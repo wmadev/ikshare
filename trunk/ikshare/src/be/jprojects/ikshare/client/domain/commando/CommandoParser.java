@@ -6,7 +6,7 @@ public class CommandoParser {
 	private static ResourceBundle bundle;
 	
 	public CommandoParser() {
-		bundle = ResourceBundle.getBundle("be.jprojects.ikshare.server.domain.commando.Commando.properties");
+		bundle = ResourceBundle.getBundle("be.jprojects.ikshare.client.domain.commando.Commando.properties");
 	}
 
 	public static Commando parse(String commandoString) throws CommandNotFoundException {
