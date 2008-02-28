@@ -22,6 +22,7 @@ public class InfoBar extends Composite {
     public InfoBar(Shell shell,int flags){
         super(shell,flags);
         GridData gd = new GridData(SWT.FILL, SWT.FILL, false, true, 1,1 );
+        gd.widthHint=200;
         this.setLayoutData(gd);
         this.setLayout(new FillLayout());
         Label lblTest = new Label(this,SWT.BORDER);
