@@ -1,6 +1,12 @@
 package ikshare.client.gui;
 
+import ikshare.client.gui.panels.ChatPanel;
+import ikshare.client.gui.panels.HelpPanel;
 import ikshare.client.gui.panels.HomePanel;
+import ikshare.client.gui.panels.SearchPanel;
+import ikshare.client.gui.panels.SettingsPanel;
+import ikshare.client.gui.panels.StatisticPanel;
+import ikshare.client.gui.panels.TransferPanel;
 import java.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
@@ -49,19 +55,24 @@ public class MainScreen {
         doComposite();
 
         addPanel(new HomePanel("Home",""));
-       
+        addPanel (new SearchPanel("Search",""));
+        addPanel (new TransferPanel("Transfer",""));
+        addPanel (new ChatPanel("Chat",""));
+        addPanel (new SettingsPanel("Settings",""));
+        addPanel (new StatisticPanel("Statistics",""));
+        addPanel (new HelpPanel("Help and About",""));
+        
+        shell.open();
+        shell.forceActive();
+        isOpen=true;
+        while (!shell.isDisposed()) {
+                if (!display.readAndDispatch()) {
 
-            shell.open();
-            shell.forceActive();
-            isOpen=true;
-            while (!shell.isDisposed()) {
-                    if (!display.readAndDispatch()) {
-
-                            display.sleep();
-                    }
-            }
-            display.dispose();
-            System.exit(0);
+                        display.sleep();
+                }
+        }
+        display.dispose();
+        System.exit(0);
     }
 
     public boolean isOpen() {
@@ -119,7 +130,7 @@ public class MainScreen {
                     p.getToolItem().setSelection(true);
             }
             p.getToolItem().addListener(SWT.Selection, new Listener() {
-                    public void handleEvent(Event event) {
+                    public void handleEvent(Event e) {
                             for (AbstractPanel pnl : panels)
                                     pnl.getToolItem().setSelection(false);
 
