@@ -55,14 +55,14 @@ public class MainScreen {
         // Add composite to shell
         doComposite();
 
-        addPanel(new HomePanel("   Home   ","resources/home.png"));
-        addPanel (new SearchPanel("  Search  ","resources/search.png"));
-        addPanel (new TransferPanel(" Transfer ","resources/down.png"));
-        addPanel (new ChatPanel("   Chat   ","resources/chat.png"));
-        addPanel (new SettingsPanel(" Settings ","resources/configure.png"));
-        addPanel (new StatisticPanel("Statistics","resources/stat.png"));
-        addPanel (new HelpPanel("   Help   ","resources/help.png"));
-        addPanel (new AboutPanel("   About   ","resources/about.png"));
+        addPanel(new HomePanel("   Home   ","resources/icons/tb_home.png"));
+        addPanel (new SearchPanel("  Search  ","resources/icons/tb_search.png"));
+        addPanel (new TransferPanel(" Transfer ","resources/icons/tb_down.png"));
+        addPanel (new ChatPanel("   Chat   ","resources/icons/tb_chat.png"));
+        addPanel (new SettingsPanel(" Settings ","resources/icons/tb_configure.png"));
+        addPanel (new StatisticPanel("Statistics","resources/icons/tb_stat.png"));
+        addPanel (new HelpPanel("   Help   ","resources/icons/tb_help.png"));
+        addPanel (new AboutPanel("   About   ","resources/icons/tb_about.png"));
         
         shell.open();
         shell.forceActive();
