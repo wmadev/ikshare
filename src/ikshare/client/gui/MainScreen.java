@@ -107,11 +107,11 @@ public class MainScreen {
     
     
     private void doLayout() {
-            shell.setMinimumSize(800, 600);
+            shell.setMinimumSize(1000, 600);
             Monitor primary = display.getPrimaryMonitor();
             Rectangle bounds = primary.getBounds();
             Rectangle rect = shell.getBounds();
-            int x = bounds.x+(bounds.width-rect.width)/2;
+            int x = (bounds.x+(bounds.width-rect.width)/2)-100;
             int y = (bounds.y+(bounds.height-rect.height)/2)-25;
             GridLayout gl = new GridLayout(2,false);
             gl.numColumns = 2;

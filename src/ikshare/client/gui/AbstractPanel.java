@@ -27,10 +27,10 @@ public class AbstractPanel extends Composite {
 		if(file.exists()){
                     this.icon = new Image(Display.getCurrent(), icon);
                 }
-		this.toolItem = new ToolItem (MainScreen.getInstance().getToolBar(), SWT.RADIO);
+		this.toolItem = new ToolItem (MainScreen.getInstance().getToolBar(), SWT.PUSH);
+                toolItem.setWidth(200);
                 toolItem.setText(getTitle());
-		toolItem.setImage(getIcon());
-		
+		toolItem.setImage(getIcon());		
 	}
 
 	public Image getIcon() {
