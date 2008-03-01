@@ -1,5 +1,6 @@
 package ikshare.client.gui;
 
+import ikshare.client.gui.panels.AboutPanel;
 import ikshare.client.gui.panels.ChatPanel;
 import ikshare.client.gui.panels.HelpPanel;
 import ikshare.client.gui.panels.HomePanel;
@@ -54,13 +55,14 @@ public class MainScreen {
         // Add composite to shell
         doComposite();
 
-        addPanel(new HomePanel("Home",""));
-        addPanel (new SearchPanel("Search",""));
-        addPanel (new TransferPanel("Transfer",""));
-        addPanel (new ChatPanel("Chat",""));
-        addPanel (new SettingsPanel("Settings",""));
-        addPanel (new StatisticPanel("Statistics",""));
-        addPanel (new HelpPanel("Help and About",""));
+        addPanel(new HomePanel("   Home   ","resources/home.png"));
+        addPanel (new SearchPanel("  Search  ","resources/search.png"));
+        addPanel (new TransferPanel(" Transfer ","resources/down.png"));
+        addPanel (new ChatPanel("   Chat   ","resources/chat.png"));
+        addPanel (new SettingsPanel(" Settings ","resources/configure.png"));
+        addPanel (new StatisticPanel("Statistics","resources/stat.png"));
+        addPanel (new HelpPanel("   Help   ","resources/help.png"));
+        addPanel (new AboutPanel("   About   ","resources/about.png"));
         
         shell.open();
         shell.forceActive();
