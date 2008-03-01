@@ -29,6 +29,7 @@ public class MainScreen {
     private Composite parent;
     private StackLayout layout;
     private static MainScreen instance;
+    
 
     private boolean isOpen = false;
 
@@ -40,6 +41,7 @@ public class MainScreen {
     }
 
     public MainScreen() {
+        
         instance = this;
         display = new Display();
         shell = new Shell(display);
@@ -55,14 +57,14 @@ public class MainScreen {
         // Add composite to shell
         doComposite();
 
-        addPanel(new HomePanel("   Home   ","resources/icons/tb_home.png"));
-        addPanel (new SearchPanel("  Search  ","resources/icons/tb_search.png"));
-        addPanel (new TransferPanel(" Transfer ","resources/icons/tb_down.png"));
-        addPanel (new ChatPanel("   Chat   ","resources/icons/tb_chat.png"));
-        addPanel (new SettingsPanel(" Settings ","resources/icons/tb_configure.png"));
-        addPanel (new StatisticPanel("Statistics","resources/icons/tb_stat.png"));
-        addPanel (new HelpPanel("   Help   ","resources/icons/tb_help.png"));
-        addPanel (new AboutPanel("   About   ","resources/icons/tb_about.png"));
+        addPanel(new HomePanel(Configuration.getInstance().getString("home"),"resources/icons/tb_home.png"));
+        addPanel (new SearchPanel(Configuration.getInstance().getString("search"),"resources/icons/tb_search.png"));
+        addPanel (new TransferPanel(Configuration.getInstance().getString("transfer"),"resources/icons/tb_down.png"));
+        addPanel (new ChatPanel(Configuration.getInstance().getString("chat"),"resources/icons/tb_chat.png"));
+        addPanel (new SettingsPanel(Configuration.getInstance().getString("settings"),"resources/icons/tb_configure.png"));
+        addPanel (new StatisticPanel(Configuration.getInstance().getString("statistics"),"resources/icons/tb_stat.png"));
+        addPanel (new HelpPanel(Configuration.getInstance().getString("help"),"resources/icons/tb_help.png"));
+        addPanel (new AboutPanel(Configuration.getInstance().getString("about"),"resources/icons/tb_about.png"));
         
         shell.open();
         shell.forceActive();
@@ -117,7 +119,7 @@ public class MainScreen {
             gl.marginHeight = gl.marginWidth = gl.verticalSpacing = 0;
             shell.setLocation(x, y);
             shell.setLayout(gl);
-            shell.setText("iKshare");
+            shell.setText(Configuration.getInstance().getString("ikshare"));
 
             /*String icon = "resources/logo.png";
             File file = new File(icon);
