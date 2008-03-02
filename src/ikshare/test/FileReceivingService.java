@@ -29,7 +29,7 @@ public class FileReceivingService implements Runnable {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        buffer = new byte[Integer.parseInt(ResourceBundleManager.getInstance().getCommandoBundle().getString("buffersize"))];
+        buffer = new byte[512];
     }
 
     public void run() {

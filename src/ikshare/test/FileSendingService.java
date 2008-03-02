@@ -24,8 +24,7 @@ public class FileSendingService implements Runnable {
     public FileSendingService(Socket receiveSocket) {
         sendSocket = receiveSocket;
 
-        buffer = new byte[Integer.parseInt(ResourceBundleManager.getInstance().getCommandoBundle().getString("buffersize"))];
-
+        buffer = new byte[512];
     }
 
     public void run() {
