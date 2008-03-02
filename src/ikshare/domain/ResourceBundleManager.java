@@ -16,17 +16,17 @@ public class ResourceBundleManager {
     private static ResourceBundle commandoBundle;    
     
     private ResourceBundleManager() {
-        commandoBundle = ResourceBundle.getBundle("ikshare.domain.commando.Commando.properties");
+        commandoBundle = ResourceBundle.getBundle("ikshare.protocol.command.Commando");
     }
     
-    private static ResourceBundleManager getInstance() {
+    public static ResourceBundleManager getInstance() {
         if (resourceBundleManager == null) {
             resourceBundleManager = new ResourceBundleManager();
         }
         return resourceBundleManager;
     }
 
-    public static ResourceBundle getCommandoBundle() {
+    public ResourceBundle getCommandoBundle() {
         return commandoBundle;
     }
     
