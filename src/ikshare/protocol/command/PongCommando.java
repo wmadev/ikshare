@@ -3,6 +3,10 @@ package ikshare.protocol.command;
 public class PongCommando extends Commando {
 
     private String accountName;
+    
+    public PongCommando() {
+        super();
+    }
 
     public PongCommando(String commandoString) {
         super(commandoString);

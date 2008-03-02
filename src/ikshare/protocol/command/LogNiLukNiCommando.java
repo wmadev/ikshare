@@ -1,10 +1,14 @@
 package ikshare.protocol.command;
 
-public class LugNiLukNiCommando extends Commando {
+public class LogNiLukNiCommando extends Commando {
 
     private String accountName, message;
+    
+    public LogNiLukNiCommando() {
+        super();
+    }
 
-    public LugNiLukNiCommando(String commandoString) {
+    public LogNiLukNiCommando(String commandoString) {
         super(commandoString);
         setAccountName(commandoLine.get(1));
         setMessage(commandoLine.get(2));

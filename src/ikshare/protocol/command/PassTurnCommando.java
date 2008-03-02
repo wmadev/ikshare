@@ -3,6 +3,10 @@ package ikshare.protocol.command;
 public class PassTurnCommando extends Commando {
 
     private String accountName,  fileName,  path;
+    
+    public PassTurnCommando() {
+        super();
+    }
 
     public PassTurnCommando(String commandoString) {
         super(commandoString);

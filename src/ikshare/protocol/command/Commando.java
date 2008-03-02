@@ -13,14 +13,14 @@ public class Commando {
     private String commandoName;
 
     public Commando(String commandoString) {
+        this();
         this.commandoString = commandoString;
-        commandoBundle = ResourceBundleManager.getCommandoBundle();
-        commandoLine = new ArrayList<String>();
         parse();
     }
     
     public Commando() {
-        
+        commandoBundle = ResourceBundleManager.getInstance().getCommandoBundle();
+        commandoLine = new ArrayList<String>();
     }
 
     private void parse() {

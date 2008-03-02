@@ -5,6 +5,10 @@ public class GivePeerCommando extends Commando {
     private String accountName,  ipAddress;
     private int port;
 
+    public GivePeerCommando() {
+        super();
+    }
+    
     public GivePeerCommando(String commandoString) {
         super(commandoString);
         setAccountName(commandoLine.get(1));

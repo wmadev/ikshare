@@ -3,6 +3,10 @@ package ikshare.protocol.command;
 public class FileConfirmCommando extends Commando {
 
     private String accountName,  fileName,  path;
+    
+    public FileConfirmCommando() {
+        super();
+    }
 
     public FileConfirmCommando(String commandoString) {
         super(commandoString);

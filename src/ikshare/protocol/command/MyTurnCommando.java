@@ -3,6 +3,10 @@ package ikshare.protocol.command;
 public class MyTurnCommando extends Commando {
 
     private String accountName,  fileName,  path;
+    
+    public MyTurnCommando() {
+        super();
+    }
 
     public MyTurnCommando(String commandoString) {
         super(commandoString);

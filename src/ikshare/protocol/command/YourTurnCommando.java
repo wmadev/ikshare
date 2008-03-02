@@ -5,6 +5,10 @@ public class YourTurnCommando extends Commando {
     private String accountName,  fileName,  path;
     private int blocks,  blockSize;
 
+    public YourTurnCommando() {
+        super();
+    }
+    
     public YourTurnCommando(String commandoString) {
         super(commandoString);
         setAccountName(commandoLine.get(1));

@@ -3,6 +3,10 @@ package ikshare.protocol.command;
 public class FileRequestCommando extends Commando {
 
     private String accountName,  fileName,  path;
+    
+    public FileRequestCommando() {
+        super();
+    }
 
     public FileRequestCommando(String commandoString) {
         super(commandoString);

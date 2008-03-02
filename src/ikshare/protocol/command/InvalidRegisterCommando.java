@@ -3,6 +3,10 @@ package ikshare.protocol.command;
 public class InvalidRegisterCommando extends Commando {
 
     private String message;
+    
+    public InvalidRegisterCommando() {
+        super();
+    }
 
     public InvalidRegisterCommando(String commandoString) {
         super(commandoString);

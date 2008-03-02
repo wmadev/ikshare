@@ -3,6 +3,10 @@ package ikshare.protocol.command;
 public class LogOnCommando extends Commando {
 
     private String accountName,  password;
+    
+    public LogOnCommando() {
+        super();
+    }
 
     public LogOnCommando(String commandoString) {
         super(commandoString);

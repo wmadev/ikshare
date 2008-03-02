@@ -3,7 +3,11 @@ package ikshare.protocol.command;
 public class FoundItAllCommando extends Commando {
 
     private String searchID;
-
+    
+    public FoundItAllCommando() {
+        super();
+    }
+    
     public FoundItAllCommando(String commandoString) {
         super(commandoString);
         setSearchID(commandoLine.get(2));

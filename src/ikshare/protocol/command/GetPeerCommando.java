@@ -3,6 +3,10 @@ package ikshare.protocol.command;
 public class GetPeerCommando extends Commando {
 
     private String accountName;
+    
+    public GetPeerCommando() {
+        super();
+    }
 
     public GetPeerCommando(String commandoString) {
         super(commandoString);

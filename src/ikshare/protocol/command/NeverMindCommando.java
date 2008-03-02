@@ -3,6 +3,10 @@ package ikshare.protocol.command;
 public class NeverMindCommando extends Commando {
 
     private String searchID;
+    
+    public NeverMindCommando() {
+        super();
+    }
 
     public NeverMindCommando(String commandoString) {
         super(commandoString);

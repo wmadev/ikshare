@@ -3,6 +3,10 @@ package ikshare.protocol.command;
 public class GiveConnCommando extends Commando {
 
     private int port;
+    
+    public GiveConnCommando() {
+        super();
+    }
 
     public GiveConnCommando(String commandoString) {
         super(commandoString);

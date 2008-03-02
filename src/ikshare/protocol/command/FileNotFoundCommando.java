@@ -4,6 +4,10 @@ public class FileNotFoundCommando extends Commando {
 
     private String accountName,  fileName,  path;
 
+    public FileNotFoundCommando() {
+        super();
+    }
+
     public FileNotFoundCommando(String commandoString) {
         super(commandoString);
         setAccountName(commandoLine.get(1));
@@ -37,7 +41,12 @@ public class FileNotFoundCommando extends Commando {
     
     @Override
     public String toString() {
-        String del=commandoBundle.getString("commandoDelimiter");
+        String del="";
+        if (commandoBundle==null) {
+            del = "$";
+        } else {
+            del=commandoBundle.getString("commandoDelimiter");
+        }
         return commandoBundle.getString("filenotfound")+del+getAccountName()+del+getFileName()+del+getPath();
     }
 }

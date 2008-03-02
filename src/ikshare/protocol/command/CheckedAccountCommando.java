@@ -3,7 +3,11 @@ package ikshare.protocol.command;
 public class CheckedAccountCommando extends Commando {
 
     private String accountName, status;
-
+    
+    public CheckedAccountCommando() {
+        super();
+    }
+    
     public CheckedAccountCommando(String commandoString) {
         super(commandoString);
         setAccountName(commandoLine.get(1));

@@ -8,9 +8,13 @@ public class FoundCommando extends Commando {
     private String searchID,fileName,path;
     private HashMap<String, String> metaData;
 
+    public FoundCommando() {
+        super();
+    }
+    
     public FoundCommando(String commandoString) {
         super(commandoString);
-
+        metaData = new HashMap<String, String>();
         setSearchID(commandoLine.get(1));
         setFileName(commandoLine.get(2));
         setPath(commandoLine.get(3));

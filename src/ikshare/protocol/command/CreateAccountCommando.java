@@ -3,6 +3,10 @@ package ikshare.protocol.command;
 public class CreateAccountCommando extends Commando {
 
     private String accountName,  email,  password;
+    
+    public CreateAccountCommando() {
+        super();
+    }
 
     public CreateAccountCommando(String commandoString) {
         super(commandoString);
