@@ -1,13 +1,13 @@
 package ikshare.protocol.command;
 
-public class LogOffCommando extends Commando {
+public class LugNiLukNiCommando extends Commando {
 
-    private String accountName,  password;
+    private String accountName, message;
 
-    public LogOffCommando(String commandoString) {
+    public LugNiLukNiCommando(String commandoString) {
         super(commandoString);
         setAccountName(commandoLine.get(1));
-        setPassword(commandoLine.get(2));
+        setMessage(commandoLine.get(2));
     }
 
     public String getAccountName() {
@@ -18,18 +18,17 @@ public class LogOffCommando extends Commando {
         this.accountName = accountName;
     }
 
-    public String getPassword() {
-        return password;
+    public String getMessage() {
+        return message;
     }
 
-    public void setPassword(String password) {
-        this.password = password;
+    public void setMessage(String message) {
+        this.message = message;
     }
     
     @Override
     public String toString() {
         String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("logoff")+del+getAccountName()+del+getPassword();
+        return commandoBundle.getString("luknilukni")+del+getAccountName()+del+getMessage();
     }
-    
 }

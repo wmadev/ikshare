@@ -1,10 +1,10 @@
 package ikshare.protocol.command;
 
-public class GetPeerCommando extends Commando {
+public class LogNiLukNiCommando1 extends Commando {
 
     private String accountName;
 
-    public GetPeerCommando(String commandoString) {
+    public LogNiLukNiCommando1(String commandoString) {
         super(commandoString);
         setAccountName(commandoLine.get(1));
     }
@@ -15,11 +15,5 @@ public class GetPeerCommando extends Commando {
 
     public void setAccountName(String accountName) {
         this.accountName = accountName;
-    }
-    
-        @Override
-    public String toString() {
-        String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("peer")+del+getAccountName();
     }
 }

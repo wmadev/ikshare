@@ -8,14 +8,19 @@ import java.util.StringTokenizer;
 public class Commando {
 
     private String commandoString;
-    private ArrayList<String> commandoLine;
-    private static ResourceBundle commandoBundle;
+    protected ArrayList<String> commandoLine;
+    protected static ResourceBundle commandoBundle;
+    private String commandoName;
 
     public Commando(String commandoString) {
         this.commandoString = commandoString;
         commandoBundle = ResourceBundleManager.getCommandoBundle();
         commandoLine = new ArrayList<String>();
         parse();
+    }
+    
+    public Commando() {
+        
     }
 
     private void parse() {
@@ -24,7 +29,20 @@ public class Commando {
         while (commandTokenizer.hasMoreTokens()) {
             commandoLine.add(commandTokenizer.nextToken());
         }
+        commandoName = commandoLine.get(0);
         
-
+    }
+    
+    public String getCommandoName() {
+        return commandoName;
+    }
+    
+    public String getCommandoString() {
+        return commandoString;
+    }
+    
+    @Override
+    public String toString() {
+        return getCommandoString();
     }
 }
