@@ -10,6 +10,7 @@ import java.io.File;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
@@ -42,8 +43,11 @@ public class TransferPanel extends AbstractPanel{
             Image icon = new Image(Display.getCurrent(), ICON_UP);
             uploadTab.setImage(icon);
         }
-        
         uploadTab.setText("Uploads");
+        Composite downloadvenster=new Composite(folder, SWT.BORDER);
+        downloadTab.setControl(downloadvenster);
+        Composite uploadvenster=new Composite(folder, SWT.BORDER);
+        uploadTab.setControl(uploadvenster);
     }
     
     

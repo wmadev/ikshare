@@ -25,8 +25,12 @@ public class InfoBar extends Composite {
         gd.widthHint=200;
         this.setLayoutData(gd);
         this.setLayout(new FillLayout());
-        Label lblTest = new Label(this,SWT.BORDER);
-        lblTest.setBounds(0, 0, 200, 30);
-        lblTest.setText("Infobar");
+        Label lblDownload = new Label(this,SWT.BORDER);
+        lblDownload.setBounds(0, 0, 200, 30);
+        lblDownload.setText("Number of Downloads");
+        Label lblUpload = new Label(this,SWT.BORDER);
+        lblUpload.setBounds(0, 0, 200, 30);
+        lblUpload.setText("Number of Uploads");
+        
     }
 }
