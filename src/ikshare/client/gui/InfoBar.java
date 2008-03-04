@@ -29,6 +29,10 @@ public class InfoBar extends Composite {
         this.setLayoutData(gd);
         GridLayout gl = new GridLayout(2,false);
         this.setLayout(gl);
+        this.init();
+    }
+        
+    private void init() {
         Label lblDownload = new Label(this,SWT.FILL);
         lblDownload.setText("Number of Downloads:");
         GridData data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
