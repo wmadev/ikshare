@@ -57,6 +57,7 @@ public class TransferPanel extends AbstractPanel{
 	addTableColumn(tblDownloadTransfer,Configuration.getInstance().getString("state"), 150, SWT.RIGHT);
 	addTableColumn(tblDownloadTransfer,Configuration.getInstance().getString("speed"),100,SWT.RIGHT);
 	addTableColumn(tblDownloadTransfer,Configuration.getInstance().getString("remaining"), 100, SWT.RIGHT);
+        addTableColumn(tblDownloadTransfer,Configuration.getInstance().getString("peer"), 100, SWT.RIGHT);
         downloadTab.setControl(cmpDownload);
         
         // Upload
@@ -78,6 +79,7 @@ public class TransferPanel extends AbstractPanel{
 	addTableColumn(tblUploadTransfer,Configuration.getInstance().getString("state"), 150, SWT.RIGHT);
 	addTableColumn(tblUploadTransfer,Configuration.getInstance().getString("speed"),100,SWT.RIGHT);
 	addTableColumn(tblUploadTransfer,Configuration.getInstance().getString("remaining"), 100, SWT.RIGHT);
+        addTableColumn(tblUploadTransfer,Configuration.getInstance().getString("peer"), 100, SWT.RIGHT);
         uploadTab.setControl(cmpUpload);   
     }
     
