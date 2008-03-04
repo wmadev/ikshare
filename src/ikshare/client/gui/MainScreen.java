@@ -114,7 +114,6 @@ public class MainScreen {
             int x = (bounds.x+(bounds.width-rect.width)/2)-100;
             int y = (bounds.y+(bounds.height-rect.height)/2)-25;
             GridLayout gl = new GridLayout(2,false);
-            gl.numColumns = 2;
             //shell.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,2));
             gl.marginHeight = gl.marginWidth = gl.verticalSpacing = 0;
             shell.setLocation(x, y);
