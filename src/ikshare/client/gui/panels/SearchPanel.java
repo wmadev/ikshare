@@ -30,10 +30,10 @@ public class SearchPanel extends AbstractPanel{
         super(text,icon);
         GridLayout gl = new GridLayout(1,true);
         this.setLayout(gl);
-        /*RowLayout rw=new RowLayout(SWT.VERTICAL);
-        rw.pack=false;
-        rw.wrap=false;
-        this.setLayout(rw);*/
+        this.init();
+    }
+        
+    private void init() {
         //SearchOptions
         Composite options = new Composite(this, SWT.BORDER);
         GridData gd=new GridData(SWT.FILL, SWT.FILL, true,false, 1,1);
