@@ -90,6 +90,8 @@ public class MainScreen {
     private void doToolbar() {
         toolBar = new ToolBar(shell, SWT.WRAP );
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false, 2,1);
+        //GridLayout gl = new GridLayout(8, true);
+        //toolBar.setLayout(gl);
         toolBar.setLayoutData(gd);
     }
 
