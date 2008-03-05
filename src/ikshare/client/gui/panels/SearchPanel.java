@@ -28,7 +28,7 @@ public class SearchPanel extends AbstractPanel{
     private static String ICON_SEARCH="resources/icons/sp_found.png";
     public SearchPanel(String text,String icon){
         super(text,icon);
-        GridLayout gl = new GridLayout(1,true);
+        GridLayout gl = new GridLayout(1,false);
         this.setLayout(gl);
         this.init();
     }

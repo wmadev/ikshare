@@ -93,6 +93,9 @@ public class MainScreen {
         //GridLayout gl = new GridLayout(8, true);
         //toolBar.setLayout(gl);
         toolBar.setLayoutData(gd);
+        
+        GridLayout gl=new GridLayout(8,true);
+        toolBar.setLayout(gl);
     }
 
     private void doInfobar(){
@@ -109,7 +112,7 @@ public class MainScreen {
     
     
     private void doLayout() {
-            shell.setMinimumSize(1000, 600);
+            shell.setMinimumSize(800, 400);
             Monitor primary = display.getPrimaryMonitor();
             Rectangle bounds = primary.getBounds();
             Rectangle rect = shell.getBounds();
