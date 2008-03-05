@@ -29,22 +29,27 @@ public class HomePanel extends AbstractPanel {
     private void init() {
         Label lblnick=new Label(this, SWT.FILL);
         lblnick.setText("nickname:");
-        GridData data=new GridData(SWT.CENTER, SWT.FILL, true, false, 1, 1);
-        data.widthHint=120;
+        GridData data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
+        data.widthHint=200;
         lblnick.setLayoutData(data);
         Text txtnick=new Text(this, SWT.BORDER);
-        GridData data2=new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+        GridData data2=new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
         txtnick.setLayoutData(data2);
         Label lbllanguage=new Label(this, SWT.FILL);
         lbllanguage.setText("language:");
-        data=new GridData(SWT.CENTER, SWT.FILL, true, false, 1, 1);
-        data.widthHint=120;
+        data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
+        data.widthHint=200;
         lbllanguage.setLayoutData(data);
         Combo cblanguages = new Combo(this,SWT.DROP_DOWN | SWT.READ_ONLY);
-        data2=new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+        data2=new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
         cblanguages.setLayoutData(data2);
         cblanguages.setItems(new String[] {"Englisch","Nederlands"});
         cblanguages.select(0);
+        Label lblbirthdate=new Label(this, SWT.FILL);
+        lblbirthdate.setText("birthdate:");
+        data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
+        data.widthHint=200;
+        lblbirthdate.setLayoutData(data);
     }
 
 }
