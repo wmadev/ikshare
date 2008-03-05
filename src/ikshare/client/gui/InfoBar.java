@@ -54,7 +54,7 @@ public class InfoBar extends Composite {
         data2.widthHint=80;
         lblNrUpload.setLayoutData(data2);
         Label lblShared = new Label(this,SWT.NONE);
-        lblShared.setText("Number of Shared Files");
+        lblShared.setText("Number of Shared Files:");
         data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
         data.widthHint=120;
         lblShared.setLayoutData(data);
