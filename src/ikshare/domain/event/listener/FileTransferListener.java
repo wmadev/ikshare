@@ -12,9 +12,10 @@ import ikshare.domain.Transfer;
  * @author awosy
  */
 public interface FileTransferListener {
-    public void TransferStarted(Transfer transfer);
-    public void TransferStopped(Transfer transfer);
-    public void TransferCanceled(Transfer transfer);
-    public void TransferStateChanged(Transfer transfer);
-    public void TransferFailed(Transfer transfer);
+    public void transferStarted(Transfer transfer);
+    public void transferStopped(Transfer transfer);
+    public void transferCanceled(Transfer transfer);
+    public void transferStateChanged(Transfer transfer);
+    public void transferFailed(Transfer transfer);
+    public void transferFinished(Transfer transfer);
 }

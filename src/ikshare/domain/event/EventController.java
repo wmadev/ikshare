@@ -27,13 +27,28 @@ public class EventController {
             instance = new EventController();
         return instance;
     }
+    public void addFileTransferListener(FileTransferListener l){
+        fileTransferListeners.add(l);
+    }
     
     public void triggerDownloadStartedEvent(Transfer transfer)
     {
         for(FileTransferListener listener:fileTransferListeners)
 	{
-		listener.TransferStarted(transfer);
+		listener.transferStarted(transfer);
 	}
+    }
+    public void triggerDownloadStateChangedEvent(Transfer transfer){
+        for(FileTransferListener listener:fileTransferListeners)
+	{
+		listener.transferStateChanged(transfer);
+	}        
+    }
+    public void triggerDownloadFinishedEvent(Transfer transfer){
+        for(FileTransferListener listener:fileTransferListeners)
+	{
+		listener.transferFinished(transfer);
+	}        
     }
     
 }
