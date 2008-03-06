@@ -11,24 +11,33 @@ package ikshare.domain;
  */
 public class Transfer {
     private int id;
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
-    }
     private String fileName;
     private long fileSize;
     private int state;
     private int numberOfBlocksFinished;
     private int numberOfBlocks;
     private long speed;
+    private long remainingTime;
     private Peer peer;
     
     public Transfer(){
         
+    }
+
+    public long getRemainingTime() {
+        return remainingTime;
+    }
+
+    public void setRemainingTime(long remainingTime) {
+        this.remainingTime = remainingTime;
+    }
+    
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
     
     public int getNumberOfBlocks() {
