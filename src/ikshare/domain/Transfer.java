@@ -13,12 +13,31 @@ public class Transfer {
     private String fileName;
     private long fileSize;
     private TransferState state;
+    private int numberOfBlocksFinished;
+    private int numberOfBlocks;
     private long speed;
     private Peer peer;
     
     public Transfer(){
         
     }
+    
+    public int getNumberOfBlocks() {
+        return numberOfBlocks;
+    }
+
+    public void setNumberOfBlocks(int numberOfBlocks) {
+        this.numberOfBlocks = numberOfBlocks;
+    }
+
+    public int getNumberOfBlocksFinished() {
+        return numberOfBlocksFinished;
+    }
+
+    public void setNumberOfBlocksFinished(int numberOfBlocksFinished) {
+        this.numberOfBlocksFinished = numberOfBlocksFinished;
+    }
+   
     
     public String getFileName() {
         return fileName;
@@ -58,9 +77,5 @@ public class Transfer {
 
     public void setState(TransferState state) {
         this.state = state;
-    }
-    
-    public String getRemainingTime(){
-        return "remaining";
     }
 }
