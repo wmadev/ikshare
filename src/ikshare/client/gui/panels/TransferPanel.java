@@ -5,8 +5,13 @@
 
 package ikshare.client.gui.panels;
 
+import ikshare.domain.TransferState;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.Configuration;
+import ikshare.client.gui.UtilityClass;
+import ikshare.domain.Transfer;
+import ikshare.domain.event.EventController;
+import ikshare.domain.event.listener.FileTransferListener;
 import java.io.File;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -19,20 +24,25 @@ import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
+import org.eclipse.swt.widgets.TableItem;
 
 /**
  *
  * @author Jana
  */
-public class TransferPanel extends AbstractPanel{
+public class TransferPanel extends AbstractPanel implements FileTransferListener{
+    
     private static String ICON_DOWN="resources/icons/tp_down.png";
     private static String ICON_UP="resources/icons/tp_up.png";
+    private Table tblUploadTransfer,tblDownloadTransfer;
+    
     
     public TransferPanel(String text,String icon){
         super(text,icon);
         FillLayout layout=new FillLayout();
         this.setLayout(layout);
         this.init();
+        EventController.getInstance().addFileTransferListener(this);
     }
 
     private void init() {
@@ -48,7 +58,7 @@ public class TransferPanel extends AbstractPanel{
         Composite cmpDownload=new Composite(folder, SWT.NONE);
         cmpDownload.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,3,1));
 	cmpDownload.setLayout(new GridLayout(1,false));
-	Table tblDownloadTransfer = new Table(cmpDownload,SWT.FULL_SELECTION | SWT.BORDER);
+	tblDownloadTransfer = new Table(cmpDownload,SWT.FULL_SELECTION | SWT.BORDER);
         tblDownloadTransfer.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
 	tblDownloadTransfer.setLinesVisible (true);
         tblDownloadTransfer.setHeaderVisible (true);
@@ -70,7 +80,7 @@ public class TransferPanel extends AbstractPanel{
         Composite cmpUpload=new Composite(folder, SWT.NONE);
         cmpUpload.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,3,1));
 	cmpUpload.setLayout(new GridLayout(1,false));
-	Table tblUploadTransfer = new Table(cmpUpload,SWT.FULL_SELECTION | SWT.BORDER);
+	tblUploadTransfer = new Table(cmpUpload,SWT.FULL_SELECTION | SWT.BORDER);
         tblUploadTransfer.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
 	tblUploadTransfer.setLinesVisible (true);
         tblUploadTransfer.setHeaderVisible (true);
@@ -90,6 +100,77 @@ public class TransferPanel extends AbstractPanel{
 	column.setWidth(width);
 	column.setAlignment(align);
 	}
+
+    public void transferStarted(final Transfer transfer) {
+        this.getDisplay().asyncExec(
+            new Runnable() {
+                public void run(){
+                    TableItem item = null;
+                    if(transfer.getState() == TransferState.DOWNLOADING){
+                         item = new TableItem(tblDownloadTransfer,SWT.NONE);
+                         item.setText(2,Configuration.getInstance().getString("downloading"));
+                    }
+                    else if(transfer.getState() == TransferState.UPLOADING){
+                         item = new TableItem(tblUploadTransfer,SWT.NONE);
+                         item.setText(2,Configuration.getInstance().getString("uploading"));
+                    }
+                    item.setText(0,transfer.getFileName());
+                    item.setText(1,UtilityClass.formatFileSize(transfer.getFileSize()));
+                    
+                    item.setText(3,"0");
+                    item.setText(4,UtilityClass.formatTime(transfer.getSpeed()));
+                    item.setData("transfer",transfer);
+                }
+        });
+    }
+
+    public void transferStopped(Transfer transfer) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void transferCanceled(Transfer transfer) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void transferStateChanged(final Transfer transfer) {
+     this.getDisplay().asyncExec(
+            new Runnable() {
+                public void run(){
+                    if(transfer.getState() == TransferState.DOWNLOADING){
+                        for(TableItem item : tblDownloadTransfer.getItems())
+                        {
+                            Transfer t = (Transfer) item.getData("transfer");
+                            if(t.getId()==transfer.getId())
+                            {
+                                item.setText(3,UtilityClass.formatFileSize(transfer.getSpeed()));
+          
+                                item.setText(4,UtilityClass.formatTime(transfer.getRemainingTime()));
+                            }
+                        }
+                    }
+                    else if(transfer.getState() == TransferState.UPLOADING){
+                        for(TableItem item : tblUploadTransfer.getItems())
+                        {
+                            Transfer t = (Transfer) item.getData("transfer");
+                            if(t.getId()==transfer.getId())
+                            {
+                                item.setText(3,UtilityClass.formatFileSize(transfer.getSpeed()));
+                                item.setText(4,UtilityClass.formatTime(transfer.getRemainingTime()));
+                            }
+                        }
+                    }
+                    
+                }
+        });
+    }
+
+    public void transferFailed(Transfer transfer) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    public void transferFinished(Transfer transfer) {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
     
     
 }
