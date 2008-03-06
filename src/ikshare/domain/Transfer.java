@@ -10,6 +10,15 @@ package ikshare.domain;
  * @author awosy
  */
 public class Transfer {
+    private int id;
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
     private String fileName;
     private long fileSize;
     private int state;
