@@ -9,7 +9,7 @@ package ikshare.domain;
  *
  * @author awosy
  */
-class TransferState {
+public class TransferState {
     public static final int STARTED = 1;
     public static final int STOPPED = 2;
     public static final int CANCELED = 3;

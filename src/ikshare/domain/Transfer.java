@@ -12,7 +12,7 @@ package ikshare.domain;
 public class Transfer {
     private String fileName;
     private long fileSize;
-    private TransferState state;
+    private int state;
     private int numberOfBlocksFinished;
     private int numberOfBlocks;
     private long speed;
@@ -71,11 +71,11 @@ public class Transfer {
         this.speed = speed;
     }
 
-    public TransferState getState() {
+    public int getState() {
         return state;
     }
 
-    public void setState(TransferState state) {
+    public void setState(int state) {
         this.state = state;
     }
 }
