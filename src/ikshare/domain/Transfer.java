@@ -11,7 +11,7 @@ package ikshare.domain;
  */
 public class Transfer {
     private String fileName;
-    private int fileSize;
+    private long fileSize;
     private TransferState state;
     private long speed;
     private Peer peer;
@@ -28,11 +28,11 @@ public class Transfer {
         this.fileName = fileName;
     }
 
-    public int getFileSize() {
+    public long getFileSize() {
         return fileSize;
     }
 
-    public void setFileSize(int fileSize) {
+    public void setFileSize(long fileSize) {
         this.fileSize = fileSize;
     }
 
