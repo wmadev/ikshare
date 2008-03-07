@@ -35,8 +35,8 @@ public class InfoBar extends Composite {
     private void init() {
         Label lblDownload = new Label(this,SWT.FILL);
         lblDownload.setText("Number of Downloads:");
-        GridData data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
-        data.widthHint=120;
+        GridData data=new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
+        //data.widthHint=120;
         lblDownload.setLayoutData(data);
         Label lblNrDownload = new Label(this,SWT.NONE);
         lblNrDownload.setText("0");
@@ -45,8 +45,8 @@ public class InfoBar extends Composite {
         lblNrDownload.setLayoutData(data2);
         Label lblUpload = new Label(this,SWT.NONE);
         lblUpload.setText("Number of Uploads:");
-        data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
-        data.widthHint=120;
+        data=new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
+        //data.widthHint=120;
         lblUpload.setLayoutData(data);
         Label lblNrUpload = new Label(this,SWT.NONE);
         lblNrUpload.setText("1");
@@ -55,8 +55,8 @@ public class InfoBar extends Composite {
         lblNrUpload.setLayoutData(data2);
         Label lblShared = new Label(this,SWT.NONE);
         lblShared.setText("Number of Shared Files:");
-        data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
-        data.widthHint=120;
+        data=new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
+        //data.widthHint=120;
         lblShared.setLayoutData(data);
         Label lblNrShared = new Label(this,SWT.NONE);
         lblNrShared.setText("2");
