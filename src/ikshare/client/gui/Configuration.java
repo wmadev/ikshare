@@ -25,6 +25,10 @@ public class Configuration {
             instance = new Configuration();
         return instance;
     }
+    public void changeLanguage(String locale){
+        bundle = ResourceBundle.getBundle("ikshare.client.gui.bundles.messages_"+locale);
+     
+    }
     public String getString(String key){
         try{
             return bundle.getString(key);

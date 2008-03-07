@@ -6,11 +6,14 @@
 package ikshare.client.gui.panels;
 
 import ikshare.client.gui.AbstractPanel;
+import ikshare.client.gui.Configuration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 
 /**
@@ -40,11 +43,21 @@ public class HomePanel extends AbstractPanel {
         data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
         data.widthHint=200;
         lbllanguage.setLayoutData(data);
-        Combo cblanguages = new Combo(this,SWT.DROP_DOWN | SWT.READ_ONLY);
+        final Combo cblanguages = new Combo(this,SWT.DROP_DOWN | SWT.READ_ONLY);
         data2=new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
         cblanguages.setLayoutData(data2);
-        cblanguages.setItems(new String[] {"Englisch","Nederlands"});
+        cblanguages.setItems(new String[] {"(en) English","(nl) Nederlands"});
         cblanguages.select(0);
+        cblanguages.addListener(SWT.Selection,new Listener(){
+
+			public void handleEvent(Event event) {
+                            Configuration.getInstance().changeLanguage(cblanguages.getItem(cblanguages.getSelectionIndex()).substring(1, 3));
+				
+				
+				
+			}
+			
+		});
         Label lblbirthdate=new Label(this, SWT.FILL);
         lblbirthdate.setText("birthdate:");
         data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
