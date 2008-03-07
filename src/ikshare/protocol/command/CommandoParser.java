@@ -1,17 +1,25 @@
 package ikshare.protocol.command;
 
+import ikshare.domain.ResourceBundleManager;
 import ikshare.protocol.exception.*;
 import java.util.ResourceBundle;
 
 public class CommandoParser {
 
     private static ResourceBundle bundle;
+    private static CommandoParser instance;
 
-    public CommandoParser() {
-        bundle = ResourceBundle.getBundle("ikshare.protocol.commando.Commando.properties");
+    protected CommandoParser() {
+        bundle = ResourceBundleManager.getInstance().getCommandoBundle();
+    }
+    
+    public static CommandoParser getInstance() {
+        if (instance==null)
+            instance = new CommandoParser();
+        return instance;
     }
 
-    public static Commando parse(String commandoString) throws CommandNotFoundException {
+    public Commando parse(String commandoString) throws CommandNotFoundException {
         if (commandoString.startsWith(bundle.getString("ping"))) {
             return new PingCommando(commandoString);
         }
