@@ -5,6 +5,7 @@
 
 package ikshare.client.gui;
 
+import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 
@@ -26,8 +27,8 @@ public class Configuration {
         return instance;
     }
     public void changeLanguage(String locale){
-        bundle = ResourceBundle.getBundle("ikshare.client.gui.bundles.messages_"+locale);
-     
+        bundle = ResourceBundle.getBundle("ikshare.client.gui.bundles.messages",new Locale(locale));
+        
     }
     public String getString(String key){
         try{
