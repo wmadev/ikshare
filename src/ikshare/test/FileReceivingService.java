@@ -20,12 +20,13 @@ public class FileReceivingService implements Runnable {
 
     public FileReceivingService(InetAddress address) {
         try {
-            receiveSocket = new Socket(address, 6000);
+            receiveSocket = new Socket(address, 6001);
             receiveSocket.setSoTimeout(5000);
+            buffer = new byte[512];
         } catch (Exception e) {
             e.printStackTrace();
         }
-        buffer = new byte[512];
+        
     }
 
     public void run() {

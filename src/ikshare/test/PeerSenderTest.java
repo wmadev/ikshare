@@ -1,7 +1,6 @@
 package ikshare.test;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
+import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -12,9 +11,13 @@ import java.util.concurrent.Executors;
 public class PeerSenderTest {
     public static void main (String args[]) {
         try {
-            ExecutorService service = Executors.newFixedThreadPool(1);
-            service.execute(new FileReceivingService(InetAddress.getLocalHost()));
-        } catch (UnknownHostException ex) {
+            while (true) {
+                ServerSocket ss = new ServerSocket(6001);
+                System.out.println("waiting");
+                ExecutorService service = Executors.newFixedThreadPool(1);
+                service.execute(new FileSendingService(ss.accept()));
+            }
+        } catch (Exception ex) {
            ex.printStackTrace();
         }
     }
