@@ -5,6 +5,7 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.net.ServerSocket;
 import java.net.Socket;
 
 /**
@@ -17,8 +18,9 @@ public class FileSendingService implements Runnable {
     private byte[] buffer;
     private File sendFile;
 
+
     public FileSendingService(Socket receiveSocket) {
-        sendSocket = receiveSocket;
+                sendSocket = receiveSocket;
 
         buffer = new byte[512];
     }

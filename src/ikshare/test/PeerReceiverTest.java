@@ -13,8 +13,10 @@ import java.util.concurrent.Executors;
 public class PeerReceiverTest {
     public static void main (String args[]) {
         try {
-            ExecutorService service = Executors.newFixedThreadPool(1);
-            service.execute(new FileReceivingService(InetAddress.getLocalHost()));
+            while (true) { 
+                ExecutorService service = Executors.newFixedThreadPool(1);
+                service.execute(new FileReceivingService(InetAddress.getLocalHost()));
+            }
         } catch (UnknownHostException ex) {
            ex.printStackTrace();
         }
