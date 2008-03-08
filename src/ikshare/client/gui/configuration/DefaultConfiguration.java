@@ -5,6 +5,8 @@
 
 package ikshare.client.gui.configuration;
 
+import java.util.Calendar;
+
 
 /**
  *
@@ -13,7 +15,13 @@ package ikshare.client.gui.configuration;
 class DefaultConfiguration extends Configuration {
 
     public DefaultConfiguration()  {
+        super.setNickname("J@n@ ;)");
         super.setLanguage("en");
+        Calendar date = Calendar.getInstance();
+        date.set(Calendar.DAY_OF_MONTH, 17);
+        date.set(Calendar.YEAR, 1986);
+        date.set(Calendar.MONTH, 8);
+        super.setBirthday(date);
     }
 
 }

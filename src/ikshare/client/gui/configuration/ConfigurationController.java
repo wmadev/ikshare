@@ -8,9 +8,11 @@ package ikshare.client.gui.configuration;
 import ikshare.client.gui.configuration.Configuration;
 import java.io.File;
 import java.io.FileOutputStream;
+import java.util.Calendar;
 import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
@@ -53,8 +55,6 @@ public class ConfigurationController {
             File configFile = new File("resources/config/configuration.xml");
             // if the config file is not found, return default configuration
             if(!configFile.exists()){
-                System.out.println("Config not found");
-                //configFile.createNewFile();
                 config = new DefaultConfiguration();
             }
             else{
@@ -78,6 +78,15 @@ public class ConfigurationController {
             Node child = childNodes.item(i);
             if (child.getNodeName().equals("language")){
                 config.setLanguage(((Element) child).getTextContent());
+            }else if(child.getNodeName().equals("birthday")){
+                StringTokenizer tokenizer = new StringTokenizer(((Element) child).getTextContent(),"-");
+                Calendar date = Calendar.getInstance();
+                date.set(Calendar.DAY_OF_MONTH, Integer.parseInt(tokenizer.nextToken()));
+                date.set(Calendar.MONTH, Integer.parseInt(tokenizer.nextToken())-1);
+                date.set(Calendar.YEAR, Integer.parseInt(tokenizer.nextToken()));
+                config.setBirthday(date);
+            }else if(child.getNodeName().equals("nickname")){
+                config.setNickname(((Element) child).getTextContent());
             }
         }
     }
@@ -109,9 +118,22 @@ public class ConfigurationController {
     
     private Element buildUserSettingsNode(Document doc){
         Element userSettings = doc.createElement("user-settings");
+        // Language
         Element language = doc.createElement("language");
         language.appendChild(doc.createTextNode(config.getLanguage()));
+        
+        // birthday
+        Element birthday = doc.createElement("birthday");
+        birthday.appendChild(doc.createTextNode(config.getBirthday().get(Calendar.DAY_OF_MONTH)+
+                "-"+(config.getBirthday().get(Calendar.MONTH)+1)+"-"+config.getBirthday().get(Calendar.YEAR)));
+        
+        // nickname
+        Element nickname = doc.createElement("nickname");
+        nickname.appendChild(doc.createTextNode(config.getNickname()));
+        // add to usersettings
+        userSettings.appendChild(nickname);
         userSettings.appendChild(language);
+        userSettings.appendChild(birthday);
         return userSettings;
     }
     
