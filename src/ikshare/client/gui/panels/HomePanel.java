@@ -6,7 +6,7 @@
 package ikshare.client.gui.panels;
 
 import ikshare.client.gui.AbstractPanel;
-import ikshare.client.gui.Configuration;
+import ikshare.client.gui.configuration.Configuration;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;

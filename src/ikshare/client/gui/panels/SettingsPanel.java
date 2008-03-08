@@ -6,7 +6,7 @@
 package ikshare.client.gui.panels;
 
 import ikshare.client.gui.AbstractPanel;
-import ikshare.client.gui.Configuration;
+import ikshare.client.gui.configuration.ConfigurationController;
 import org.eclipse.swt.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -31,7 +31,7 @@ public class SettingsPanel extends AbstractPanel{
 
     private void makeGeneralFolder(TabFolder folder) {
           TabItem generalTab = new TabItem(folder,SWT.BORDER);
-        generalTab.setText(Configuration.getInstance().getString("general"));
+        generalTab.setText(ConfigurationController.getInstance().getString("general"));
         Composite general=new Composite(folder,SWT.NONE);
         generalTab.setControl(general);
         GridLayout gd=new GridLayout(2,false);
@@ -53,11 +53,15 @@ public class SettingsPanel extends AbstractPanel{
         data2=new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
         cblanguages.setLayoutData(data2);
         cblanguages.setItems(new String[] {"(en) English","(nl) Nederlands"});
-        cblanguages.select(0);
+        for(int i = 0 ; i < cblanguages.getItemCount();i++)
+           if(cblanguages.getItem(i).substring(1, 3).equals(ConfigurationController.getInstance().getConfiguration().getLanguage())){
+                        cblanguages.select(i);
+           }
+
         cblanguages.addListener(SWT.Selection,new Listener(){
 
 			public void handleEvent(Event event) {
-                            Configuration.getInstance().changeLanguage(cblanguages.getItem(cblanguages.getSelectionIndex()).substring(1, 3));
+                            ConfigurationController.getInstance().changeLanguage(cblanguages.getItem(cblanguages.getSelectionIndex()).substring(1, 3));
 				
 				
 				

@@ -7,8 +7,9 @@ package ikshare.client.gui.panels;
 
 import ikshare.domain.TransferState;
 import ikshare.client.gui.AbstractPanel;
-import ikshare.client.gui.Configuration;
+import ikshare.client.gui.configuration.Configuration;
 import ikshare.client.gui.UtilityClass;
+import ikshare.client.gui.configuration.ConfigurationController;
 import ikshare.domain.Transfer;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.FileTransferListener;
@@ -50,7 +51,7 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
         
         // Download
         TabItem downloadTab = new TabItem(folder,SWT.NONE);
-        downloadTab.setText(Configuration.getInstance().getString("downloads"));
+        downloadTab.setText(ConfigurationController.getInstance().getString("downloads"));
         if(new File(ICON_DOWN).exists()){
             Image icon = new Image(Display.getCurrent(), ICON_DOWN);
             downloadTab.setImage(icon);
@@ -62,12 +63,12 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
         tblDownloadTransfer.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
 	tblDownloadTransfer.setLinesVisible (true);
         tblDownloadTransfer.setHeaderVisible (true);
-        addTableColumn(tblDownloadTransfer,Configuration.getInstance().getString("filename"),300,SWT.LEFT);
-	addTableColumn(tblDownloadTransfer,Configuration.getInstance().getString("size"),100,SWT.RIGHT);
-	addTableColumn(tblDownloadTransfer,Configuration.getInstance().getString("state"), 150, SWT.RIGHT);
-	addTableColumn(tblDownloadTransfer,Configuration.getInstance().getString("speed"),100,SWT.RIGHT);
-	addTableColumn(tblDownloadTransfer,Configuration.getInstance().getString("remaining"), 100, SWT.RIGHT);
-        addTableColumn(tblDownloadTransfer,Configuration.getInstance().getString("peer"), 100, SWT.RIGHT);
+        addTableColumn(tblDownloadTransfer,ConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
+	addTableColumn(tblDownloadTransfer,ConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
+	addTableColumn(tblDownloadTransfer,ConfigurationController.getInstance().getString("state"), 150, SWT.RIGHT);
+	addTableColumn(tblDownloadTransfer,ConfigurationController.getInstance().getString("speed"),100,SWT.RIGHT);
+	addTableColumn(tblDownloadTransfer,ConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
+        addTableColumn(tblDownloadTransfer,ConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
         downloadTab.setControl(cmpDownload);
         
         // Upload
@@ -76,7 +77,7 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
             Image icon = new Image(Display.getCurrent(), ICON_UP);
             uploadTab.setImage(icon);
         }
-        uploadTab.setText(Configuration.getInstance().getString("uploads"));
+        uploadTab.setText(ConfigurationController.getInstance().getString("uploads"));
         Composite cmpUpload=new Composite(folder, SWT.NONE);
         cmpUpload.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,3,1));
 	cmpUpload.setLayout(new GridLayout(1,false));
@@ -84,12 +85,12 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
         tblUploadTransfer.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
 	tblUploadTransfer.setLinesVisible (true);
         tblUploadTransfer.setHeaderVisible (true);
-        addTableColumn(tblUploadTransfer,Configuration.getInstance().getString("filename"),300,SWT.LEFT);
-	addTableColumn(tblUploadTransfer,Configuration.getInstance().getString("size"),100,SWT.RIGHT);
-	addTableColumn(tblUploadTransfer,Configuration.getInstance().getString("state"), 150, SWT.RIGHT);
-	addTableColumn(tblUploadTransfer,Configuration.getInstance().getString("speed"),100,SWT.RIGHT);
-	addTableColumn(tblUploadTransfer,Configuration.getInstance().getString("remaining"), 100, SWT.RIGHT);
-        addTableColumn(tblUploadTransfer,Configuration.getInstance().getString("peer"), 100, SWT.RIGHT);
+        addTableColumn(tblUploadTransfer,ConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
+	addTableColumn(tblUploadTransfer,ConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
+	addTableColumn(tblUploadTransfer,ConfigurationController.getInstance().getString("state"), 150, SWT.RIGHT);
+	addTableColumn(tblUploadTransfer,ConfigurationController.getInstance().getString("speed"),100,SWT.RIGHT);
+	addTableColumn(tblUploadTransfer,ConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
+        addTableColumn(tblUploadTransfer,ConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
         uploadTab.setControl(cmpUpload);   
     }
     
@@ -108,11 +109,11 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
                     TableItem item = null;
                     if(transfer.getState() == TransferState.DOWNLOADING){
                          item = new TableItem(tblDownloadTransfer,SWT.NONE);
-                         item.setText(2,Configuration.getInstance().getString("downloading"));
+                         item.setText(2,ConfigurationController.getInstance().getString("downloading"));
                     }
                     else if(transfer.getState() == TransferState.UPLOADING){
                          item = new TableItem(tblUploadTransfer,SWT.NONE);
-                         item.setText(2,Configuration.getInstance().getString("uploading"));
+                         item.setText(2,ConfigurationController.getInstance().getString("uploading"));
                     }
                     item.setText(0,transfer.getFileName());
                     item.setText(1,UtilityClass.formatFileSize(transfer.getFileSize()));
