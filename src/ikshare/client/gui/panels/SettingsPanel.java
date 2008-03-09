@@ -8,8 +8,10 @@ package ikshare.client.gui.panels;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.configuration.Configuration;
 import ikshare.client.gui.configuration.ConfigurationController;
+import java.io.File;
 import java.util.Calendar;
 import org.eclipse.swt.*;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -18,13 +20,13 @@ import org.eclipse.swt.widgets.*;
  * @author Jana
  */
 public class SettingsPanel extends AbstractPanel{
+    private static String ICON_GENERAL="resources/icons/pref_user.png";
     private Configuration config;
     
     public SettingsPanel(String text,String icon){
         super(text,icon);
         config = ConfigurationController.getInstance().getConfiguration();
-        FillLayout fl=new FillLayout(SWT.NONE);
-        this.setLayout(fl);
+        this.setLayout(new FillLayout(SWT.NONE));
         this.init();
     }
 
@@ -36,30 +38,31 @@ public class SettingsPanel extends AbstractPanel{
     private void makeGeneralFolder(TabFolder folder) {
         TabItem generalTab = new TabItem(folder,SWT.BORDER);
         generalTab.setText(ConfigurationController.getInstance().getString("general"));
-        
-        Composite general=new Composite(folder,SWT.NONE);
+        if(new File(ICON_GENERAL).exists()){
+            generalTab.setImage(new Image(Display.getCurrent(), ICON_GENERAL));
+        }
+        GridData firstColum = new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
+        firstColum.widthHint = 100;
+        firstColum.heightHint = 25;
+        final Composite general=new Composite(folder,SWT.NONE);
         generalTab.setControl(general);
-        GridLayout gd=new GridLayout(2,false);
-        general.setLayout(gd);
+        general.setLayout(new GridLayout(3,false));
         
         Label lblnick=new Label(general, SWT.FILL);
-        lblnick.setText("nickname:");
-        GridData data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
-        data.widthHint=200;
-        lblnick.setLayoutData(data);
+        lblnick.setText(ConfigurationController.getInstance().getString("nickname"));
+        
+        lblnick.setLayoutData(firstColum);
         final Text txtnick=new Text(general, SWT.BORDER);
-        GridData data2=new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
-        txtnick.setLayoutData(data2);
+        txtnick.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true, 2, 1));
         txtnick.setText(config.getNickname());
         
         Label lbllanguage=new Label(general, SWT.FILL);
-        lbllanguage.setText("language:");
-        data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
-        data.widthHint=200;
-        lbllanguage.setLayoutData(data);
+        lbllanguage.setText(ConfigurationController.getInstance().getString("language"));
+        lbllanguage.setLayoutData(firstColum);
+        
         final Combo cblanguages = new Combo(general,SWT.DROP_DOWN | SWT.READ_ONLY);
-        data2=new GridData(SWT.FILL, SWT.CENTER, true, true, 1, 1);
-        cblanguages.setLayoutData(data2);
+        cblanguages.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, true, true, 2, 1));
+        // Talen uitlezen uit xml?
         cblanguages.setItems(new String[] {"(en) English","(nl) Nederlands"});
         for(int i = 0 ; i < cblanguages.getItemCount();i++)
            if(cblanguages.getItem(i).substring(1, 3).equals(ConfigurationController.getInstance().getConfiguration().getLanguage())){
@@ -69,25 +72,43 @@ public class SettingsPanel extends AbstractPanel{
        
         
         Label lblbirthdate=new Label(general, SWT.FILL);
-        lblbirthdate.setText("birthdate:");
-        data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
-        data.widthHint=200;
-        lblbirthdate.setLayoutData(data);
+        lblbirthdate.setText(ConfigurationController.getInstance().getString("birthday"));
+        
+        lblbirthdate.setLayoutData(firstColum);
         final DateTime dt=new DateTime(general, SWT.CALENDAR);
-        data2=new GridData(SWT.LEFT, SWT.CENTER, true, true, 1, 1);
-        dt.setLayoutData(data2);
+        dt.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, true, 2, 1));
         dt.setDay(config.getBirthday().get(Calendar.DAY_OF_MONTH));
         dt.setYear(config.getBirthday().get(Calendar.YEAR));
         dt.setMonth(config.getBirthday().get(Calendar.MONTH));
        
         Label lblSharedFiles=new Label(general,SWT.FILL);
-        lblSharedFiles.setText("Shared Files:");
-        data=new GridData(SWT.CENTER, SWT.CENTER, false, true, 1, 1);
-        data.widthHint=200;
-        lblSharedFiles.setLayoutData(data);
+        lblSharedFiles.setText(ConfigurationController.getInstance().getString("sharedfolder"));
+        
+        lblSharedFiles.setLayoutData(firstColum);
+        
+        final Text txtSharedFolder = new Text(general,SWT.NONE);
+        txtSharedFolder.setText(config.getSharedFolder().getPath());
+        txtSharedFolder.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, true, 1, 1));
+        
+        Button btnAddFile = new Button(general,SWT.NONE);
+	btnAddFile.setLayoutData(new GridData(SWT.RIGHT,SWT.TOP,false,false,1,1));
+	btnAddFile.setText(ConfigurationController.getInstance().getString("change"));
+	btnAddFile.addListener(SWT.Selection,new Listener(){
+            public void handleEvent(Event event) {
+		DirectoryDialog dialog = new DirectoryDialog(general.getShell(),SWT.OPEN);
+                String selectedDir = dialog.open();
+                         
+		if(!selectedDir.equalsIgnoreCase("") && new File(selectedDir).exists()&& new File(selectedDir).isDirectory())
+                    {
+                        txtSharedFolder.setText(selectedDir);
+                    }
+		
+            }
+	});
         
         Button btnSave = new Button(general, SWT.NONE);
-        btnSave.setText("Save");
+        btnSave.setText(ConfigurationController.getInstance().getString("save"));
+        btnSave.setLayoutData(firstColum);
         btnSave.addListener(SWT.Selection, new Listener() {
 
             public void handleEvent(Event event) {
@@ -98,6 +119,7 @@ public class SettingsPanel extends AbstractPanel{
                 date.set(Calendar.MONTH, dt.getMonth());
                 config.setBirthday(date);
                 config.setNickname(txtnick.getText());
+                config.setSharedFolder(new File(txtSharedFolder.getText()));
                 ConfigurationController.getInstance().saveConfiguration(config);
             }
         });
