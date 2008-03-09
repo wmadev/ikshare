@@ -5,6 +5,7 @@
 
 package ikshare.client.gui.configuration;
 
+import java.io.File;
 import java.util.Calendar;
 
 
@@ -22,6 +23,7 @@ class DefaultConfiguration extends Configuration {
         date.set(Calendar.YEAR, 1986);
         date.set(Calendar.MONTH, 8);
         super.setBirthday(date);
+        super.setSharedFolder(new File(System.getProperty("user.home")));
     }
 
 }
