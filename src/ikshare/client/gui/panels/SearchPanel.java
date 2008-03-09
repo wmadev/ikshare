@@ -6,6 +6,7 @@
 package ikshare.client.gui.panels;
 
 import ikshare.client.gui.AbstractPanel;
+import ikshare.client.gui.configuration.ConfigurationController;
 import java.io.File;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
@@ -52,7 +53,7 @@ public class SearchPanel extends AbstractPanel{
         if(new File(ICON_SEARCH).exists()){
             result1.setImage(new Image(Display.getCurrent(), ICON_SEARCH));
         }
-        result1.setText("Resultaat 1");
+        result1.setText(ConfigurationController.getInstance().getString("result")+" 1");
     }
 
 }
