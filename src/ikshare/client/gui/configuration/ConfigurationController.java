@@ -87,6 +87,8 @@ public class ConfigurationController {
                 config.setBirthday(date);
             }else if(child.getNodeName().equals("nickname")){
                 config.setNickname(((Element) child).getTextContent());
+            }else if(child.getNodeName().equals("shared-folder")){
+                config.setSharedFolder(new File(((Element)child).getTextContent()));
             }
         }
     }
@@ -130,10 +132,14 @@ public class ConfigurationController {
         // nickname
         Element nickname = doc.createElement("nickname");
         nickname.appendChild(doc.createTextNode(config.getNickname()));
+        // shared folder
+        Element sharedFolder = doc.createElement("shared-folder");
+        sharedFolder.appendChild(doc.createTextNode(config.getSharedFolder().getAbsolutePath()));
         // add to usersettings
         userSettings.appendChild(nickname);
         userSettings.appendChild(language);
         userSettings.appendChild(birthday);
+        userSettings.appendChild(sharedFolder);
         return userSettings;
     }
     
