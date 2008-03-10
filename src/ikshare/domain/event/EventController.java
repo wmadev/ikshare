@@ -30,21 +30,32 @@ public class EventController {
     public void addFileTransferListener(FileTransferListener l){
         fileTransferListeners.add(l);
     }
+
+    public void triggerDownloadCanceledEvent(Transfer transfer) {
+        System.out.println("EVENT: Trigger download canceled");
+        for(FileTransferListener listener:fileTransferListeners)
+	{
+		listener.transferCanceled(transfer);
+	}
+    }
     
     public void triggerDownloadStartedEvent(Transfer transfer)
     {
+        System.out.println("EVENT: Trigger download started");
         for(FileTransferListener listener:fileTransferListeners)
 	{
 		listener.transferStarted(transfer);
 	}
     }
     public void triggerDownloadStateChangedEvent(Transfer transfer){
+        System.out.println("EVENT: Trigger download state changed");
         for(FileTransferListener listener:fileTransferListeners)
 	{
 		listener.transferStateChanged(transfer);
 	}        
     }
     public void triggerDownloadFinishedEvent(Transfer transfer){
+        System.out.println("EVENT: Trigger download finished");
         for(FileTransferListener listener:fileTransferListeners)
 	{
 		listener.transferFinished(transfer);
