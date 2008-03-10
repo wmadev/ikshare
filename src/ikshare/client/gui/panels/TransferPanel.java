@@ -15,12 +15,19 @@ import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.FileTransferListener;
 import java.io.File;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.MouseAdapter;
+import org.eclipse.swt.events.MouseEvent;
+import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Menu;
+import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -63,6 +70,26 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
         tblDownloadTransfer.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
 	tblDownloadTransfer.setLinesVisible (true);
         tblDownloadTransfer.setHeaderVisible (true);
+        // Right click menu
+        tblDownloadTransfer.addMouseListener(new MouseAdapter() {
+            public void mouseDown(MouseEvent event) {
+                if(event.button == 3){
+                    final int selectedRow = tblDownloadTransfer.getSelectionIndex();
+                    if (selectedRow == -1) 
+                        return;
+                    Menu rightClickMenu = new Menu (tblDownloadTransfer.getShell(), SWT.POP_UP);
+                    MenuItem cancelMenuItem = new MenuItem(rightClickMenu, SWT.PUSH);
+                    cancelMenuItem.setText(ConfigurationController.getInstance().getString("canceldownload"));
+                    cancelMenuItem.addListener (SWT.Selection, new Listener () {
+                        public void handleEvent(Event event) {
+                            EventController.getInstance().triggerDownloadCanceledEvent((Transfer)tblDownloadTransfer.getItem(selectedRow).getData("transfer"));
+                        }
+                    });
+                    rightClickMenu.setVisible (true);
+                }
+            }
+        });
+        
         addTableColumn(tblDownloadTransfer,ConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
 	addTableColumn(tblDownloadTransfer,ConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
 	addTableColumn(tblDownloadTransfer,ConfigurationController.getInstance().getString("state"), 150, SWT.RIGHT);
@@ -70,6 +97,8 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
 	addTableColumn(tblDownloadTransfer,ConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
         addTableColumn(tblDownloadTransfer,ConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
         downloadTab.setControl(cmpDownload);
+        
+        
         
         // Upload
         TabItem uploadTab = new TabItem(folder,SWT.NONE);
@@ -121,7 +150,8 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
                     item.setText(3,"0");
                     item.setText(4,UtilityClass.formatTime(transfer.getSpeed()));
                     item.setData("transfer",transfer);
-                }
+     
+            }
         });
     }
 
@@ -129,8 +159,35 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void transferCanceled(Transfer transfer) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void transferCanceled(final Transfer transfer) {
+        this.getDisplay().asyncExec(
+            new Runnable() {
+                public void run(){
+                    if(transfer.getState() == TransferState.DOWNLOADING){
+                        for(TableItem item : tblDownloadTransfer.getItems())
+                        {
+                            Transfer t = (Transfer) item.getData("transfer");
+                            if(t.getId()==transfer.getId())
+                            {
+                                item.setText(2,ConfigurationController.getInstance().getString("finished"));
+                                item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
+                            }
+                        }
+                    }
+                    else if(transfer.getState() == TransferState.UPLOADING){
+                        for(TableItem item : tblUploadTransfer.getItems())
+                        {
+                            Transfer t = (Transfer) item.getData("transfer");
+                            if(t.getId()==transfer.getId())
+                            {
+                                item.setText(2,ConfigurationController.getInstance().getString("canceled"));
+                                item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW));
+                            }
+                        }
+                    }
+                    
+                }
+        });
     }
 
     public void transferStateChanged(final Transfer transfer) {
@@ -144,7 +201,7 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
                             if(t.getId()==transfer.getId())
                             {
                                 item.setText(3,UtilityClass.formatFileSize(transfer.getSpeed()));
-          
+                                item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
                                 item.setText(4,UtilityClass.formatTime(transfer.getRemainingTime()));
                             }
                         }
@@ -156,6 +213,7 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
                             if(t.getId()==transfer.getId())
                             {
                                 item.setText(3,UtilityClass.formatFileSize(transfer.getSpeed()));
+                                item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
                                 item.setText(4,UtilityClass.formatTime(transfer.getRemainingTime()));
                             }
                         }
@@ -169,8 +227,35 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void transferFinished(Transfer transfer) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public void transferFinished(final Transfer transfer) {
+        this.getDisplay().asyncExec(
+            new Runnable() {
+                public void run(){
+                    if(transfer.getState() == TransferState.DOWNLOADING){
+                        for(TableItem item : tblDownloadTransfer.getItems())
+                        {
+                            Transfer t = (Transfer) item.getData("transfer");
+                            if(t.getId()==transfer.getId())
+                            {
+                                item.setText(2,ConfigurationController.getInstance().getString("finished"));
+                                item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
+                            }
+                        }
+                    }
+                    else if(transfer.getState() == TransferState.UPLOADING){
+                        for(TableItem item : tblUploadTransfer.getItems())
+                        {
+                            Transfer t = (Transfer) item.getData("transfer");
+                            if(t.getId()==transfer.getId())
+                            {
+                                item.setText(2,ConfigurationController.getInstance().getString("finished"));
+                                item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
+                            }
+                        }
+                    }
+                    
+                }
+        });
     }
     
     
