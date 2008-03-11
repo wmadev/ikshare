@@ -53,7 +53,7 @@ public class SettingsPanel extends AbstractPanel{
         
         lblnick.setLayoutData(firstColum);
         final Text txtnick=new Text(general, SWT.BORDER);
-        txtnick.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, false, true, 2, 1));
+        txtnick.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 2, 1));
         txtnick.setText(config.getNickname());
         
         Label lbllanguage=new Label(general, SWT.FILL);
@@ -86,10 +86,10 @@ public class SettingsPanel extends AbstractPanel{
         
         lblSharedFiles.setLayoutData(firstColum);
         
-        final Text txtSharedFolder = new Text(general,SWT.NONE);
+        final Text txtSharedFolder = new Text(general,SWT.H_SCROLL);
         txtSharedFolder.setText(config.getSharedFolder().getPath());
-        txtSharedFolder.setLayoutData(new GridData(SWT.LEFT, SWT.TOP, false, true, 1, 1));
-        
+        txtSharedFolder.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false,1,1));
+
         Button btnAddFile = new Button(general,SWT.NONE);
 	btnAddFile.setLayoutData(new GridData(SWT.RIGHT,SWT.TOP,false,false,1,1));
 	btnAddFile.setText(ConfigurationController.getInstance().getString("change"));
@@ -98,7 +98,7 @@ public class SettingsPanel extends AbstractPanel{
 		DirectoryDialog dialog = new DirectoryDialog(general.getShell(),SWT.OPEN);
                 String selectedDir = dialog.open();
                          
-		if(!selectedDir.equalsIgnoreCase("") && new File(selectedDir).exists()&& new File(selectedDir).isDirectory())
+		if(selectedDir != null && !selectedDir.equalsIgnoreCase("") && new File(selectedDir).exists()&& new File(selectedDir).isDirectory())
                     {
                         txtSharedFolder.setText(selectedDir);
                     }
