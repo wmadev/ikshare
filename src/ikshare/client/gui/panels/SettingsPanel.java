@@ -86,9 +86,9 @@ public class SettingsPanel extends AbstractPanel{
         
         lblSharedFiles.setLayoutData(firstColum);
         
-        final Text txtSharedFolder = new Text(general,SWT.H_SCROLL);
+        final Text txtSharedFolder = new Text(general,SWT.MULTI);
         txtSharedFolder.setText(config.getSharedFolder().getPath());
-        txtSharedFolder.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false,1,1));
+        txtSharedFolder.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false,1,1));
 
         Button btnAddFile = new Button(general,SWT.NONE);
 	btnAddFile.setLayoutData(new GridData(SWT.RIGHT,SWT.TOP,false,false,1,1));
