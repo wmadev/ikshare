@@ -111,7 +111,12 @@ public class ConfigurationController {
             Element userSettingsNode = buildUserSettingsNode(doc);
             configurationNode.appendChild(userSettingsNode);
             doc.appendChild(configurationNode);
-            FileOutputStream out = new FileOutputStream("resources/config/configuration.xml");
+            FileOutputStream out = null;
+             if(System.getProperty("os.name").startsWith("L"))
+                new FileOutputStream("resources/config/configuration.xml");
+            else
+                new FileOutputStream("resources\\config\\configuration.xml");
+            
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             DOMSource source = new DOMSource(doc);
             StreamResult result = new StreamResult(out);
