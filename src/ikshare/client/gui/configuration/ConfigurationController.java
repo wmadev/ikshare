@@ -5,6 +5,7 @@
 
 package ikshare.client.gui.configuration;
 
+import ikshare.client.gui.MainScreen;
 import ikshare.client.gui.configuration.Configuration;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -52,7 +53,11 @@ public class ConfigurationController {
     public void loadConfiguration() {
         try {
             // Try to open config file
-            File configFile = new File("resources/config/configuration.xml");
+            File configFile = null;
+            if(System.getProperty("os.name").startsWith("L"))
+                new File("resources/config/configuration.xml");
+            else
+                new File("resources\\config\\configuration.xml");
             // if the config file is not found, return default configuration
             if(!configFile.exists()){
                 config = new DefaultConfiguration();
