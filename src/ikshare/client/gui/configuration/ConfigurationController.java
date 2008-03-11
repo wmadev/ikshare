@@ -55,9 +55,9 @@ public class ConfigurationController {
             // Try to open config file
             File configFile = null;
             if(System.getProperty("os.name").startsWith("L"))
-                new File("resources/config/configuration.xml");
+                configFile = new File("resources/config/configuration.xml");
             else
-                new File("resources\\config\\configuration.xml");
+                configFile = new File("resources\\config\\configuration.xml");
             // if the config file is not found, return default configuration
             if(!configFile.exists()){
                 config = new DefaultConfiguration();
@@ -112,10 +112,10 @@ public class ConfigurationController {
             configurationNode.appendChild(userSettingsNode);
             doc.appendChild(configurationNode);
             FileOutputStream out = null;
-             if(System.getProperty("os.name").startsWith("L"))
-                new FileOutputStream("resources/config/configuration.xml");
+            if(System.getProperty("os.name").startsWith("L"))
+                out = new FileOutputStream("resources/config/configuration.xml");
             else
-                new FileOutputStream("resources\\config\\configuration.xml");
+                out = new FileOutputStream("resources\\config\\configuration.xml");
             
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             DOMSource source = new DOMSource(doc);
