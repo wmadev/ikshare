@@ -53,11 +53,10 @@ public class ConfigurationController {
     public void loadConfiguration() {
         try {
             // Try to open config file
-            File configFile = null;
-            if(System.getProperty("os.name").startsWith("L"))
-                configFile = new File("resources/config/configuration.xml");
-            else
-                configFile = new File("resources\\config\\configuration.xml");
+            File configFile =  new File("resources"+System.getProperty("file.seperator")+"config"+System.getProperty("file.seperator")+"configuration.xml");
+            if(!new File("resources"+System.getProperty("file.seperator")+"config").exists())
+                new File("resources"+System.getProperty("file.seperator")+"config").mkdir();
+            
             // if the config file is not found, return default configuration
             if(!configFile.exists()){
                 config = new DefaultConfiguration();
@@ -111,11 +110,10 @@ public class ConfigurationController {
             Element userSettingsNode = buildUserSettingsNode(doc);
             configurationNode.appendChild(userSettingsNode);
             doc.appendChild(configurationNode);
-            FileOutputStream out = null;
-            if(System.getProperty("os.name").startsWith("L"))
-                out = new FileOutputStream("resources/config/configuration.xml");
-            else
-                out = new FileOutputStream("resources\\config\\configuration.xml");
+            System.out.println("resources"+System.getProperty("file.seperator")+"config"+System.getProperty("file.seperator")+"configuration.xml");
+            FileOutputStream out = new FileOutputStream("resources"+System.getProperty("file.seperator")+"config"+System.getProperty("file.seperator")+"configuration.xml");
+          
+                
             
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             DOMSource source = new DOMSource(doc);
