@@ -5,6 +5,7 @@
 
 package ikshare.client.gui.panels;
 
+import ikshare.domain.PeerFacade;
 import ikshare.domain.TransferState;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.configuration.Configuration;
@@ -22,8 +23,13 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
+
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Listener;
+
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -38,20 +44,25 @@ import org.eclipse.swt.widgets.TableItem;
  *
  * @author Jana
  */
-public class TransferPanel extends AbstractPanel implements FileTransferListener{
-    
-    private static String ICON_DOWN="resources/icons/tp_down.png";
-    private static String ICON_UP="resources/icons/tp_up.png";
-    private Table tblUploadTransfer,tblDownloadTransfer;
-    
-    
-    public TransferPanel(String text,String icon){
-        super(text,icon);
-        FillLayout layout=new FillLayout();
-        this.setLayout(layout);
-        this.init();
-        EventController.getInstance().addFileTransferListener(this);
-    }
+public class TransferPanel extends AbstractPanel implements	FileTransferListener {
+
+
+	private static String ICON_DOWN = "resources/icons/tp_down.png";
+
+	private static String ICON_UP = "resources/icons/tp_up.png";
+
+	private Table tblUploadTransfer, tblDownloadTransfer;
+	
+	private Transfer f;
+
+	public TransferPanel(String text, String icon) {
+		super(text, icon);
+		FillLayout layout = new FillLayout();
+		this.setLayout(layout);
+		this.init();
+		EventController.getInstance().addFileTransferListener(this);
+        }
+
 
     private void init() {
         TabFolder folder=new TabFolder(this, SWT.NONE);
@@ -120,7 +131,29 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
 	addTableColumn(tblUploadTransfer,ConfigurationController.getInstance().getString("speed"),100,SWT.RIGHT);
 	addTableColumn(tblUploadTransfer,ConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
         addTableColumn(tblUploadTransfer,ConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
-        uploadTab.setControl(cmpUpload);   
+        uploadTab.setControl(cmpUpload); 
+        
+        //temp button
+        Button btnDownload = new Button(cmpDownload, SWT.PUSH);
+        btnDownload.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event arg0) {
+       
+				// TODO Auto-generated method stub
+				
+				Transfer transfer = new Transfer();
+				transfer.setFileName("/kopie");
+				transfer.setState(TransferState.DOWNLOADING);
+				transfer.setId(1);
+				transfer.setFileSize(2000);
+				transfer.setNumberOfBlocks(4000);
+				transfer.setNumberOfBlocksFinished(0);
+		
+				EventController.getInstance().triggerDownloadStartedEvent(transfer);
+				
+				PeerFacade.getInstance().startDownloadThread(transfer);
+                                }
+			});
+       
     }
     
     private void addTableColumn(Table table, String text, int width, int align) {
@@ -130,6 +163,8 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
 	column.setWidth(width);
 	column.setAlignment(align);
 	}
+
+
 
     public void transferStarted(final Transfer transfer) {
         this.getDisplay().asyncExec(
@@ -153,10 +188,6 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
      
             }
         });
-    }
-
-    public void transferStopped(Transfer transfer) {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     public void transferCanceled(final Transfer transfer) {
@@ -189,6 +220,9 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
                 }
         });
     }
+
+			
+			
 
     public void transferStateChanged(final Transfer transfer) {
      this.getDisplay().asyncExec(
@@ -223,9 +257,17 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
         });
     }
 
-    public void transferFailed(Transfer transfer) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+
+
+	public void transferStopped(Transfer transfer) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
+	
+	public void transferFailed(Transfer transfer) {
+		throw new UnsupportedOperationException("Not supported yet.");
+	}
+
 
     public void transferFinished(final Transfer transfer) {
         this.getDisplay().asyncExec(
@@ -257,6 +299,5 @@ public class TransferPanel extends AbstractPanel implements FileTransferListener
                 }
         });
     }
-    
     
 }
