@@ -49,7 +49,7 @@ public class MainScreen {
         shell = new Shell(display);
         panels = new ArrayList<AbstractPanel>();
         // Add menubar to the shell
-        doMenu();
+        //doMenu();
         // Make layout of the shell
         doLayout();
         // Add toolbar to the shell
