@@ -15,6 +15,8 @@ import ikshare.domain.Transfer;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.FileTransferListener;
 import java.io.File;
+import java.util.Date;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -143,7 +145,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 				Transfer transfer = new Transfer();
 				transfer.setFileName("/kopie");
 				transfer.setState(TransferState.DOWNLOADING);
-				transfer.setId(1);
+				transfer.setId(new Date().toString());
 				transfer.setFileSize(2000);
 				transfer.setNumberOfBlocks(4000);
 				transfer.setNumberOfBlocksFinished(0);
@@ -191,17 +193,17 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
     }
 
     public void transferCanceled(final Transfer transfer) {
-        this.getDisplay().asyncExec(
+        this.getDisplay().syncExec(
             new Runnable() {
                 public void run(){
                     if(transfer.getState() == TransferState.DOWNLOADING){
                         for(TableItem item : tblDownloadTransfer.getItems())
                         {
                             Transfer t = (Transfer) item.getData("transfer");
-                            if(t.getId()==transfer.getId())
+                            if(t.getId().equals(transfer.getId()))
                             {
-                                item.setText(2,ConfigurationController.getInstance().getString("finished"));
-                                item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
+                                item.setText(2,ConfigurationController.getInstance().getString("canceled"));
+                                item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW));
                             }
                         }
                     }
@@ -209,7 +211,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
                         for(TableItem item : tblUploadTransfer.getItems())
                         {
                             Transfer t = (Transfer) item.getData("transfer");
-                            if(t.getId()==transfer.getId())
+                            if(t.getId().equals(transfer.getId()))
                             {
                                 item.setText(2,ConfigurationController.getInstance().getString("canceled"));
                                 item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW));
@@ -270,14 +272,14 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 
 
     public void transferFinished(final Transfer transfer) {
-        this.getDisplay().asyncExec(
+        this.getDisplay().syncExec(
             new Runnable() {
                 public void run(){
                     if(transfer.getState() == TransferState.DOWNLOADING){
                         for(TableItem item : tblDownloadTransfer.getItems())
                         {
                             Transfer t = (Transfer) item.getData("transfer");
-                            if(t.getId()==transfer.getId())
+                            if(t.getId().equals(transfer.getId()))
                             {
                                 item.setText(2,ConfigurationController.getInstance().getString("finished"));
                                 item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
@@ -288,7 +290,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
                         for(TableItem item : tblUploadTransfer.getItems())
                         {
                             Transfer t = (Transfer) item.getData("transfer");
-                            if(t.getId()==transfer.getId())
+                            if(t.getId().equals(transfer.getId()))
                             {
                                 item.setText(2,ConfigurationController.getInstance().getString("finished"));
                                 item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));

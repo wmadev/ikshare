@@ -17,8 +17,6 @@ public class StartUp {
 	private StartUp()
 	{
 
-            PeerFacade.getInstance().getPeerFileServer().startServer();
-
                 if(System.getProperty("os.name").startsWith("L"))
                     System.setProperty("file.seperator","/");
                 else

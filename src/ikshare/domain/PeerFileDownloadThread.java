@@ -1,6 +1,7 @@
 package ikshare.domain;
 
 import ikshare.domain.event.EventController;
+import ikshare.domain.event.listener.FileTransferListener;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -15,7 +16,7 @@ import java.util.concurrent.Executors;
  *
  * @author jonas
  */
-public class PeerFileDownloadThread implements Runnable {
+public class PeerFileDownloadThread implements Runnable, FileTransferListener {
 
     private BufferedInputStream inStream;
     private File outputFile;
@@ -35,6 +36,7 @@ public class PeerFileDownloadThread implements Runnable {
 	}
 
 	public PeerFileDownloadThread(InetAddress address) {
+		EventController.getInstance().addFileTransferListener(this);
         try {
             receiveSocket = new Socket(address, 6002);
             receiveSocket.setSoTimeout(5000);
@@ -47,7 +49,7 @@ public class PeerFileDownloadThread implements Runnable {
 
     public void run() {
         try {
-            outputFile = new File("/testmiddelgroot2.rar");
+            outputFile = new File("/kopie.ext");
             FileOutputStream fileOutput = new FileOutputStream(outputFile);
             inStream = new BufferedInputStream( receiveSocket.getInputStream());
             
@@ -94,4 +96,34 @@ public class PeerFileDownloadThread implements Runnable {
     public void stop() {
     	service.shutdown();
     }
+
+	public void transferCanceled(Transfer transfer) {
+		stop();
+		
+	}
+
+	public void transferFailed(Transfer transfer) {
+		stop();
+		
+	}
+
+	public void transferFinished(Transfer transfer) {
+		stop();
+		
+	}
+
+	public void transferStarted(Transfer transfer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void transferStateChanged(Transfer transfer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void transferStopped(Transfer transfer) {
+		stop();
+		
+	}
 }
