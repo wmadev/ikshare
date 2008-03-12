@@ -34,14 +34,15 @@ public class PeerFacade {
 	protected PeerFacade() {
 		
 		//test
-		
+		peer = new Peer();
+		peer.setName("testnaam");
 		
 		peerFileServer = new PeerFileServer();
 		peerFileServer.start();
 	}
 	
 	public void startDownloadThread(Transfer transfer) {
-		peer = new Peer();
+		
 		try {
 			peerFileDownloadThread = new PeerFileDownloadThread(InetAddress.getLocalHost());
 			peerFileDownloadThread.setTransfer(transfer);

@@ -10,7 +10,7 @@ package ikshare.domain;
  * @author awosy
  */
 public class Transfer {
-    private int id;
+    private String id;
     private String fileName;
     private long fileSize;
     private int state;
@@ -32,11 +32,11 @@ public class Transfer {
         this.remainingTime = remainingTime;
     }
     
-    public int getId() {
+    public String getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(String id) {
         this.id = id;
     }
     

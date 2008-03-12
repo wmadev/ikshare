@@ -1,17 +1,21 @@
 package ikshare.domain;
 
 import ikshare.domain.event.EventController;
+import ikshare.domain.event.listener.FileTransferListener;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.net.Socket;
+import java.util.Date;
+
+import sun.print.resources.serviceui;
 
 /**
  *
  * @author jonas
  */
-public class PeerFileUploadThread implements Runnable {
+public class PeerFileUploadThread implements Runnable, FileTransferListener {
 
     private Socket sendSocket;
     private byte[] buffer;
@@ -30,11 +34,12 @@ public class PeerFileUploadThread implements Runnable {
 	}
 
 	public PeerFileUploadThread(Socket receiveSocket) {
+		EventController.getInstance().addFileTransferListener(this);
         sendSocket = receiveSocket;
         transfer = new Transfer();
 		transfer.setFileName("/testmiddelgroot.rar");
 		transfer.setState(TransferState.UPLOADING);
-		transfer.setId(1);
+		transfer.setId(new Date().toString());
 		transfer.setNumberOfBlocksFinished(0);
 
         buffer = new byte[512];
@@ -84,4 +89,38 @@ public class PeerFileUploadThread implements Runnable {
         }
 
     }
+    
+    public void stop() {
+    	
+    }
+
+	public void transferCanceled(Transfer transfer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void transferFailed(Transfer transfer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void transferFinished(Transfer transfer) {
+		stop();
+		
+	}
+
+	public void transferStarted(Transfer transfer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void transferStateChanged(Transfer transfer) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void transferStopped(Transfer transfer) {
+		// TODO Auto-generated method stub
+		
+	}
 }
