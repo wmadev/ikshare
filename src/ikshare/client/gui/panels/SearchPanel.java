@@ -10,6 +10,7 @@ import ikshare.client.gui.UtilityClass;
 import ikshare.client.gui.configuration.ConfigurationController;
 import ikshare.domain.PeerFacade;
 import ikshare.domain.Transfer;
+import ikshare.domain.TransferState;
 import ikshare.domain.event.EventController;
 
 import java.io.File;
@@ -122,13 +123,16 @@ public class SearchPanel extends AbstractPanel{
         tblResults.setHeaderVisible (true);
         tblResults.addMouseListener(new MouseAdapter() {
             public void mouseDoubleClick(MouseEvent event) {
-                    final int selectedRow = tblResults.getSelectionIndex();
-                    if (selectedRow == -1) 
-                        return;
-                    
-                    Transfer selected = (Transfer)tblResults.getItem(selectedRow).getData("transfer");
-                    PeerFacade.getInstance().startDownloadThread(selected);
-                    EventController.getInstance().triggerDownloadStartedEvent(selected);
+		                    final int selectedRow = tblResults.getSelectionIndex();
+		                    if (selectedRow == -1) 
+		                        return;
+		                    
+		                    Transfer selected = (Transfer)tblResults.getItem(selectedRow).getData("transfer");
+		                    if (selected!=null) {
+		                    	selected.setState(TransferState.DOWNLOADING);
+		                    	PeerFacade.getInstance().startDownloadThread(selected);
+		                    	EventController.getInstance().triggerDownloadStartedEvent(selected);
+		                    }
                         }
                     });
 
