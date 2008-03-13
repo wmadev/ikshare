@@ -12,13 +12,8 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
 import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.Composite;
-import org.eclipse.swt.widgets.Display;
-import org.eclipse.swt.widgets.Label;
-/**
- *
- * @author awosy
- */
+import org.eclipse.swt.widgets.*;
+
 public class AboutPanel extends AbstractPanel {
     private Composite parent;
     
