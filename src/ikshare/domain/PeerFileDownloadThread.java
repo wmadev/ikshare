@@ -19,6 +19,7 @@ import java.util.concurrent.Executors;
 public class PeerFileDownloadThread implements Runnable, FileTransferListener {
 
     private BufferedInputStream inStream;
+    private FileOutputStream fileOutput;
     private File outputFile;
     private byte[] buffer;
     private Socket receiveSocket;
@@ -40,7 +41,7 @@ public class PeerFileDownloadThread implements Runnable, FileTransferListener {
         try {
             receiveSocket = new Socket(address, 6002);
             receiveSocket.setSoTimeout(5000);
-            buffer = new byte[512];
+            buffer = new byte[2048];
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -50,7 +51,7 @@ public class PeerFileDownloadThread implements Runnable, FileTransferListener {
     public void run() {
         try {
             outputFile = new File("/kopie.ext");
-            FileOutputStream fileOutput = new FileOutputStream(outputFile);
+            fileOutput = new FileOutputStream(outputFile);
             inStream = new BufferedInputStream( receiveSocket.getInputStream());
             
             int n;
@@ -58,9 +59,9 @@ public class PeerFileDownloadThread implements Runnable, FileTransferListener {
             // Zolang er input komt van de socket moet er worden weggeschreven naar het bestand.
             // Om de seconde wordt een event getriggerd met de gemiddelde snelheid en de resterende downloadtijd
             //int tellerpakketjes=0;
-            while ((n = inStream.read(buffer)) > 0) {
+            while (!receiveSocket.isClosed() && inStream != null && (n = inStream.read(buffer)) > 0) {
                 transfer.setNumberOfBlocksFinished(transfer.getNumberOfBlocksFinished()+1);
-                transfer.setSpeed(transfer.getNumberOfBlocksFinished()*512);
+                transfer.setSpeed(transfer.getNumberOfBlocksFinished()*2048);
                 EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
                 
                 fileOutput.write(buffer, 0, n);
@@ -69,21 +70,21 @@ public class PeerFileDownloadThread implements Runnable, FileTransferListener {
             transfer.setState(TransferState.FINISHED);
             EventController.getInstance().triggerDownloadFinishedEvent(transfer);
             fileOutput.flush();
-            fileOutput.close();
-            inStream.close();
-            receiveSocket.close();
+
         } catch (Exception e) {
         	transfer.setState(TransferState.FAILED);
-        	
-        	EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
-            if (!receiveSocket.isClosed()) {
-                try {
-                    receiveSocket.close();
-                } catch (IOException ex) {
-                    e.printStackTrace();
-                }
-            }
-            e.printStackTrace();
+        	EventController.getInstance().triggerDownloadFailedEvent(transfer);
+        } finally {
+            try {
+				fileOutput.close();
+	            inStream.close();
+	            inStream = null;
+	            receiveSocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+
         }
     }
     
@@ -94,7 +95,20 @@ public class PeerFileDownloadThread implements Runnable, FileTransferListener {
     }
     
     public void stop() {
-    	service.shutdown();
+    	System.out.println("stop downloadthread");
+    	try {
+    		if (receiveSocket==null && inStream==null){
+    			receiveSocket.close();
+    			inStream.close();
+    		}
+		} catch (IOException e) {
+			transfer.setState(TransferState.FAILED);
+			EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
+			e.printStackTrace();
+		} finally {
+			service.shutdown();
+			System.out.println("stopped downloadthread");
+		}
     }
 
 	public void transferCanceled(Transfer transfer) {

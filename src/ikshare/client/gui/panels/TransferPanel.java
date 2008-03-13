@@ -135,7 +135,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
         addTableColumn(tblUploadTransfer,ConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
         uploadTab.setControl(cmpUpload); 
         
-        //temp button
+        /*
         Button btnDownload = new Button(cmpDownload, SWT.PUSH);
         btnDownload.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event arg0) {
@@ -155,6 +155,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 				PeerFacade.getInstance().startDownloadThread(transfer);
                                 }
 			});
+			*/
        
     }
     
@@ -195,15 +196,19 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
     }
 
     public void transferCanceled(final Transfer transfer) {
-        this.getDisplay().syncExec(
+    	System.out.println("transfer canceled");
+        this.getDisplay().asyncExec(
             new Runnable() {
                 public void run(){
                     if(transfer.getState() == TransferState.DOWNLOADING){
                         for(TableItem item : tblDownloadTransfer.getItems())
                         {
                             Transfer t = (Transfer) item.getData("transfer");
+                            System.out.println("item " + t.getId());
+                            System.out.println("gecancelde t " + transfer.getId());
                             if(t.getId().equals(transfer.getId()))
                             {
+                            	System.out.println("gevonden");
                                 item.setText(2,ConfigurationController.getInstance().getString("canceled"));
                                 item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_YELLOW));
                             }
@@ -236,7 +241,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
                         for(TableItem item : tblDownloadTransfer.getItems())
                         {
                             Transfer t = (Transfer) item.getData("transfer");
-                            if(t.getId()==transfer.getId())
+                            if(t.getId().equals(transfer.getId()))
                             {
                                 item.setText(3,UtilityClass.formatFileSize(transfer.getSpeed()));
                                 item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
@@ -248,7 +253,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
                         for(TableItem item : tblUploadTransfer.getItems())
                         {
                             Transfer t = (Transfer) item.getData("transfer");
-                            if(t.getId()==transfer.getId())
+                            if(t.getId().equals(transfer.getId()))
                             {
                                 item.setText(3,UtilityClass.formatFileSize(transfer.getSpeed()));
                                 item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
@@ -256,7 +261,6 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
                             }
                         }
                     }
-                    
                 }
         });
     }
@@ -268,16 +272,44 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 	}
 
 	
-	public void transferFailed(Transfer transfer) {
-		throw new UnsupportedOperationException("Not supported yet.");
+	public void transferFailed(final Transfer transfer) {
+	     this.getDisplay().asyncExec(
+	             new Runnable() {
+	                 public void run(){
+								if(transfer.getState() == TransferState.FAILED){
+						            for(TableItem item : tblUploadTransfer.getItems())
+						            {
+						                Transfer t = (Transfer) item.getData("transfer");
+						                if(t.getId().equals(transfer.getId()))
+						                {
+						                	item.setText(2,ConfigurationController.getInstance().getString("failed"));
+						                    item.setText(3,UtilityClass.formatFileSize(transfer.getSpeed()));
+						                    item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));  
+						                    item.setText(4,UtilityClass.formatTime(transfer.getRemainingTime()));
+						                }
+						            }
+						            for(TableItem item : tblDownloadTransfer.getItems())
+						            {
+						                Transfer t = (Transfer) item.getData("transfer");
+						                if(t.getId().equals(transfer.getId()))
+						                {
+						                	item.setText(2,ConfigurationController.getInstance().getString("failed"));
+						                    item.setText(3,UtilityClass.formatFileSize(transfer.getSpeed()));
+						                    item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));  
+						                    item.setText(4,UtilityClass.formatTime(transfer.getRemainingTime()));
+						                }
+						            }
+						        }
+	                 }
+	             });
 	}
 
 
     public void transferFinished(final Transfer transfer) {
-        this.getDisplay().syncExec(
+        this.getDisplay().asyncExec(
             new Runnable() {
                 public void run(){
-                    if(transfer.getState() == TransferState.DOWNLOADING){
+                    if(transfer.getState() == TransferState.FINISHED){
                         for(TableItem item : tblDownloadTransfer.getItems())
                         {
                             Transfer t = (Transfer) item.getData("transfer");
@@ -287,8 +319,6 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
                                 item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
                             }
                         }
-                    }
-                    else if(transfer.getState() == TransferState.UPLOADING){
                         for(TableItem item : tblUploadTransfer.getItems())
                         {
                             Transfer t = (Transfer) item.getData("transfer");
