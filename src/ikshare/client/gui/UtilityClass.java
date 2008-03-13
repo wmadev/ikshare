@@ -1,14 +1,7 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 
 package ikshare.client.gui;
 
-/**
- *
- * @author awosy
- */
+
 public class UtilityClass {
     /**
      * This method formats a long that represents a filesize in bytes in a more readable form

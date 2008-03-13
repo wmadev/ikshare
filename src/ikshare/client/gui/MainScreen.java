@@ -1,6 +1,5 @@
 package ikshare.client.gui;
 
-import ikshare.client.gui.configuration.Configuration;
 import ikshare.client.gui.configuration.ConfigurationController;
 import ikshare.client.gui.panels.AboutPanel;
 import ikshare.client.gui.panels.ChatPanel;
@@ -17,10 +16,6 @@ import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-/**
- *
- * @author WardMaenhout
- */
 public class MainScreen {
     private Display display;
     private Shell shell;
@@ -32,16 +27,22 @@ public class MainScreen {
     private StackLayout layout;
     private static MainScreen instance;
     
-
     private boolean isOpen = false;
-
+    
+    /*
+     * returns the only mainscreen, there can only be one instance of it
+     * @return instance     The mainscreen
+     */
     public static MainScreen getInstance()
     {
             if(instance==null)
                     instance = new MainScreen();
             return instance;
     }
-
+    
+    /*
+     *Makes the mainscreen in the shell, sets the layout and adds the different panels to it.
+     */
     public MainScreen() {
         ConfigurationController.getInstance();
         instance = this;
@@ -81,30 +82,43 @@ public class MainScreen {
         display.dispose();
         System.exit(0);
     }
-
+    /*
+     * returns the status of the mainscreen: open or not?
+     */
     public boolean isOpen() {
             return isOpen;
     }
+    /*
+     * Makes a new menubar and adds it to the mainscreen.
+     */
     private void doMenu() {
         MenuBar b = new MenuBar(shell,SWT.BAR);
         shell.setMenuBar(b.getMenu());
     }
-    
+    /*
+     * Makes a new toolbar and adds it to the mainscreen.
+     * Sets the layout of the toolbar in the shell (1 vertical grid and 2 horizontal grids)
+     * Sets the layout of the toolbar to a gridlayout with 8 koloms.
+     */
     private void doToolbar() {
         toolBar = new ToolBar(shell, SWT.WRAP );
         GridData gd = new GridData(SWT.FILL, SWT.FILL, true, false, 2,1);
-        //GridLayout gl = new GridLayout(8, true);
-        //toolBar.setLayout(gl);
         toolBar.setLayoutData(gd);
         
         GridLayout gl=new GridLayout(8,true);
         toolBar.setLayout(gl);
     }
-
+    /*
+     * Makes a new infobar and adds it to the shell
+     */
     private void doInfobar(){
         infoBar = new InfoBar(shell,SWT.BORDER);
     }
-
+    
+    /*
+     * Makes a new composite in the shell where the different panels fit in.
+     * Sets the layout to a stacklayout
+     */ 
     private void doComposite(){
         parent = new Composite(shell,SWT.BORDER);
         layout = new StackLayout();
@@ -113,7 +127,10 @@ public class MainScreen {
     }
 
     
-    
+    /*
+     * Sets the position of the mainscreen in the middle of the display.
+     * Sets the layout of the mainscreen in a gridlayout with 2 koloms. 
+     */
     private void doLayout() {
             shell.setMinimumSize(800, 400);
             Monitor primary = display.getPrimaryMonitor();
@@ -134,6 +151,10 @@ public class MainScreen {
                     shell.setImage(new Image(display, icon));*/
     }
 
+    
+    /*
+     * Adds the different panels to the composite, sets the topcontrol on the first panel that is been added.
+     */
     private void addPanel(final AbstractPanel p) {
             panels.add(p);
             if(panels.size()==1) {
