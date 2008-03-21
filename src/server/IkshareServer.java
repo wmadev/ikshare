@@ -7,10 +7,9 @@ package server;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import server.threads.ClientThread;
+import server.threads.HandleClientThread;
 
 /**
  *
@@ -43,7 +42,7 @@ public class IkshareServer implements Runnable {
             while (running) {
                 Socket clientSocket  = serverSocket.accept();
                 System.out.println("Received connection with client, starting seperate thread...");
-                executorService.execute(new ClientThread(clientSocket));
+                executorService.execute(new HandleClientThread(clientSocket));
             }
             serverSocket.close();
         } catch (IOException ex) {

@@ -1,29 +1,21 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+/**
+ * This class represents a thread that handles a client that connects with the server.
  */
-
 package server.threads;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
+import java.io.*;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author awosy
  */
-public class ClientThread implements Runnable{
+public class HandleClientThread implements Runnable{
     private Socket clientSocket;
     private boolean running = false;
     private PrintWriter outputWriter;
     private BufferedReader incomingReader;
     
-    public ClientThread(Socket socket){
+    public HandleClientThread(Socket socket){
         try {
             clientSocket = socket;
             outputWriter = new PrintWriter(clientSocket.getOutputStream(), true);
@@ -51,8 +43,7 @@ public class ClientThread implements Runnable{
             }
             clientSocket.close();
         } catch (IOException ex) {
-            Logger.getLogger(ClientThread.class.getName()).log(Level.SEVERE, null, ex);
+            ex.printStackTrace();
         }
     }
-
 }
