@@ -37,7 +37,7 @@ public class HelpPanel extends AbstractPanel{
 		return name.endsWith(".html") || name.endsWith(".htm");
             }
         });
-	if (files.length == 0) return;
+    if (files.length == 0) return;
         urls = new String[files.length];
         titles = new String[files.length];
         index = 0;

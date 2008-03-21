@@ -6,7 +6,7 @@
 package ikshare.client.init;
 
 import ikshare.client.gui.MainScreen;
-import ikshare.domain.PeerFacade;
+
 public class StartUp {
 
 	public static void main(String[] args) {
