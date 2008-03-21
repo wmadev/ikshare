@@ -5,6 +5,8 @@
 
 package ikshare.server.data;
 
+import ikshare.server.Configuration;
+
 /**
  *
  * @author awosy
