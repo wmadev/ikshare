@@ -17,12 +17,7 @@ public class StartUp {
 	private StartUp()
 	{
 
-                if(System.getProperty("os.name").startsWith("L"))
-                    System.setProperty("file.seperator","/");
-                else
-                    System.setProperty("file.seperator","\\");
-
-		MainScreen.getInstance();                
+              MainScreen.getInstance();                
 	}
 
 }

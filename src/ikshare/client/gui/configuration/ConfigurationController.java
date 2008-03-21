@@ -53,9 +53,9 @@ public class ConfigurationController {
     public void loadConfiguration() {
         try {
             // Try to open config file
-            File configFile =  new File("resources"+System.getProperty("file.seperator")+"config"+System.getProperty("file.seperator")+"configuration.xml");
-            if(!new File("resources"+System.getProperty("file.seperator")+"config").exists())
-                new File("resources"+System.getProperty("file.seperator")+"config").mkdir();
+            File configFile =  new File("resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"configuration.xml");
+            if(!new File("resources"+System.getProperty("file.separator")+"config").exists())
+                new File("resources"+System.getProperty("file.separator")+"config").mkdir();
             
             // if the config file is not found, return default configuration
             if(!configFile.exists()){
@@ -110,8 +110,8 @@ public class ConfigurationController {
             Element userSettingsNode = buildUserSettingsNode(doc);
             configurationNode.appendChild(userSettingsNode);
             doc.appendChild(configurationNode);
-            System.out.println("resources"+System.getProperty("file.seperator")+"config"+System.getProperty("file.seperator")+"configuration.xml");
-            FileOutputStream out = new FileOutputStream("resources"+System.getProperty("file.seperator")+"config"+System.getProperty("file.seperator")+"configuration.xml");
+            System.out.println("resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"configuration.xml");
+            FileOutputStream out = new FileOutputStream("resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"configuration.xml");
           
                 
             

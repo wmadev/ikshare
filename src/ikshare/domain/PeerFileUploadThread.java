@@ -11,7 +11,6 @@ import java.net.Socket;
 import java.util.Date;
 import java.util.concurrent.TimeoutException;
 
-import sun.print.resources.serviceui;
 
 /**
  *
