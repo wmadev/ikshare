@@ -1,7 +1,7 @@
 /**
  * This class represents a thread that handles a client that connects with the server.
  */
-package server.threads;
+package ikshare.server.threads;
 
 import java.io.*;
 import java.net.Socket;

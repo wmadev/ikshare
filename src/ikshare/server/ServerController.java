@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package server;
+package ikshare.server;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
