@@ -2,7 +2,7 @@
  * This class is used to start the server application
  */
 
-package server;
+package ikshare.server;
 
 
 /**
