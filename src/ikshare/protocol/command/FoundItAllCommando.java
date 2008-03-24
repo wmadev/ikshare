@@ -10,7 +10,7 @@ public class FoundItAllCommando extends Commando {
     
     public FoundItAllCommando(String commandoString) {
         super(commandoString);
-        setSearchID(commandoLine.get(2));
+        setSearchID(commandoLine.get(1));
     }
 
     public String getSearchID() {
