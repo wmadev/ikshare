@@ -33,6 +33,6 @@ public class LogNiLukNiCommando extends Commando {
     @Override
     public String toString() {
         String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("luknilukni")+del+getAccountName()+del+getMessage();
+        return commandoBundle.getString("lognilukni")+del+getAccountName()+del+getMessage();
     }
 }

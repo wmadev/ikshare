@@ -24,6 +24,6 @@ public class GetPeerCommando extends Commando {
         @Override
     public String toString() {
         String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("peer")+del+getAccountName();
+        return commandoBundle.getString("getpeer")+del+getAccountName();
     }
 }

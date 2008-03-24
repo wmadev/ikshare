@@ -19,8 +19,8 @@ public class FoundCommando extends Commando {
         setFileName(commandoLine.get(2));
         setPath(commandoLine.get(3));
         if (commandoLine.size() > 4) {
-            for (int i = 4; i <= commandoLine.size(); i++) {
-                String[] couple = commandoLine.get(4).split("=");
+            for (int i = 4; i < commandoLine.size(); i++) {
+                String[] couple = commandoLine.get(i).split("=");
                 metaData.put(couple[0], couple[1]);
             }
         }

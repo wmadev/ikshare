@@ -1,5 +1,7 @@
 package ikshare.protocol.command;
 
+import ikshare.protocol.exception.NotAvailableException;
+
 public class PongCommando extends Commando {
 
     private String accountName;
@@ -15,7 +17,7 @@ public class PongCommando extends Commando {
     }
 
     public String getAccountName() {
-        return commandoLine.get(1);
+    	return accountName;
     }
 
     public void setAccountName(String accountName) {
@@ -25,6 +27,6 @@ public class PongCommando extends Commando {
     @Override
     public String toString() {
         String del = commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("pong") + del + getAccountName();
+			return commandoBundle.getString("pong") + del + getAccountName();
     }
 }

@@ -24,6 +24,6 @@ public class GiveConnCommando extends Commando {
     @Override
     public String toString() {
         String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("conn")+del+getPort();
+        return commandoBundle.getString("giveconn")+del+getPort();
     }
 }
