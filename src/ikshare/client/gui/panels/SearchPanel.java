@@ -58,26 +58,9 @@ public class SearchPanel extends AbstractPanel{
 		TableItem ti=null;
 		Transfer t=null;
 		
-		t = new Transfer();
-		t.setFileName("/testklein.pdf");
-		t.setId(new Date().toString());
-		ti = new TableItem(tblResults, SWT.NONE);
-		ti.setText(0, t.getFileName());
-		ti.setText(1,UtilityClass.formatFileSize(t.getFileSize()));
-		ti.setText(2, PeerFacade.getInstance().getPeer().getName());
-		ti.setData("transfer",t);
 		
 		t = new Transfer();
 		t.setFileName("/testmiddelgroot.rar");
-		t.setId(new Date().toString());
-		ti = new TableItem(tblResults, SWT.NONE);
-		ti.setText(0, t.getFileName());
-		ti.setText(1,UtilityClass.formatFileSize(t.getFileSize()));
-		ti.setText(2, PeerFacade.getInstance().getPeer().getName());
-		ti.setData("transfer",t);
-		
-		t = new Transfer();
-		t.setFileName("/testgroot.avi");
 		t.setId(new Date().toString());
 		ti = new TableItem(tblResults, SWT.NONE);
 		ti.setText(0, t.getFileName());

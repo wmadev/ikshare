@@ -39,7 +39,7 @@ public class PeerFileUploadThread extends Thread implements Runnable, FileTransf
 		EventController.getInstance().addFileTransferListener(this);
         sendSocket = receiveSocket;
         transfer = new Transfer();
-		transfer.setFileName("/testgroot.avi");
+		transfer.setFileName("/testmiddelgroot.rar");
 		transfer.setState(TransferState.UPLOADING);
 		transfer.setId(new Date().toString());
 		transfer.setNumberOfBlocksFinished(0);

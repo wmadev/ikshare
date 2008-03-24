@@ -13,7 +13,7 @@ public class PeerFileServer extends Thread implements Runnable {
 	public PeerFileServer() {
 		running=true;
 		try {
-	        fileServerSocket = new ServerSocket(6003);
+	        fileServerSocket = new ServerSocket(6002);
 	        fileServerSocket.setReuseAddress(true);
 		} catch (IOException ioException) {
 			ioException.printStackTrace();
