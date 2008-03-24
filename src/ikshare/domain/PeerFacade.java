@@ -11,9 +11,17 @@ public class PeerFacade {
 	private PeerFileServer peerFileServer;
 	private PeerFileDownloadThread peerFileDownloadThread;
 	private Transfer uploadTransfer, downloadTransfer;
+	private PeerMessageService peerMessageService;
 	
 	
-	
+
+	public PeerMessageService getPeerMessageService() {
+		return peerMessageService;
+	}
+
+	public void setPeerMessageService(PeerMessageService peerMessageService) {
+		this.peerMessageService = peerMessageService;
+	}
 
 	public Transfer getDownloadTransfer() {
 		return downloadTransfer;
@@ -39,6 +47,8 @@ public class PeerFacade {
 		
 		peerFileServer = new PeerFileServer();
 		peerFileServer.start();
+		
+		peerMessageService = new PeerMessageService();
 	}
 	
 	public void startDownloadThread(Transfer transfer) {

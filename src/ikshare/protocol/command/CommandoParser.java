@@ -94,7 +94,10 @@ public class CommandoParser {
         }       
         if (commandoString.startsWith(bundle.getString("lognilukni"))) {
             return new LogNiLukNiCommando(commandoString);
-        }        
+        }     
+        if (commandoString.startsWith(bundle.getString("canceltransfer"))) {
+            return new CancelTransferCommando(commandoString);
+        }   
         throw new CommandNotFoundException(commandoString);
     }
 }
