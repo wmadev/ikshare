@@ -5,13 +5,15 @@
 
 package ikshare.domain;
 
+import java.io.File;
+
 /**
  *
  * @author awosy
  */
 public class Transfer {
     private String id;
-    private String fileName;
+    private File file;
     private long fileSize;
     private int state;
     private int numberOfBlocksFinished;
@@ -24,7 +26,8 @@ public class Transfer {
         
     }
 
-    public long getRemainingTime() {
+
+	public long getRemainingTime() {
         return remainingTime;
     }
 
@@ -57,12 +60,12 @@ public class Transfer {
     }
    
     
-    public String getFileName() {
-        return fileName;
+    public File getFile() {
+        return file;
     }
 
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
+    public void setFile(File file) {
+        this.file = file;
     }
 
     public long getFileSize() {

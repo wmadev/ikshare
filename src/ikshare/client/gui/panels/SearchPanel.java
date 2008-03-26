@@ -8,7 +8,9 @@ package ikshare.client.gui.panels;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.UtilityClass;
 import ikshare.client.gui.configuration.ConfigurationController;
+import ikshare.domain.Peer;
 import ikshare.domain.PeerFacade;
+import ikshare.domain.SearchResult;
 import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;
 import ikshare.domain.event.EventController;
@@ -56,17 +58,15 @@ public class SearchPanel extends AbstractPanel{
         
     private void load() {
 		TableItem ti=null;
-		Transfer t=null;
+		SearchResult searchResult=null;
 		
 		
-		t = new Transfer();
-		t.setFileName("/testmiddelgroot.rar");
-		t.setId(new Date().toString());
+		searchResult = new SearchResult(new Date().getTime()+"",new Peer("Monet", null), new File("/" + "testmiddelgroot.rar"));
 		ti = new TableItem(tblResults, SWT.NONE);
-		ti.setText(0, t.getFileName());
-		ti.setText(1,UtilityClass.formatFileSize(t.getFileSize()));
-		ti.setText(2, PeerFacade.getInstance().getPeer().getName());
-		ti.setData("transfer",t);
+		ti.setText(0, searchResult.getFile().getName());
+		//ti.setText(1,UtilityClass.formatFileSize());
+		ti.setText(2, searchResult.getPeer().getAccountName());
+		ti.setData("results",searchResult);
 		
 	}
 
@@ -110,11 +110,13 @@ public class SearchPanel extends AbstractPanel{
 		                    if (selectedRow == -1) 
 		                        return;
 		                    
-		                    Transfer selected = (Transfer)tblResults.getItem(selectedRow).getData("transfer");
+		                    SearchResult selected = (SearchResult)tblResults.getItem(selectedRow).getData("results");
 		                    if (selected!=null) {
-		                    	selected.setState(TransferState.DOWNLOADING);
-		                    	PeerFacade.getInstance().startDownloadThread(selected);
-		                    	EventController.getInstance().triggerDownloadStartedEvent(selected);
+		                    	Transfer newTransfer = new Transfer();
+		                    	newTransfer.setFile(selected.getFile());
+		                    	newTransfer.setState(TransferState.DOWNLOADING);
+		                    	PeerFacade.getInstance().addToDownloads(newTransfer);
+		                    	EventController.getInstance().triggerDownloadStartedEvent(newTransfer);
 		                    }
                         }
                     });

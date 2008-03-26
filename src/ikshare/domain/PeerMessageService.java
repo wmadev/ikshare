@@ -3,7 +3,6 @@ package ikshare.domain;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.FileTransferListener;
 import ikshare.protocol.command.CancelTransferCommando;
-import ikshare.protocol.command.CheckAccountCommando;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CommandoParser;
 import ikshare.protocol.command.FileConfirmCommando;
@@ -16,8 +15,6 @@ import ikshare.protocol.command.GiveConnCommando;
 import ikshare.protocol.command.GivePeerCommando;
 import ikshare.protocol.command.MyTurnCommando;
 import ikshare.protocol.command.PassTurnCommando;
-import ikshare.protocol.command.PingCommando;
-import ikshare.protocol.command.PongCommando;
 import ikshare.protocol.command.WelcomeCommando;
 import ikshare.protocol.command.YourTurnCommando;
 import ikshare.protocol.exception.CommandNotFoundException;
@@ -31,12 +28,9 @@ import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-
-import javax.media.DownloadProgressListener;
-
-import com.sun.tools.javac.tree.Tree.Exec;
 
 public class PeerMessageService extends Thread implements Runnable, FileTransferListener{
     private Socket sendSocket;
@@ -44,13 +38,9 @@ public class PeerMessageService extends Thread implements Runnable, FileTransfer
     private PrintWriter printWriter;
     private boolean running;
 	private int port;
-	private String host;
-
 	public PeerMessageService() {
     	running = true;
     	port = 6000;
-    	host = "localhost";
-    	
     	try {
 			messageServer = new ServerSocket(port);
 			messageServer.setReuseAddress(true);
@@ -72,14 +62,13 @@ public class PeerMessageService extends Thread implements Runnable, FileTransfer
 	        {
 	            // Step 1. Establish server connection
 	            link = messageServer.accept();
-	            WelcomeCommando wc = new WelcomeCommando();
-	            wc.setAccountName("Jonas");
-	            sendMessage(link, wc);
+	            Socket replySocket = new Socket(link.getInetAddress(), 6000);
+
 	            
 	            // Step 2. Set up input stream
 	            in = new BufferedReader(new
 	                InputStreamReader(link.getInputStream()));
-
+	            
 	            // Step 3. Receive data
 	            String input = in.readLine();
 	            
@@ -93,79 +82,117 @@ public class PeerMessageService extends Thread implements Runnable, FileTransfer
 		                	
 		                }
 		                System.out.println(c);
-		                if (c instanceof FoundCommando) {
-		                	//TODO handle FoundCommando
-		                }
-		                else if (c instanceof FoundItAllCommando) {
-		                	//TODO handle FoundItAllCommando
-		                }
-		                else if (c instanceof GivePeerCommando) {
-		                	//TODO handle GivePeerCommando
-		                	
-		                }
-		                else if (c instanceof FileRequestCommando) {
-		                	File f = new File(((FileRequestCommando)c).getPath()+"/"+((FileRequestCommando)c).getFileName());
-		                	if( f.exists() ) {
-			                	FileConfirmCommando fcc = new FileConfirmCommando();
-			                	fcc.setAccountName("Monet");
-			                	fcc.setFileName(((FileRequestCommando)c).getFileName());
-			                	fcc.setPath(((FileRequestCommando)c).getPath());
-			                	sendMessage(link, fcc);
-		                	} else {
-		                		FileNotFoundCommando fnfc = new FileNotFoundCommando();
-		                		fnfc.setAccountName("Monet");
-			                	fnfc.setFileName(((FileRequestCommando)c).getFileName());
-			                	fnfc.setPath(((FileRequestCommando)c).getPath());
-			                	sendMessage(link, fnfc);
-		                	}
-		                }
-		                else if (c instanceof FileConfirmCommando) {
-		                	//TODO handle FileConfirmCommando
-		                }
-		                else if (c instanceof FileNotFoundCommando) {
-		                	//TODO handle FileNotFoundCommando
-		                }
-		                else if (c instanceof YourTurnCommando) {
-		                	MyTurnCommando mtc = new MyTurnCommando();
-		                	mtc.setAccountName("Degas");
-		                	mtc.setFileName(((YourTurnCommando)c).getFileName());
-		                	mtc.setPath(((YourTurnCommando)c).getPath());
-		                	sendMessage(link, mtc);
-		                }
-		                else if (c instanceof MyTurnCommando) {
-		                	//TODO handle MyTurnCommando
-		                	
-		                }
-		                else if (c instanceof PassTurnCommando) {
-		                	//TODO handle PassTurnCommando
-		                }
-		                else if (c instanceof GetConnCommando) {
-		                	GiveConnCommando gcc = new GiveConnCommando();
-		                	gcc.setPort(6002);
-		                	sendMessage(link, gcc);
-		                }
-		                else if (c instanceof GiveConnCommando) {
-		                	//TODO handle GiveConnCommando
-		                }
-		                else if (c instanceof CancelTransferCommando) {
-		                	Transfer t = new Transfer();
-		                	t.setId(((CancelTransferCommando)c).getTransferId());
-		                	EventController.getInstance().triggerDownloadCanceledEvent(t);
-		                }
+		                handleCommando(replySocket, c);
 		                input = in.readLine();
 	            }
+	            link.close();
+	            replySocket.close();
 	        } catch (Exception e) {
 	        	//TODO
 	        }
 		}
 		
 	}
+
+	private void handleCommando(Socket replySocket, Commando c) {
+		if (c instanceof FoundCommando) {
+			//TODO handle FoundCommando
+		}
+		else if (c instanceof FoundItAllCommando) {
+			//TODO handle FoundItAllCommando
+		}
+		else if (c instanceof GivePeerCommando) {
+			//TODO handle GivePeerCommando
+			
+		}
+		else if (c instanceof FileRequestCommando) {
+			File f = new File(((FileRequestCommando)c).getPath().replace('\\', '/')+((FileRequestCommando)c).getFileName());
+         
+			System.out.println(f.getPath());
+			
+			if( f.exists() ) {
+		    	FileConfirmCommando fcc = new FileConfirmCommando();
+		    	fcc.setAccountName("Monet");
+		    	fcc.setFileName(((FileRequestCommando)c).getFileName());
+		    	fcc.setPath(((FileRequestCommando)c).getPath());
+		    	sendMessage(replySocket, fcc);
+		    	
+		    	Transfer t = new Transfer();
+		    	t.setFile(new File(fcc.getPath()+"/"+fcc.getFileName()));
+		    	t.setId(new Date().getTime()+"");
+		    	t.setPeer(new Peer(fcc.getAccountName(), null));
+		    	t.setState(TransferState.DOWNLOADING);
+		    	PeerFacade.getInstance().addToUploads(new Transfer());
+		    	EventController.getInstance().triggerDownloadStartedEvent(t);
+		    	
+		    	
+		    	YourTurnCommando ytc = new YourTurnCommando();
+		    	ytc.setAccountName("Monet");
+		    	ytc.setBlocks(4000);
+		    	ytc.setBlockSize(2048);
+		    	ytc.setFileName(((FileRequestCommando)c).getFileName());
+		    	ytc.setPath(((FileRequestCommando)c).getPath());
+		    	sendMessage(replySocket, ytc);
+			} else {
+				FileNotFoundCommando fnfc = new FileNotFoundCommando();
+				fnfc.setAccountName("Monet");
+		    	fnfc.setFileName(((FileRequestCommando)c).getFileName());
+		    	fnfc.setPath(((FileRequestCommando)c).getPath());
+		    	sendMessage(replySocket, fnfc);
+			}
+		}
+		else if (c instanceof FileConfirmCommando) {
+			FileConfirmCommando fcc = (FileConfirmCommando) c;
+			Transfer t = new Transfer();
+			t.setFile(new File(fcc.getPath()+"/"+fcc.getFileName()));
+			t.setId(new Date().getTime()+"");
+			t.setPeer(new Peer(fcc.getAccountName(), null));
+			t.setState(TransferState.UPLOADING);
+			PeerFacade.getInstance().addToUploads(new Transfer());
+			EventController.getInstance().triggerDownloadStartedEvent(t);
+		}
+		else if (c instanceof FileNotFoundCommando) {
+			//TODO handle FileNotFoundCommando
+		}
+		else if (c instanceof YourTurnCommando) {
+			MyTurnCommando mtc = new MyTurnCommando();
+			mtc.setAccountName("Degas");
+			mtc.setFileName(((YourTurnCommando)c).getFileName());
+			mtc.setPath(((YourTurnCommando)c).getPath());
+			sendMessage(replySocket, mtc);
+			//PeerFacade.getInstance().startDownloadThread();
+		}
+		else if (c instanceof MyTurnCommando) {
+			//TODO handle MyTurnCommando
+			
+		}
+		else if (c instanceof PassTurnCommando) {
+			//TODO handle PassTurnCommando
+		}
+		else if (c instanceof GetConnCommando) {
+			GiveConnCommando gcc = new GiveConnCommando();
+			gcc.setPort(6002);
+			sendMessage(replySocket, gcc);
+		}
+		else if (c instanceof GiveConnCommando) {
+			//TODO handle GiveConnCommando
+		}
+		else if (c instanceof CancelTransferCommando) {
+			Transfer t = new Transfer();
+			t.setId(((CancelTransferCommando)c).getTransferId());
+			EventController.getInstance().triggerDownloadCanceledEvent(t);
+		}
+
+	}
 	
 	public void sendMessage(Socket s, Commando commando) {
+		System.out.println("[" +commando + "] wordt gezonden naar " + s.getInetAddress().getHostAddress() + " op poort " + s.getPort());
+		
 		sendSocket = s;
 		try {
 			printWriter = new PrintWriter(sendSocket.getOutputStream(), true);
 			printWriter.println(commando.toString());
+
 		
 		} catch (IOException e) {
 			// TODO Auto-generated catch block

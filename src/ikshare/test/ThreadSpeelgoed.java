@@ -9,6 +9,7 @@ import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;
 import ikshare.domain.event.EventController;
 
+import java.io.File;
 import java.util.Date;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,7 +23,7 @@ public class ThreadSpeelgoed implements Runnable{
 
     public void run() {
         Transfer transfer = new Transfer();
-        transfer.setFileName("Dummy thread file");
+        transfer.setFile(new File("Dummy thread file"));
         transfer.setId(new Date().toString());
         transfer.setFileSize(786432000);
         transfer.setNumberOfBlocksFinished(0);
@@ -51,7 +52,7 @@ public class ThreadSpeelgoed implements Runnable{
                     transfer.setRemainingTime(rtime);
                     EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
                     doneFileSize = 0;
-                  System.out.println(transfer.getFileName() + ":"+transfer.getNumberOfBlocksFinished()+"/"+transfer.getNumberOfBlocks());
+                  System.out.println(transfer.getFile() + ":"+transfer.getNumberOfBlocksFinished()+"/"+transfer.getNumberOfBlocks());
                
                 
             } catch (InterruptedException ex) {

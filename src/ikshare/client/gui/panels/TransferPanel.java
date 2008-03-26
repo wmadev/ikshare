@@ -173,7 +173,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
         this.getDisplay().asyncExec(
             new Runnable() {
                 public void run(){
-                	System.out.println(transfer.getFileName());
+                	System.out.println(transfer.getFile().getName());
                     TableItem item = null;
                     if(transfer.getState() == TransferState.DOWNLOADING){
                          item = new TableItem(tblDownloadTransfer,SWT.NONE);
@@ -184,7 +184,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
                          item.setText(2,ConfigurationController.getInstance().getString("uploading"));
                     }
                   
-                    item.setText(0,transfer.getFileName());
+                    item.setText(0,transfer.getFile().getName());
                     item.setText(1,UtilityClass.formatFileSize(transfer.getFileSize()));
                     
                     item.setText(3,"0");

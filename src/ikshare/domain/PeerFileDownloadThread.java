@@ -36,7 +36,7 @@ public class PeerFileDownloadThread implements Runnable, FileTransferListener {
 		this.transfer = transfer;
 	}
 
-	public PeerFileDownloadThread(InetAddress address) {
+    public PeerFileDownloadThread(InetAddress address, Transfer transfer) {
 		EventController.getInstance().addFileTransferListener(this);
         try {
             receiveSocket = new Socket(address, 6002);
@@ -45,10 +45,10 @@ public class PeerFileDownloadThread implements Runnable, FileTransferListener {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        
-    }
+        setTransfer(transfer);
+	}
 
-    public void run() {
+	public void run() {
         try {
             outputFile = new File("kopie.ext");
             fileOutput = new FileOutputStream(outputFile);
