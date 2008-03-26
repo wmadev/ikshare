@@ -15,27 +15,29 @@ import java.net.InetAddress;
  */
 public class Peer {
 
-	private String name;
+	private String accountName;
 	private InetAddress internetAddress;
-	private File downloadableFile; //enkel voor testdoeleinden
 	
-	public File getDownloadableFile() {
-		return downloadableFile;
+	public Peer() {
+		
 	}
-	public void setDownloadableFile(File downloadableFile) {
-		this.downloadableFile = downloadableFile;
+	
+	public Peer(String name, InetAddress internetAddress) {
+		this.accountName = name;
+		this.internetAddress = internetAddress;
 	}
+	
 	public InetAddress getInternetAddress() {
 		return internetAddress;
 	}
 	public void setInternetAddress(InetAddress internetAddress) {
 		this.internetAddress = internetAddress;
 	}
-	public String getName() {
-		return name;
+	public String getAccountName() {
+		return accountName;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setAccountName(String name) {
+		this.accountName = name;
 	}
 	
 	

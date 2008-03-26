@@ -11,23 +11,26 @@ import java.net.Socket;
 import java.util.Date;
 import java.util.concurrent.TimeoutException;
 
-
 /**
  *
  * @author jonas
  */
-public class PeerFileUploadThread extends Thread implements Runnable, FileTransferListener {
+public class PeerFileUploadThread extends Thread implements Runnable,
+		FileTransferListener {
 
-    private Socket sendSocket;
-    private byte[] buffer;
-    private File sendFile;
-    private Transfer transfer;
-    private BufferedOutputStream outStream;
-    private FileInputStream fileInput;
-    
+	private Socket sendSocket;
 
+	private byte[] buffer;
 
-    public Transfer getTransfer() {
+	private File sendFile;
+
+	private Transfer transfer;
+
+	private BufferedOutputStream outStream;
+
+	private FileInputStream fileInput;
+
+	public Transfer getTransfer() {
 		return transfer;
 	}
 
@@ -37,98 +40,98 @@ public class PeerFileUploadThread extends Thread implements Runnable, FileTransf
 
 	public PeerFileUploadThread(Socket receiveSocket) {
 		EventController.getInstance().addFileTransferListener(this);
-        sendSocket = receiveSocket;
-        transfer = new Transfer();
-		transfer.setFileName("/testmiddelgroot.rar");
-		transfer.setState(TransferState.UPLOADING);
-		transfer.setId(new Date().toString());
-		transfer.setNumberOfBlocksFinished(0);
+		sendSocket = receiveSocket;
 
-        buffer = new byte[2048];
-    }
+		buffer = new byte[2048];
+	}
 
-    public void run() {
-        try {
-            // timeout zetten en streams aanmaken
-            
-        	
-        	sendSocket.setSoTimeout(5000);
-            outStream = new BufferedOutputStream(sendSocket.getOutputStream());
-            
-            sendFile = new File(transfer.getFileName());
-            transfer.setFileSize(sendFile.length());
-            transfer.setNumberOfBlocks((int) (transfer.getFileSize()/512));
-            EventController.getInstance().triggerDownloadStartedEvent(transfer);
+	public void run() {
+		try {
+			// timeout zetten en streams aanmaken
 
-            fileInput = new FileInputStream(sendFile.getAbsolutePath());
+			sendSocket.setSoTimeout(5000);
+			outStream = new BufferedOutputStream(sendSocket.getOutputStream());
 
-            int sentBytes = 0;
-           // int aantalpakketjes=0;
-            while (!sendSocket.isClosed() && outStream!=null && (sentBytes = fileInput.read(buffer)) > 0) {
-            	outStream.write(buffer, 0, sentBytes);
-            	transfer.setNumberOfBlocksFinished(transfer.getNumberOfBlocksFinished()+1);
-                    transfer.setSpeed(1);
-                    transfer.setRemainingTime((transfer.getNumberOfBlocks()-transfer.getNumberOfBlocksFinished())/transfer.getNumberOfBlocksFinished());
+			sendFile = new File(transfer.getFile().getName());
+			transfer.setFileSize(sendFile.length());
+			transfer.setNumberOfBlocks((int) (transfer.getFileSize() / 512));
+			EventController.getInstance().triggerDownloadStartedEvent(transfer);
 
-            	EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
+			fileInput = new FileInputStream(sendFile.getAbsolutePath());
 
-                //System.out.println(buffer + " " + aantalpakketjes);
-            }
-            buffer=null;
-            buffer=new byte[512];
-            /*
-            sentBytes =0;
-            outStream.write(buffer,0,sentBytes);
-            System.out.println("senden gedaan");
-             */
-            transfer.setState(TransferState.FINISHED);
-            EventController.getInstance().triggerDownloadFinishedEvent(transfer);
-        } catch (Exception e) {
-        	transfer.setState(TransferState.FAILED);
-        	EventController.getInstance().triggerDownloadFailedEvent(transfer);
-        } finally {
-        	try {
-        		System.out.println("upload stopped");
+			int sentBytes = 0;
+			// int aantalpakketjes=0;
+			while (!sendSocket.isClosed() && outStream != null
+					&& (sentBytes = fileInput.read(buffer)) > 0) {
+				outStream.write(buffer, 0, sentBytes);
+				transfer.setNumberOfBlocksFinished(transfer
+						.getNumberOfBlocksFinished() + 1);
+				transfer.setSpeed(1);
+				transfer
+						.setRemainingTime((transfer.getNumberOfBlocks() - transfer
+								.getNumberOfBlocksFinished())
+								/ transfer.getNumberOfBlocksFinished());
+
+				EventController.getInstance().triggerDownloadStateChangedEvent(
+						transfer);
+
+				//System.out.println(buffer + " " + aantalpakketjes);
+			}
+			buffer = null;
+			buffer = new byte[512];
+			/*
+			 sentBytes =0;
+			 outStream.write(buffer,0,sentBytes);
+			 System.out.println("senden gedaan");
+			 */
+			transfer.setState(TransferState.FINISHED);
+			EventController.getInstance()
+					.triggerDownloadFinishedEvent(transfer);
+		} catch (Exception e) {
+			transfer.setState(TransferState.FAILED);
+			EventController.getInstance().triggerDownloadFailedEvent(transfer);
+		} finally {
+			try {
+				System.out.println("upload stopped");
 				fileInput.close();
-	        	sendSocket.close();
+				sendSocket.close();
 				outStream.close();
 				outStream = null;
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-        	
-        }
 
-    }
-    
+		}
+
+	}
 
 	public void transferCanceled(Transfer transfer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void transferFailed(Transfer transfer) {
 		// TODO Auto-generated method stub
 		System.out.println("transfer failed in PeerFileUploadThread");
-		
+
 	}
 
 	public void transferFinished(Transfer transfer) {
-		
+
 	}
 
 	public void transferStarted(Transfer transfer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void transferStateChanged(Transfer transfer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void transferStopped(Transfer transfer) {
 		// TODO Auto-generated method stub
-		
+
 	}
 }
