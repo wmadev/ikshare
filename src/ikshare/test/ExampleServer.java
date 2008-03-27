@@ -95,14 +95,7 @@ public class ExampleServer
 
                 // Step 4: Send a short message to the client
                 
-                CheckAccountCommando checkAccountCommando = new CheckAccountCommando();
-                checkAccountCommando.setAccountName("Jonas");
-                out.println(checkAccountCommando);
                 
-                CheckedAccountCommando checkedAccountCommando = new CheckedAccountCommando();
-                checkedAccountCommando.setAccountName("Jonas");
-                checkedAccountCommando.setStatus("FREE");
-                out.println(checkedAccountCommando);
                 
                 CreateAccountCommando createAccountCommando = new CreateAccountCommando();
                 createAccountCommando.setAccountName("Jonas");

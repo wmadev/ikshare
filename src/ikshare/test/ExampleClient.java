@@ -1,7 +1,6 @@
 package ikshare.test;
 
-import ikshare.protocol.command.CheckAccountCommando;
-import ikshare.protocol.command.CheckedAccountCommando;
+
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CommandoParser;
 import ikshare.protocol.command.CreateAccountCommando;
@@ -127,16 +126,7 @@ public class ExampleClient
             while (input != null)
             {
 	                Commando c = CommandoParser.getInstance().parse(input);
-	                if (c instanceof CheckAccountCommando) {
-	                	System.out.println(((CheckAccountCommando)c).getCommandoName());
-	                	System.out.println(((CheckAccountCommando)c).getAccountName());
-	                }
-	                else if (c instanceof CheckedAccountCommando) {
-	                	System.out.println(((CheckedAccountCommando)c).getCommandoName());
-	                	System.out.println(((CheckedAccountCommando)c).getAccountName());
-	                	System.out.println(((CheckedAccountCommando)c).getStatus());
-	                }
-	                else if (c instanceof CreateAccountCommando) {
+	                if (c instanceof CreateAccountCommando) {
 	                	System.out.println(((CreateAccountCommando)c).getCommandoName());
 	                	System.out.println(((CreateAccountCommando)c).getAccountName());
 	                	System.out.println(((CreateAccountCommando)c).getEmail());
