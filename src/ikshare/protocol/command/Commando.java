@@ -21,6 +21,7 @@ public class Commando {
     public Commando() {
         commandoBundle = ResourceBundleManager.getInstance().getCommandoBundle();
         commandoLine = new ArrayList<String>();
+        commandoString = "";
     }
 
     private void parse() {
