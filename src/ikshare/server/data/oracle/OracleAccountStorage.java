@@ -124,8 +124,25 @@ public class OracleAccountStorage implements AccountStorage {
         return success;
     }
 
-    public boolean logoff(Peer user) {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public boolean logoff(Peer user) throws DatabaseException {
+        boolean success = false;
+        Connection conn = OracleDatabaseFactory.getConnection();
+        try {
+            PreparedStatement stmtLogoff = conn.prepareStatement(bundle.getString("logoff"));
+            stmtLogoff.setString(1, user.getAccountName());
+            stmtLogoff.setString(2, user.getInternetAddress().getHostAddress());
+            stmtLogoff.setInt(3, user.getPort());
+            stmtLogoff.executeUpdate();
+            stmtLogoff.close();
+            success = true;
+        } catch (SQLException e) {
+            success = false;
+            e.printStackTrace();
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
+        } finally {
+            OracleDatabaseFactory.freeConnection(conn);
+        }
+        return success;
     }
 
    

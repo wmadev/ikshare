@@ -44,6 +44,10 @@ public class ServerController {
         return databaseFactory.getAccountStorage().checkAccountName(newUser);
     }
 
+    public boolean logoff(Peer user) throws DatabaseException {
+        return databaseFactory.getAccountStorage().logoff(user);
+    }
+
     public boolean logon(Peer user) throws DatabaseException {
         return databaseFactory.getAccountStorage().logon(user);
     }

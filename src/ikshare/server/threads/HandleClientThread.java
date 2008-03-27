@@ -10,6 +10,7 @@ import ikshare.protocol.command.CreateAccountCommando;
 import ikshare.protocol.command.CreatedAccountCommando;
 import ikshare.protocol.command.InvalidRegisterCommando;
 import ikshare.protocol.command.LogNiLukNiCommando;
+import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
 import ikshare.protocol.command.ServerErrorCommando;
 import ikshare.protocol.command.WelcomeCommando;
@@ -59,6 +60,9 @@ public class HandleClientThread implements Runnable{
                     else if( c instanceof LogOnCommando){
                         handleLogonCommando(c);
                     }
+                    else if( c instanceof LogOffCommando){
+                        handleLogoffCommando(c);
+                    }
                     
                 }
             }
@@ -101,6 +105,21 @@ public class HandleClientThread implements Runnable{
             sec.setMessage(ex.getMessage());
             outputWriter.println(sec.toString());
         }
+    }
+
+    private void handleLogoffCommando(Commando c) {
+        LogOffCommando lo = (LogOffCommando)c;
+        Peer user = new Peer(lo.getAccountName(),lo.getPassword(),clientSocket.getInetAddress(),lo.getPort());
+                     
+        try {
+            ServerController.getInstance().logoff(user);
+        }
+        catch (DatabaseException ex) {
+            ServerErrorCommando sec = new ServerErrorCommando();
+            sec.setMessage(ex.getMessage());
+            outputWriter.println(sec.toString());
+        }
+        running = false;
     }
 
     private void handleLogonCommando(Commando c) {
