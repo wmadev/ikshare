@@ -18,15 +18,15 @@ public abstract class DatabaseFactory {
     private static ServerConfiguration configuration;
     
     // Supported Storage factories (Now only ORACLE, can be expanded to support more)
-    private static final int ORACLE = 1;
+    private static final String ORACLE = "ORACLE";
     
     public static DatabaseFactory getFactory(){
         if(configuration == null)
             configuration = ServerConfigurationController.getInstance().getConfiguration();    
-        switch (configuration.getDatabaseType()) {
-        case ORACLE:
+        if(configuration.getDatabaseType().equalsIgnoreCase(ORACLE)) {
             return OracleDatabaseFactory.getInstance(configuration);
-        default:
+        }
+        else{
             return null;
         }
     }
