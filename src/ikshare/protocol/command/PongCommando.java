@@ -1,7 +1,5 @@
 package ikshare.protocol.command;
 
-import ikshare.protocol.exception.NotAvailableException;
-
 public class PongCommando extends Commando {
 
     private String accountName;
@@ -12,7 +10,6 @@ public class PongCommando extends Commando {
 
     public PongCommando(String commandoString) {
         super(commandoString);
-        // TODO Auto-generated constructor stub
         setAccountName(commandoLine.get(1));
     }
 
