@@ -15,7 +15,9 @@ public class DefaultServerConfiguration extends ServerConfiguration{
             super.setDatabaseDriver("oracle.jdbc.driver.OracleDriver");
             super.setDatabaseUser("SYSTEM");
             super.setDatabasePassword("e=mc**2");
-            super.setDatabaseURL("jdbc:oracle:thin:@127.0.0.1:1521:ikshare");
+            //jdbc:oracle:thin:@//myserver.com/customer_db
+
+            super.setDatabaseURL("jdbc:oracle:thin:@//localhost:1521/ikshare");
         }
 
 
