@@ -47,6 +47,10 @@ public class Peer {
         this.internetAddress = inetAddress;
         this.port = port;
     }
+
+    Peer(String accountName) {
+        this.accountName = accountName;
+    }
     
     public int getPort(){
         return port;
