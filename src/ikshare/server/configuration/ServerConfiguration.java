@@ -11,7 +11,7 @@ package ikshare.server.configuration;
  */
 public class ServerConfiguration {
     
-    private int databaseType;
+    private String databaseType;
     private String databaseDriver;
     private String databaseUser;
     private String databasePassword;
@@ -52,14 +52,12 @@ public class ServerConfiguration {
     public void setDatabaseUser(String databaseUser) {
         this.databaseUser = databaseUser;
     }
-
     
-    
-    public void setDatabaseType(int databaseType) {
+    public void setDatabaseType(String databaseType) {
         this.databaseType = databaseType;
     }
     
-    public int getDatabaseType() {
+    public String getDatabaseType() {
         return databaseType;
     }
 }
