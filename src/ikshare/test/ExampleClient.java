@@ -238,7 +238,7 @@ public class ExampleClient
 	                	System.out.println(((YourTurnCommando)c).getAccountName());
 	                	System.out.println(((YourTurnCommando)c).getFileName());
 	                	System.out.println(((YourTurnCommando)c).getPath());
-	                	System.out.println(((YourTurnCommando)c).getBlocks());
+	                	System.out.println(((YourTurnCommando)c).getSize());
 	                	System.out.println(((YourTurnCommando)c).getBlockSize());
 	                }
                 //System.out.println(input);

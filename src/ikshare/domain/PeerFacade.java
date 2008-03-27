@@ -61,22 +61,16 @@ public class PeerFacade {
 
 	public void startDownloadThread(Transfer transfer) {
 		PeerFileDownloadThread peerFileDownloadThread;
-		try {
-			peerFileDownloadThread = new PeerFileDownloadThread(
-					InetAddress.getLocalHost(), transfer);
+		peerFileDownloadThread = new PeerFileDownloadThread(otherPeer.getInternetAddress(), transfer);
 
-			peerFileDownloadThread.start();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		peerFileDownloadThread.start();
+
 	}
 	
 	public void startUploadThread(Transfer transfer) {
 		PeerFileDownloadThread peerFileDownloadThread;
 		try {
-			peerFileDownloadThread = new PeerFileDownloadThread(
-					InetAddress.getLocalHost(), transfer);
+			peerFileDownloadThread = new PeerFileDownloadThread(InetAddress.getLocalHost(), transfer);
 
 			peerFileDownloadThread.start();
 		} catch (UnknownHostException e) {
@@ -91,8 +85,8 @@ public class PeerFacade {
 		
 		FileRequestCommando frc = new FileRequestCommando();
 		frc.setAccountName(otherPeer.getAccountName());
-		frc.setPath(transfer.getFile().getParent());
-		frc.setFileName(transfer.getFile().getName());
+		frc.setPath("C://");
+		frc.setFileName("testmiddelgroot.rar");
 		try {
 			peerMessageService.sendMessage(new Socket(otherPeer.getInternetAddress(), 6000), frc);
 		} catch (IOException e) {
@@ -131,6 +125,25 @@ public class PeerFacade {
 
 	public void setPeer(Peer peer) {
 		this.peer = peer;
+	}
+	
+	public Transfer getDownloadTransferForFileName(String fileName) {
+		Transfer ret=null;
+		for (Transfer t: downloadTransfers) {
+			if (t.getFile().getName().equals(fileName)) {
+				ret = t;
+			}
+		}
+		return ret;
+	}
+	public Transfer getUploadTransferForFileName(String fileName) {
+		Transfer ret=null;
+		for (Transfer t: uploadTransfers) {
+			if (t.getFile()!=null && t.getFile().getName().equals(fileName)) {
+				ret = t;
+			}
+		}
+		return ret;
 	}
 
 }

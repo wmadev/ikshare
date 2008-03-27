@@ -9,6 +9,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -50,7 +51,7 @@ public class PeerFileDownloadThread implements Runnable, FileTransferListener {
 
 	public void run() {
         try {
-            outputFile = new File("kopie.ext");
+            outputFile = new File(transfer.getFile().getName());
             fileOutput = new FileOutputStream(outputFile);
             inStream = new BufferedInputStream( receiveSocket.getInputStream());
             
@@ -59,9 +60,15 @@ public class PeerFileDownloadThread implements Runnable, FileTransferListener {
             // Zolang er input komt van de socket moet er worden weggeschreven naar het bestand.
             // Om de seconde wordt een event getriggerd met de gemiddelde snelheid en de resterende downloadtijd
             //int tellerpakketjes=0;
+            Date startUpload = new Date();
+            Date now = null;
             while (!receiveSocket.isClosed() && inStream != null && (n = inStream.read(buffer)) > 0) {
                 transfer.setNumberOfBlocksFinished(transfer.getNumberOfBlocksFinished()+1);
-                transfer.setSpeed(transfer.getNumberOfBlocksFinished()*2048);
+                now = new Date();
+
+                transfer.setSpeed(transfer.getNumberOfBlocksFinished()*2048/(now.getTime()-startUpload.getTime()));
+                transfer.setRemainingTime((now.getTime()-startUpload.getTime())/(transfer.getNumberOfBlocksFinished())*(transfer.getNumberOfBlocks()-transfer.getNumberOfBlocksFinished())/1000);
+
                 EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
                 
                 fileOutput.write(buffer, 0, n);

@@ -184,12 +184,16 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
                          item.setText(2,ConfigurationController.getInstance().getString("uploading"));
                     }
                   
-                    item.setText(0,transfer.getFile().getName());
-                    item.setText(1,UtilityClass.formatFileSize(transfer.getFileSize()));
-                    
-                    item.setText(3,"0");
-                    item.setText(4,UtilityClass.formatTime(transfer.getSpeed()));
-                    item.setData("transfer",transfer);
+                    if (item != null) {
+	                    //System.out.println(transfer.getFile().getName()==null);
+	                    item.setText(0,transfer.getFile().getName());
+	                    item.setText(1,UtilityClass.formatFileSize(transfer.getFileSize()));
+	                    
+	                    item.setText(3,"0");
+	                    item.setText(4,UtilityClass.formatTime(transfer.getRemainingTime()));
+	                    item.setText(5, transfer.getPeer().getAccountName());
+	                    item.setData("transfer",transfer);
+                    }
      
             }
         });
@@ -243,6 +247,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
                             Transfer t = (Transfer) item.getData("transfer");
                             if(t.getId().equals(transfer.getId()))
                             {
+                            	item.setText(1, UtilityClass.formatFileSize(t.getFileSize()));
                                 item.setText(3,UtilityClass.formatFileSize(transfer.getSpeed()));
                                 item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
                                 item.setText(4,UtilityClass.formatTime(transfer.getRemainingTime()));
@@ -255,6 +260,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
                             Transfer t = (Transfer) item.getData("transfer");
                             if(t.getId().equals(transfer.getId()))
                             {
+                            	item.setText(1, UtilityClass.formatFileSize(t.getFileSize()));
                                 item.setText(3,UtilityClass.formatFileSize(transfer.getSpeed()));
                                 item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
                                 item.setText(4,UtilityClass.formatTime(transfer.getRemainingTime()));

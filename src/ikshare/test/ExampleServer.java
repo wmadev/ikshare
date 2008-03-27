@@ -218,7 +218,7 @@ public class ExampleServer
 				
 				YourTurnCommando yourTurnCommando = new YourTurnCommando();
 				yourTurnCommando.setAccountName("Jonas");
-				yourTurnCommando.setBlocks(300);
+				yourTurnCommando.setSize(300);
 				yourTurnCommando.setBlockSize(2048);
 				yourTurnCommando.setFileName("testmiddelgroot.rar");
 				yourTurnCommando.setPath("/");

@@ -3,7 +3,7 @@ package ikshare.protocol.command;
 public class YourTurnCommando extends Commando {
 
     private String accountName,  fileName,  path;
-    private int blocks,  blockSize;
+    private int size,  blockSize;
 
     public YourTurnCommando() {
         super();
@@ -14,7 +14,7 @@ public class YourTurnCommando extends Commando {
         setAccountName(commandoLine.get(1));
         setFileName(commandoLine.get(2));
         setPath(commandoLine.get(3));
-        setBlocks(Integer.parseInt(commandoLine.get(4)));
+        setSize(Integer.parseInt(commandoLine.get(4)));
         if (commandoLine.size()==6)
             setBlockSize(Integer.parseInt(commandoLine.get(5)));
         else
@@ -37,12 +37,12 @@ public class YourTurnCommando extends Commando {
         this.blockSize = blockSize;
     }
 
-    public int getBlocks() {
-        return blocks;
+    public int getSize() {
+        return size;
     }
 
-    public void setBlocks(int blocks) {
-        this.blocks = blocks;
+    public void setSize(int size) {
+        this.size = size;
     }
 
     public String getFileName() {
@@ -63,6 +63,6 @@ public class YourTurnCommando extends Commando {
     @Override
     public String toString() {
         String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("yourturn")+del+getAccountName()+del+getFileName()+del+getPath()+del+getBlocks()+del+getBlockSize();
+        return commandoBundle.getString("yourturn")+del+getAccountName()+del+getFileName()+del+getPath()+del+getSize()+del+getBlockSize();
     }  
 }

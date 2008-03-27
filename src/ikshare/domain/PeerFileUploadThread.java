@@ -52,25 +52,28 @@ public class PeerFileUploadThread extends Thread implements Runnable,
 			sendSocket.setSoTimeout(5000);
 			outStream = new BufferedOutputStream(sendSocket.getOutputStream());
 
-			sendFile = new File(transfer.getFile().getName());
+			sendFile = transfer.getFile();
 			transfer.setFileSize(sendFile.length());
-			transfer.setNumberOfBlocks((int) (transfer.getFileSize() / 512));
-			EventController.getInstance().triggerDownloadStartedEvent(transfer);
+			transfer.setNumberOfBlocks((int) (Math.ceil(transfer.getFileSize() / 2048)));
+			EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
 
+			System.out.println(sendFile.getAbsolutePath());
 			fileInput = new FileInputStream(sendFile.getAbsolutePath());
 
+			Date startUpload = new Date();
+			Date now=null;
 			int sentBytes = 0;
 			// int aantalpakketjes=0;
 			while (!sendSocket.isClosed() && outStream != null
 					&& (sentBytes = fileInput.read(buffer)) > 0) {
+				
 				outStream.write(buffer, 0, sentBytes);
 				transfer.setNumberOfBlocksFinished(transfer
 						.getNumberOfBlocksFinished() + 1);
-				transfer.setSpeed(1);
-				transfer
-						.setRemainingTime((transfer.getNumberOfBlocks() - transfer
-								.getNumberOfBlocksFinished())
-								/ transfer.getNumberOfBlocksFinished());
+				now = new Date();
+				transfer.setSpeed(transfer.getNumberOfBlocksFinished()*2048/(now.getTime()-startUpload.getTime()+1));
+                
+				transfer.setRemainingTime((now.getTime()-startUpload.getTime())/(transfer.getNumberOfBlocksFinished())*(transfer.getNumberOfBlocks()-transfer.getNumberOfBlocksFinished())/1000);
 
 				EventController.getInstance().triggerDownloadStateChangedEvent(
 						transfer);
@@ -88,6 +91,7 @@ public class PeerFileUploadThread extends Thread implements Runnable,
 			EventController.getInstance()
 					.triggerDownloadFinishedEvent(transfer);
 		} catch (Exception e) {
+			e.printStackTrace();
 			transfer.setState(TransferState.FAILED);
 			EventController.getInstance().triggerDownloadFailedEvent(transfer);
 		} finally {

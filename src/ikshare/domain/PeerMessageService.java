@@ -43,6 +43,7 @@ public class PeerMessageService extends Thread implements Runnable, FileTransfer
     	port = 6000;
     	try {
 			messageServer = new ServerSocket(port);
+			messageServer.setReceiveBufferSize(100);
 			messageServer.setReuseAddress(true);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -62,7 +63,10 @@ public class PeerMessageService extends Thread implements Runnable, FileTransfer
 	        {
 	            // Step 1. Establish server connection
 	            link = messageServer.accept();
+	            link.setSoTimeout(2000);
+	            //System.out.println("verbonden");
 	            Socket replySocket = new Socket(link.getInetAddress(), 6000);
+	            replySocket.setSoTimeout(2000);
 
 	            
 	            // Step 2. Set up input stream
@@ -79,14 +83,15 @@ public class PeerMessageService extends Thread implements Runnable, FileTransfer
 		                try {
 		                	c = CommandoParser.getInstance().parse(input);
 		                } catch (CommandNotFoundException cnfe) {
-		                	
+		                	cnfe.printStackTrace();
 		                }
 		                System.out.println(c);
 		                handleCommando(replySocket, c);
 		                input = in.readLine();
 	            }
-	            link.close();
-	            replySocket.close();
+	            System.out.println("input was null");
+	            //link.close();
+	            //replySocket.close();
 	        } catch (Exception e) {
 	        	//TODO
 	        }
@@ -118,17 +123,17 @@ public class PeerMessageService extends Thread implements Runnable, FileTransfer
 		    	sendMessage(replySocket, fcc);
 		    	
 		    	Transfer t = new Transfer();
-		    	t.setFile(new File(fcc.getPath()+"/"+fcc.getFileName()));
+		    	t.setFile(f);
 		    	t.setId(new Date().getTime()+"");
 		    	t.setPeer(new Peer(fcc.getAccountName(), null));
-		    	t.setState(TransferState.DOWNLOADING);
-		    	PeerFacade.getInstance().addToUploads(new Transfer());
+		    	t.setState(TransferState.UPLOADING);
+		    	PeerFacade.getInstance().addToUploads(t);
 		    	EventController.getInstance().triggerDownloadStartedEvent(t);
 		    	
 		    	
 		    	YourTurnCommando ytc = new YourTurnCommando();
 		    	ytc.setAccountName("Monet");
-		    	ytc.setBlocks(4000);
+		    	ytc.setSize((int) Math.ceil(f.length()));
 		    	ytc.setBlockSize(2048);
 		    	ytc.setFileName(((FileRequestCommando)c).getFileName());
 		    	ytc.setPath(((FileRequestCommando)c).getPath());
@@ -142,14 +147,16 @@ public class PeerMessageService extends Thread implements Runnable, FileTransfer
 			}
 		}
 		else if (c instanceof FileConfirmCommando) {
+			/*
 			FileConfirmCommando fcc = (FileConfirmCommando) c;
 			Transfer t = new Transfer();
 			t.setFile(new File(fcc.getPath()+"/"+fcc.getFileName()));
 			t.setId(new Date().getTime()+"");
 			t.setPeer(new Peer(fcc.getAccountName(), null));
-			t.setState(TransferState.UPLOADING);
-			PeerFacade.getInstance().addToUploads(new Transfer());
+			t.setState(TransferState.DOWNLOADING);
+			PeerFacade.getInstance().addToDownloads(t);
 			EventController.getInstance().triggerDownloadStartedEvent(t);
+			*/
 		}
 		else if (c instanceof FileNotFoundCommando) {
 			//TODO handle FileNotFoundCommando
@@ -160,7 +167,12 @@ public class PeerMessageService extends Thread implements Runnable, FileTransfer
 			mtc.setFileName(((YourTurnCommando)c).getFileName());
 			mtc.setPath(((YourTurnCommando)c).getPath());
 			sendMessage(replySocket, mtc);
-			//PeerFacade.getInstance().startDownloadThread();
+			
+			Transfer t = PeerFacade.getInstance().getDownloadTransferForFileName(mtc.getFileName());
+			
+			t.setFileSize(((YourTurnCommando)c).getSize());
+			t.setNumberOfBlocks((int) Math.ceil(t.getFileSize()/2048));
+			PeerFacade.getInstance().startDownloadThread(PeerFacade.getInstance().getDownloadTransferForFileName(mtc.getFileName()));
 		}
 		else if (c instanceof MyTurnCommando) {
 			//TODO handle MyTurnCommando
@@ -181,6 +193,14 @@ public class PeerMessageService extends Thread implements Runnable, FileTransfer
 			Transfer t = new Transfer();
 			t.setId(((CancelTransferCommando)c).getTransferId());
 			EventController.getInstance().triggerDownloadCanceledEvent(t);
+		}
+		else if(c instanceof Commando) {
+			 try {
+				replySocket.close();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}	
 		}
 
 	}
