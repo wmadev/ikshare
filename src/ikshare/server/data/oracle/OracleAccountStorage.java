@@ -7,6 +7,10 @@ package ikshare.server.data.oracle;
 
 import ikshare.domain.Peer;
 import ikshare.server.data.AccountStorage;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
+import java.util.ResourceBundle;
 
 /**
  *
@@ -14,9 +18,10 @@ import ikshare.server.data.AccountStorage;
  */
 public class OracleAccountStorage implements AccountStorage {
     private static OracleAccountStorage instance;
+    private ResourceBundle bundle;
     
     private OracleAccountStorage(){
-        
+        bundle = ResourceBundle.getBundle("ikshare.server.data.oracle.dbconstants");
     }
     public static OracleAccountStorage getInstance(){
         if(instance == null){
@@ -26,7 +31,23 @@ public class OracleAccountStorage implements AccountStorage {
     }
     
     public boolean createAccount(Peer newUser) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        boolean success = false;
+        Connection conn = OracleDatabaseFactory.getConnection();
+        try {
+            PreparedStatement stmtCreateAccount = conn.prepareStatement(bundle.getString("createAccount"));
+            stmtCreateAccount.setString(1, newUser.getAccountName());
+            stmtCreateAccount.setString(2, newUser.getPassword());
+            stmtCreateAccount.setString(3, newUser.getEmail());
+            stmtCreateAccount.executeUpdate();
+            stmtCreateAccount.close();
+            success = true;
+        } catch (SQLException e) {
+            success = false;
+            e.printStackTrace();
+        } finally {
+            OracleDatabaseFactory.freeConnection(conn);
+        }
+        return success;
     }
 
     public boolean deleteAccount(int userID) {

@@ -12,6 +12,10 @@ package ikshare.server.configuration;
 public class DefaultServerConfiguration extends ServerConfiguration{
         public DefaultServerConfiguration(){
             super.setDatabaseType(1);
+            super.setDatabaseDriver("oracle.jdbc.driver.OracleDriver");
+            super.setDatabaseUser("SYSTEM");
+            super.setDatabasePassword("e=mc**2");
+            super.setDatabaseURL("jdbc:oracle:thin:@127.0.0.1:1521:ikshare");
         }
 
 

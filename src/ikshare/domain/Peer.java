@@ -17,7 +17,9 @@ public class Peer {
 
 	private String accountName;
 	private InetAddress internetAddress;
-	
+	private String email;
+        private String password;
+        
 	public Peer() {
 		
 	}
@@ -26,7 +28,24 @@ public class Peer {
 		this.accountName = name;
 		this.internetAddress = internetAddress;
 	}
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 	
+        
 	public InetAddress getInternetAddress() {
 		return internetAddress;
 	}
