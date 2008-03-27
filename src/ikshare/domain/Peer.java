@@ -24,8 +24,8 @@ public class Peer {
 		
 	}
 	
-	public Peer(String name, InetAddress internetAddress) {
-		this.accountName = name;
+	public Peer(String accountName, InetAddress internetAddress) {
+		this(accountName);
 		this.internetAddress = internetAddress;
 	}
 
@@ -45,7 +45,10 @@ public class Peer {
         this.password = password;
     }
 	
-        
+	public Peer(String accountName) {
+		this.accountName = accountName;
+	}
+
 	public InetAddress getInternetAddress() {
 		return internetAddress;
 	}

@@ -61,7 +61,7 @@ public class SearchPanel extends AbstractPanel{
 		SearchResult searchResult=null;
 		
 		
-		searchResult = new SearchResult(new Date().getTime()+"",new Peer("Monet", null), new File("/" + "testmiddelgroot.rar"));
+		searchResult = new SearchResult(new Date().getTime()+"",new Peer("Monet", null), new File("C:\\/" + "testmiddelgroot.rar"));
 		ti = new TableItem(tblResults, SWT.NONE);
 		ti.setText(0, searchResult.getFile().getName());
 		//ti.setText(1,UtilityClass.formatFileSize());
@@ -113,7 +113,9 @@ public class SearchPanel extends AbstractPanel{
 		                    SearchResult selected = (SearchResult)tblResults.getItem(selectedRow).getData("results");
 		                    if (selected!=null) {
 		                    	Transfer newTransfer = new Transfer();
+		                    	newTransfer.setId(new Date().getTime()+"");
 		                    	newTransfer.setFile(selected.getFile());
+		                    	newTransfer.setPeer(selected.getPeer());
 		                    	newTransfer.setState(TransferState.DOWNLOADING);
 		                    	PeerFacade.getInstance().addToDownloads(newTransfer);
 		                    	EventController.getInstance().triggerDownloadStartedEvent(newTransfer);

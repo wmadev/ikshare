@@ -26,6 +26,8 @@ public class PeerFileServer extends Thread implements Runnable {
         	while (running) {
 	            if (service!=null) {
 	            	PeerFileUploadThread peerFileUploadThread = new PeerFileUploadThread(fileServerSocket.accept());
+	            	peerFileUploadThread.setTransfer(PeerFacade.getInstance().getUploadTransferForFileName("testmiddelgroot.rar"));
+	            	
 	            	service.execute(peerFileUploadThread);
 	            }
 	            	
