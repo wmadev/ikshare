@@ -11,7 +11,7 @@ package ikshare.server.configuration;
  */
 public class DefaultServerConfiguration extends ServerConfiguration{
         public DefaultServerConfiguration(){
-            super.setDatabaseType(1);
+            super.setDatabaseType("ORACLE");
             super.setDatabaseDriver("oracle.jdbc.driver.OracleDriver");
             super.setDatabaseUser("SYSTEM");
             super.setDatabasePassword("e=mc**2");
