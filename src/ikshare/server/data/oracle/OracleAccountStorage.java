@@ -21,7 +21,7 @@ public class OracleAccountStorage implements AccountStorage {
     private ResourceBundle bundle;
     
     private OracleAccountStorage(){
-        bundle = ResourceBundle.getBundle("ikshare.server.data.oracle.dbconstants");
+        bundle = ResourceBundle.getBundle("ikshare.server.data.oracle.DBConstants");
     }
     public static OracleAccountStorage getInstance(){
         if(instance == null){
