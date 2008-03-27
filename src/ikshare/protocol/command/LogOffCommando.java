@@ -3,7 +3,7 @@ package ikshare.protocol.command;
 public class LogOffCommando extends Commando {
 
     private String accountName,  password;
-    
+    private int port;
     public LogOffCommando() {
         super();
     }
@@ -12,6 +12,15 @@ public class LogOffCommando extends Commando {
         super(commandoString);
         setAccountName(commandoLine.get(1));
         setPassword(commandoLine.get(2));
+        setPort(Integer.parseInt(commandoLine.get(3)));
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     public String getAccountName() {
