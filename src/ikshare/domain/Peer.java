@@ -48,7 +48,7 @@ public class Peer {
         this.port = port;
     }
 
-    Peer(String accountName) {
+    public Peer(String accountName) {
         this.accountName = accountName;
     }
     
