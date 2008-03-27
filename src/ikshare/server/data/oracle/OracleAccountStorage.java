@@ -7,8 +7,10 @@ package ikshare.server.data.oracle;
 
 import ikshare.domain.Peer;
 import ikshare.server.data.AccountStorage;
+import ikshare.server.data.DatabaseException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
@@ -30,7 +32,28 @@ public class OracleAccountStorage implements AccountStorage {
         return instance;
     }
     
-    public boolean createAccount(Peer newUser) {
+    public synchronized boolean checkAccountName(Peer newUser) throws DatabaseException {
+        boolean exists = false;
+        Connection conn = OracleDatabaseFactory.getConnection();
+        try {
+            PreparedStatement stmtCheckAccount = conn.prepareStatement(bundle.getString("checkAccount"));
+            stmtCheckAccount.setString(1, newUser.getAccountName());
+            ResultSet result = stmtCheckAccount.executeQuery();
+            if(result.next()){
+                exists = true;
+            }
+            result.close();
+            stmtCheckAccount.close();
+        } catch (SQLException e) {
+            exists = false;
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
+        } finally {
+            OracleDatabaseFactory.freeConnection(conn);
+        }
+        return exists;
+    }
+    
+    public boolean createAccount(Peer newUser) throws DatabaseException {
         boolean success = false;
         Connection conn = OracleDatabaseFactory.getConnection();
         try {
@@ -43,11 +66,33 @@ public class OracleAccountStorage implements AccountStorage {
             success = true;
         } catch (SQLException e) {
             success = false;
-            e.printStackTrace();
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
         } finally {
             OracleDatabaseFactory.freeConnection(conn);
         }
         return success;
+    }
+    
+    public boolean checkPassword(Peer user) throws DatabaseException{
+        boolean correct = false;
+        Connection conn = OracleDatabaseFactory.getConnection();
+        try {
+            PreparedStatement stmtCheckPassword = conn.prepareStatement(bundle.getString("checkPassword"));
+            stmtCheckPassword.setString(1, user.getAccountName());
+            stmtCheckPassword.setString(2, user.getPassword());
+            ResultSet result = stmtCheckPassword.executeQuery();
+            if(result.next()){
+                correct = true;
+            }
+            result.close();
+            stmtCheckPassword.close();
+        } catch (SQLException e) {
+            correct = false;
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
+        } finally {
+            OracleDatabaseFactory.freeConnection(conn);
+        }
+        return correct;
     }
 
     public boolean deleteAccount(int userID) {
@@ -58,12 +103,31 @@ public class OracleAccountStorage implements AccountStorage {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean login(Peer user) {
+    public boolean logon(Peer user) throws DatabaseException {
+        boolean success = false;
+        Connection conn = OracleDatabaseFactory.getConnection();
+        try {
+            PreparedStatement stmtLogon = conn.prepareStatement(bundle.getString("logon"));
+            stmtLogon.setString(1, user.getAccountName());
+            stmtLogon.setString(2, user.getInternetAddress().getHostAddress());
+            stmtLogon.setInt(3, user.getPort());
+            stmtLogon.executeUpdate();
+            stmtLogon.close();
+            success = true;
+        } catch (SQLException e) {
+            success = false;
+            e.printStackTrace();
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
+        } finally {
+            OracleDatabaseFactory.freeConnection(conn);
+        }
+        return success;
+    }
+
+    public boolean logoff(Peer user) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean logout(Peer user) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
+   
 
 }
