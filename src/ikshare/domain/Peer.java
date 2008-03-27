@@ -19,16 +19,42 @@ public class Peer {
 	private InetAddress internetAddress;
 	private String email;
         private String password;
+        private int port;
         
 	public Peer() {
 		
 	}
 	
-	public Peer(String accountName, InetAddress internetAddress) {
-		this(accountName);
+	public Peer(String name, InetAddress internetAddress) {
+		this.accountName = name;
 		this.internetAddress = internetAddress;
 	}
 
+    public Peer(String accountName, String password) {
+        this.accountName = accountName;
+        this.password = password;
+    }
+
+    public Peer(String accountName, String password, String email) {
+        this.accountName = accountName;
+        this.password = password;
+        this.email = email;
+    }
+
+    public Peer(String accountName, String password, InetAddress inetAddress, int port) {
+        this.accountName = accountName;
+        this.password = password;
+        this.internetAddress = inetAddress;
+        this.port = port;
+    }
+    
+    public int getPort(){
+        return port;
+    }
+    public void setPort(int port){
+        this.port= port;
+    }
+    
     public String getEmail() {
         return email;
     }
@@ -45,10 +71,7 @@ public class Peer {
         this.password = password;
     }
 	
-	public Peer(String accountName) {
-		this.accountName = accountName;
-	}
-
+        
 	public InetAddress getInternetAddress() {
 		return internetAddress;
 	}
