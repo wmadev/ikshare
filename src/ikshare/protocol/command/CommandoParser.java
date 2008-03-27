@@ -71,9 +71,6 @@ public class CommandoParser {
         if (commandoString.startsWith(bundle.getString("createaccount"))) {
             return new CreateAccountCommando(commandoString);
         }
-        if (commandoString.startsWith(bundle.getString("checkaccount"))) {
-            return new CheckAccountCommando(commandoString);
-        }
         if (commandoString.startsWith(bundle.getString("logon"))) {
             return new LogOnCommando(commandoString);
         }
@@ -86,9 +83,6 @@ public class CommandoParser {
         if (commandoString.startsWith(bundle.getString("invalidregister"))) {
             return new InvalidRegisterCommando(commandoString);
         }
-        if (commandoString.startsWith(bundle.getString("checkedaccount"))) {
-            return new CheckedAccountCommando(commandoString);
-        }        
         if (commandoString.startsWith(bundle.getString("welcome"))) {
             return new WelcomeCommando(commandoString);
         }       
