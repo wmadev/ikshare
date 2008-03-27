@@ -125,7 +125,7 @@ public class PeerMessageService extends Thread implements Runnable, FileTransfer
 		    	Transfer t = new Transfer();
 		    	t.setFile(f);
 		    	t.setId(new Date().getTime()+"");
-		    	t.setPeer(new Peer(fcc.getAccountName(), null));
+		    	t.setPeer(new Peer(fcc.getAccountName()));
 		    	t.setState(TransferState.UPLOADING);
 		    	PeerFacade.getInstance().addToUploads(t);
 		    	EventController.getInstance().triggerDownloadStartedEvent(t);
