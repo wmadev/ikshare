@@ -3,27 +3,14 @@
  */
 package ikshare.server.threads;
 
-import ikshare.domain.Peer;
-import ikshare.protocol.command.Commando;
-import ikshare.protocol.command.CommandoParser;
-import ikshare.protocol.command.CreateAccountCommando;
-import ikshare.protocol.command.CreatedAccountCommando;
-import ikshare.protocol.command.InvalidRegisterCommando;
-import ikshare.protocol.command.LogNiLukNiCommando;
-import ikshare.protocol.command.LogOffCommando;
-import ikshare.protocol.command.LogOnCommando;
-import ikshare.protocol.command.ServerErrorCommando;
-import ikshare.protocol.command.WelcomeCommando;
-import ikshare.server.ServerController;
-import ikshare.server.data.DatabaseException;
-import ikshare.server.data.DatabaseFactory;
+import ikshare.domain.*;
+import ikshare.protocol.command.*;
+import ikshare.server.*;
+import ikshare.server.data.*;
 import java.io.*;
 import java.net.Socket;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.crypto.spec.IvParameterSpec;
 /**
  *
  * @author awosy
