@@ -35,7 +35,9 @@ public class OracleConnectionPool extends ObjectPool<Connection>{
     protected Connection create() {
         Connection o = null;
         try {
-            o = (Connection)(DriverManager.getConnection(dsn, usr, pwd));
+            //o = (Connection)(DriverManager.getConnection(dsn, usr, pwd));
+            o = (Connection)(DriverManager.getConnection("jdbc:oracle:thin:SYSTEM/e=mc**2@//localhost:1521/IKSHARE"));
+            //jdbc:oracle:thin:[<user>/<password>]@//<host>[:<port>]/<service>
             return o;
         } catch (SQLException e) {
             e.printStackTrace();
