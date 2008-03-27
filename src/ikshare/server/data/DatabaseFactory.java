@@ -17,7 +17,7 @@ public abstract class DatabaseFactory {
     
     private static ServerConfiguration configuration;
     
-    // Supported Storage factories (Now only MySQL, can be expanded to support more)
+    // Supported Storage factories (Now only ORACLE, can be expanded to support more)
     private static final int ORACLE = 1;
     
     public static DatabaseFactory getFactory(){

@@ -24,6 +24,10 @@ public class ServerConfigurationController {
     private static ServerConfigurationController instance;
     private ServerConfiguration config;
     
+    private ServerConfigurationController(){
+        loadConfiguration();
+    }
+    
     public static ServerConfigurationController getInstance(){
         if(instance == null){
             instance = new ServerConfigurationController();
@@ -57,7 +61,8 @@ public class ServerConfigurationController {
     }
     public ServerConfiguration getConfiguration(){
         return config;
-    }public void saveConfiguration(){
+    }
+    public void saveConfiguration(){
         saveConfiguration(config);
     }
     
