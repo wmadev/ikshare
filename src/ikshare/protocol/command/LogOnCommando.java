@@ -3,6 +3,7 @@ package ikshare.protocol.command;
 public class LogOnCommando extends Commando {
 
     private String accountName,  password;
+    private int port;
     
     public LogOnCommando() {
         super();
@@ -12,8 +13,19 @@ public class LogOnCommando extends Commando {
         super(commandoString);
         setAccountName(commandoLine.get(1));
         setPassword(commandoLine.get(2));
+        setPort(Integer.parseInt(commandoLine.get(3)));
     }
 
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
+    }
+
+    
+    
     public String getAccountName() {
         return accountName;
     }
@@ -33,7 +45,7 @@ public class LogOnCommando extends Commando {
     @Override
     public String toString() {
         String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("logon")+del+getAccountName()+del+getPassword();
+        return commandoBundle.getString("logon")+del+getAccountName()+del+getPassword()+del+getPort();
     }
     
 }
