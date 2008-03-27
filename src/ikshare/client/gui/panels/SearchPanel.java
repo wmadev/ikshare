@@ -61,7 +61,7 @@ public class SearchPanel extends AbstractPanel{
 		SearchResult searchResult=null;
 		
 		
-		searchResult = new SearchResult(new Date().getTime()+"",new Peer("Monet", null), new File("C:\\/" + "testmiddelgroot.rar"));
+		searchResult = new SearchResult(new Date().getTime()+"",new Peer("Monet"), new File("C:\\/" + "testmiddelgroot.rar"));
 		ti = new TableItem(tblResults, SWT.NONE);
 		ti.setText(0, searchResult.getFile().getName());
 		//ti.setText(1,UtilityClass.formatFileSize());
