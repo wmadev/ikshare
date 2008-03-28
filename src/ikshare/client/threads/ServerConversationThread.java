@@ -33,7 +33,7 @@ public class ServerConversationThread implements Runnable{
             serverConnection = new Socket(
                 InetAddress.getByName(ClientConfigurationController.getInstance().getConfiguration().getIkshareServerAddress()),
                 ClientConfigurationController.getInstance().getConfiguration().getIkshareServerPort());
-            outputWriter = new PrintWriter(serverConnection.getOutputStream());
+            outputWriter = new PrintWriter(serverConnection.getOutputStream(),true);
             incomingReader = new BufferedReader(new InputStreamReader(serverConnection.getInputStream()));
             running = true;
         }
