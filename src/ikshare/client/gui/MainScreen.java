@@ -1,6 +1,6 @@
 package ikshare.client.gui;
 
-import ikshare.client.gui.configuration.ConfigurationController;
+import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.client.gui.panels.AboutPanel;
 import ikshare.client.gui.panels.ChatPanel;
 import ikshare.client.gui.panels.HelpPanel;
@@ -44,7 +44,7 @@ public class MainScreen {
      *Makes the mainscreen in the shell, sets the layout and adds the different panels to it.
      */
     public MainScreen() {
-        ConfigurationController.getInstance();
+        ClientConfigurationController.getInstance();
         instance = this;
         display = new Display();
         shell = new Shell(display);
@@ -60,14 +60,14 @@ public class MainScreen {
         // Add composite to shell
         doComposite();
 
-        addPanel(new HomePanel(ConfigurationController.getInstance().getString("home"),"resources/icons/tb_home.png"));
-        addPanel (new SearchPanel(ConfigurationController.getInstance().getString("search"),"resources/icons/tb_search.png"));
-        addPanel (new TransferPanel(ConfigurationController.getInstance().getString("transfer"),"resources/icons/tb_down.png"));
-        addPanel (new ChatPanel(ConfigurationController.getInstance().getString("chat"),"resources/icons/tb_chat.png"));
-        addPanel (new SettingsPanel(ConfigurationController.getInstance().getString("settings"),"resources/icons/tb_configure.png"));
-        addPanel (new StatisticPanel(ConfigurationController.getInstance().getString("statistics"),"resources/icons/tb_stat.png"));
-        addPanel (new HelpPanel(ConfigurationController.getInstance().getString("help"),"resources/icons/tb_help.png"));
-        addPanel (new AboutPanel(ConfigurationController.getInstance().getString("about"),"resources/icons/tb_about.png"));
+        addPanel(new HomePanel(ClientConfigurationController.getInstance().getString("home"),"resources/icons/tb_home.png"));
+        addPanel (new SearchPanel(ClientConfigurationController.getInstance().getString("search"),"resources/icons/tb_search.png"));
+        addPanel (new TransferPanel(ClientConfigurationController.getInstance().getString("transfer"),"resources/icons/tb_down.png"));
+        addPanel (new ChatPanel(ClientConfigurationController.getInstance().getString("chat"),"resources/icons/tb_chat.png"));
+        addPanel (new SettingsPanel(ClientConfigurationController.getInstance().getString("settings"),"resources/icons/tb_configure.png"));
+        addPanel (new StatisticPanel(ClientConfigurationController.getInstance().getString("statistics"),"resources/icons/tb_stat.png"));
+        addPanel (new HelpPanel(ClientConfigurationController.getInstance().getString("help"),"resources/icons/tb_help.png"));
+        addPanel (new AboutPanel(ClientConfigurationController.getInstance().getString("about"),"resources/icons/tb_about.png"));
         
         shell.open();
         shell.forceActive();
@@ -78,7 +78,7 @@ public class MainScreen {
                         display.sleep();
                 }
         }
-        ConfigurationController.getInstance().saveConfiguration();
+        ClientConfigurationController.getInstance().saveConfiguration();
         display.dispose();
         System.exit(0);
     }
@@ -143,7 +143,7 @@ public class MainScreen {
             gl.marginHeight = gl.marginWidth = gl.verticalSpacing = 0;
             shell.setLocation(x, y);
             shell.setLayout(gl);
-            shell.setText(ConfigurationController.getInstance().getString("ikshare"));
+            shell.setText(ClientConfigurationController.getInstance().getString("ikshare"));
 
             /*String icon = "resources/logo.png";
             File file = new File(icon);

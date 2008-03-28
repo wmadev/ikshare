@@ -6,7 +6,7 @@
 package ikshare.client.gui.panels;
 
 import ikshare.client.gui.AbstractPanel;
-import ikshare.client.gui.configuration.ConfigurationController;
+import ikshare.client.configuration.ClientConfigurationController;
 import java.io.File;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.Font;
@@ -48,7 +48,7 @@ public class AboutPanel extends AbstractPanel {
 		gd2.heightHint = 30;
 		Label atopeer = new Label(parent, SWT.CENTER);
 		atopeer.setLayoutData(gd2);
-		atopeer.setText(ConfigurationController.getInstance().getString("ikshare"));
+		atopeer.setText(ClientConfigurationController.getInstance().getString("ikshare"));
 		FontData data = Display.getCurrent().getSystemFont().getFontData()[0];
 		Font newFont = new Font(Display.getCurrent(), data.getName(), 20, SWT.BOLD);
 		atopeer.setFont(newFont);

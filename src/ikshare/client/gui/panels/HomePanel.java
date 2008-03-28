@@ -6,8 +6,8 @@
 package ikshare.client.gui.panels;
 
 import ikshare.client.gui.AbstractPanel;
-import ikshare.client.gui.configuration.Configuration;
-import ikshare.client.gui.configuration.ConfigurationController;
+import ikshare.client.configuration.ClientConfiguration;
+import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.PeerFacade;
 
 import org.eclipse.swt.SWT;
@@ -27,22 +27,22 @@ public class HomePanel extends AbstractPanel {
     private void init() {
         Group grpConnect = new Group(this,SWT.NONE);
         grpConnect.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false,2,1));
-        grpConnect.setText(ConfigurationController.getInstance().getString("connection"));
+        grpConnect.setText(ClientConfigurationController.getInstance().getString("connection"));
         grpConnect.setLayout(new GridLayout(6,true));
         Label lblAccountName = new Label(grpConnect,SWT.NONE);
-        lblAccountName.setText(ConfigurationController.getInstance().getString("accountname"));
+        lblAccountName.setText(ClientConfigurationController.getInstance().getString("accountname"));
         lblAccountName.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false,1,1));
         Text txtAccountName = new Text(grpConnect,SWT.BORDER);
         txtAccountName.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false,1,1));
         
         Label lblAccountPassword = new Label(grpConnect,SWT.NONE);
-        lblAccountPassword.setText(ConfigurationController.getInstance().getString("password"));
+        lblAccountPassword.setText(ClientConfigurationController.getInstance().getString("password"));
         lblAccountPassword.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false,1,1));
         Text txtAccountPassword = new Text(grpConnect,SWT.BORDER| SWT.PASSWORD);
         txtAccountPassword.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false,1,1));
         
         Button btnConnect=new Button(grpConnect, SWT.NONE);
-        btnConnect.setText(ConfigurationController.getInstance().getString("logon"));
+        btnConnect.setText(ClientConfigurationController.getInstance().getString("logon"));
         btnConnect.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false,1,1));
         btnConnect.addListener(SWT.Selection, new Listener() {
 
@@ -55,7 +55,7 @@ public class HomePanel extends AbstractPanel {
         });
         Button btnCreateNew=new Button(grpConnect, SWT.NONE);
         btnCreateNew.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false,1,1));
-        btnCreateNew.setText(ConfigurationController.getInstance().getString("create"));
+        btnCreateNew.setText(ClientConfigurationController.getInstance().getString("create"));
         btnCreateNew.addListener(SWT.Selection, new Listener() {
 
 			public void handleEvent(Event arg0) {

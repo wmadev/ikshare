@@ -7,7 +7,7 @@ package ikshare.client.gui.panels;
 
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.UtilityClass;
-import ikshare.client.gui.configuration.ConfigurationController;
+import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.Peer;
 import ikshare.domain.PeerFacade;
 import ikshare.domain.SearchResult;
@@ -83,7 +83,7 @@ public class SearchPanel extends AbstractPanel{
         if(new File(ICON_SEARCH).exists()){
             result1.setImage(new Image(Display.getCurrent(), ICON_SEARCH));
         }
-        result1.setText(ConfigurationController.getInstance().getString("result")+" 1");
+        result1.setText(ClientConfigurationController.getInstance().getString("result")+" 1");
         
         Composite cmpResult1 = new Composite(folder, SWT.NONE);
         cmpResult1.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,3,1));
@@ -113,9 +113,9 @@ public class SearchPanel extends AbstractPanel{
                     });
 
         result1.setControl(cmpResult1);
-        addTableColumn(tblResults,ConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
-	    addTableColumn(tblResults,ConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
-        addTableColumn(tblResults,ConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
+        addTableColumn(tblResults,ClientConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
+	    addTableColumn(tblResults,ClientConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
+        addTableColumn(tblResults,ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
     }
     
     private void addTableColumn(Table table, String text, int width, int align) {

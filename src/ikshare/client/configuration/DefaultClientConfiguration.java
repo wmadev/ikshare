@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ikshare.client.gui.configuration;
+package ikshare.client.configuration;
 
 import java.io.File;
 import java.util.Calendar;
@@ -13,9 +13,9 @@ import java.util.Calendar;
  *
  * @author awosy
  */
-class DefaultConfiguration extends Configuration {
+class DefaultClientConfiguration extends ClientConfiguration {
 
-    public DefaultConfiguration()  {
+    public DefaultClientConfiguration()  {
         super.setNickname("J@n@ ;)");
         super.setLanguage("en");
         Calendar date = Calendar.getInstance();
@@ -24,6 +24,11 @@ class DefaultConfiguration extends Configuration {
         date.set(Calendar.MONTH, 8);
         super.setBirthday(date);
         super.setSharedFolder(new File(System.getProperty("user.home")));
+        
+        // Default network settings
+        super.setIkshareServerAddress("127.0.0.1");
+        super.setIkshareServerPort(6000);
+        super.setFileTransferPort(6666);
     }
 
 }
