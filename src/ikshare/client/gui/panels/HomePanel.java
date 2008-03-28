@@ -5,6 +5,7 @@
 
 package ikshare.client.gui.panels;
 
+import ikshare.client.ClientController;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.configuration.ClientConfiguration;
 import ikshare.client.configuration.ClientConfigurationController;
@@ -32,13 +33,13 @@ public class HomePanel extends AbstractPanel {
         Label lblAccountName = new Label(grpConnect,SWT.NONE);
         lblAccountName.setText(ClientConfigurationController.getInstance().getString("accountname"));
         lblAccountName.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false,1,1));
-        Text txtAccountName = new Text(grpConnect,SWT.BORDER);
+        final Text txtAccountName = new Text(grpConnect,SWT.BORDER);
         txtAccountName.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false,1,1));
         
         Label lblAccountPassword = new Label(grpConnect,SWT.NONE);
         lblAccountPassword.setText(ClientConfigurationController.getInstance().getString("password"));
         lblAccountPassword.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false,1,1));
-        Text txtAccountPassword = new Text(grpConnect,SWT.BORDER| SWT.PASSWORD);
+        final Text txtAccountPassword = new Text(grpConnect,SWT.BORDER| SWT.PASSWORD);
         txtAccountPassword.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false,1,1));
         
         Button btnConnect=new Button(grpConnect, SWT.NONE);
@@ -49,7 +50,10 @@ public class HomePanel extends AbstractPanel {
 			public void handleEvent(Event arg0) {
 				// Fileserver mss beter starten bij opstarten van applicatie???
                                 // Hier beter enkel de logon op het netwerk
-                                PeerFacade.getInstance().getPeerFileServer().startServer();
+                                ClientController.getInstance().logon(
+                                        txtAccountName.getText(),
+                                        txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
+                                //PeerFacade.getInstance().getPeerFileServer().startServer();
 			}
         	
         });

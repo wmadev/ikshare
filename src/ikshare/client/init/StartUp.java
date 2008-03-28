@@ -5,7 +5,11 @@
 
 package ikshare.client.init;
 
+import ikshare.client.ClientController;
 import ikshare.client.gui.MainScreen;
+import ikshare.client.threads.ServerConversationThread;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class StartUp {
 
@@ -16,7 +20,8 @@ public class StartUp {
 	}
 	private StartUp()
 	{
-
+              ClientController.getInstance().startServerConversation();
+              
               MainScreen.getInstance();                
 	}
 
