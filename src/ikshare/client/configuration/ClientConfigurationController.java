@@ -110,10 +110,10 @@ public class ClientConfigurationController {
                 }
             }else if(child.getNodeName().equals("file-transfer-port")){
                 try{
-                    config.setIkshareServerPort(Integer.parseInt(((Element) child).getTextContent()));
+                    config.setFileTransferPort(Integer.parseInt(((Element) child).getTextContent()));
                 }
                 catch(NumberFormatException e){
-                    config.setIkshareServerPort(6666);
+                    config.setFileTransferPort(6666);
                 }
             }
         }
