@@ -6,6 +6,7 @@
 package ikshare.client;
 
 import ikshare.client.threads.ServerConversationThread;
+import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -28,6 +29,14 @@ public class ClientController {
             instance = new ClientController();
         return instance;
     }
+
+    public void logoff(String accountName, String password, int port) {
+        LogOffCommando loc = new LogOffCommando();
+        loc.setAccountName(accountName);
+        loc.setPassword(password);
+        loc.setPort(port);
+        serverConversation.sendCommand(loc);
+    }
     
     public void startServerConversation(){
         serverConversation = new ServerConversationThread();
@@ -41,5 +50,9 @@ public class ClientController {
         loc.setPort(port);
         serverConversation.sendCommand(loc);
         return true;
+    }
+
+    public void stopServerConversation() {
+        serverConversation.stop();
     }
 }

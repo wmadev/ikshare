@@ -20,8 +20,6 @@ public class StartUp {
 	}
 	private StartUp()
 	{
-              ClientController.getInstance().startServerConversation();
-              
               MainScreen.getInstance();                
 	}
 

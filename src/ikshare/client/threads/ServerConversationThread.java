@@ -6,8 +6,10 @@
 package ikshare.client.threads;
 
 import ikshare.client.configuration.ClientConfigurationController;
+import ikshare.domain.event.EventController;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CommandoParser;
+import ikshare.protocol.command.WelcomeCommando;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -49,16 +51,7 @@ public class ServerConversationThread implements Runnable{
                 if (inputLine != null) {
                     System.out.println(inputLine);
                     Commando c = CommandoParser.getInstance().parse(inputLine);
-	            /*if (c instanceof CreateAccountCommando) {
-                        handleCreateAccountCommando(c);
-	            }
-                    else if( c instanceof LogOnCommando){
-                        handleLogonCommando(c);
-                    }
-                    else if( c instanceof LogOffCommando){
-                        handleLogoffCommando(c);
-                    }*/
-                    
+	            EventController.getInstance().triggerCommandoReceivedEvent(c);
                 }
             }
             serverConnection.close();
