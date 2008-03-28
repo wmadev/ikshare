@@ -42,7 +42,7 @@ public class LogOffCommando extends Commando {
     @Override
     public String toString() {
         String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("logoff")+del+getAccountName()+del+getPassword();
+        return commandoBundle.getString("logoff")+del+getAccountName()+del+getPassword()+del+getPort();
     }
     
 }

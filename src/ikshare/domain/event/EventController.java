@@ -7,6 +7,8 @@ package ikshare.domain.event;
 
 import ikshare.domain.Transfer;
 import ikshare.domain.event.listener.FileTransferListener;
+import ikshare.domain.event.listener.ServerConversationListener;
+import ikshare.protocol.command.Commando;
 import java.util.ArrayList;
 
 /**
@@ -17,9 +19,11 @@ public class EventController {
     private static EventController instance;
     
     private ArrayList<FileTransferListener> fileTransferListeners;
+    private ArrayList<ServerConversationListener> serverConversationListeners;
     
     private EventController(){
         fileTransferListeners = new ArrayList<FileTransferListener>();
+        serverConversationListeners = new ArrayList<ServerConversationListener>();
     }
     public static EventController getInstance()
     {
@@ -30,7 +34,10 @@ public class EventController {
     public void addFileTransferListener(FileTransferListener l){
         fileTransferListeners.add(l);
     }
-
+    public void addServerConversationListener(ServerConversationListener l){
+        serverConversationListeners.add(l);
+    }
+    
     public void triggerDownloadCanceledEvent(Transfer transfer) {
         //System.out.println("EVENT: Trigger download canceled");
         for(FileTransferListener listener:fileTransferListeners)
@@ -67,6 +74,12 @@ public class EventController {
 	{
 		listener.transferFailed(transfer);
 	}        
+    }
+
+    public void triggerCommandoReceivedEvent(Commando c) {
+        for(ServerConversationListener listener:serverConversationListeners){
+            listener.receivedCommando(c);
+        }
     }
     
 }

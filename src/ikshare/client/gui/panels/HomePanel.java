@@ -11,16 +11,32 @@ import ikshare.client.configuration.ClientConfiguration;
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.PeerFacade;
 
+import ikshare.domain.event.EventController;
+import ikshare.domain.event.listener.ServerConversationListener;
+import ikshare.protocol.command.Commando;
+import ikshare.protocol.command.LogNiLukNiCommando;
+import ikshare.protocol.command.WelcomeCommando;
+import java.io.File;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.graphics.Color;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 
-public class HomePanel extends AbstractPanel {
+public class HomePanel extends AbstractPanel implements ServerConversationListener{
+
+    private static String ICON_LOGON = "resources/icons/home_logon.png";
+    private static String ICON_LOGOFF = "resources/icons/home_logoff.png";
+    
+    private Label lblStatus;
+    private Button btnConnect;
+            
     public HomePanel(String text,String icon){
         super(text,icon);
         GridLayout gd=new GridLayout(2,false);
         this.setLayout(gd);
+        EventController.getInstance().addServerConversationListener(this);
         init();
         
     }
@@ -42,24 +58,56 @@ public class HomePanel extends AbstractPanel {
         final Text txtAccountPassword = new Text(grpConnect,SWT.BORDER| SWT.PASSWORD);
         txtAccountPassword.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false,1,1));
         
-        Button btnConnect=new Button(grpConnect, SWT.NONE);
+        btnConnect=new Button(grpConnect, SWT.NONE);
         btnConnect.setText(ClientConfigurationController.getInstance().getString("logon"));
+        if(new File(ICON_LOGON).exists()){
+            btnConnect.setImage(new Image(Display.getCurrent(), ICON_LOGON));
+        }
+        
         btnConnect.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false,1,1));
+        
+        Button btnCreateNew=new Button(grpConnect, SWT.NONE);
+        btnCreateNew.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false,1,1));
+        btnCreateNew.setText(ClientConfigurationController.getInstance().getString("create"));
+        
+        Label lblCurrentState = new Label(grpConnect,SWT.NONE);
+        lblCurrentState.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false,1,1));
+        lblCurrentState.setText(ClientConfigurationController.getInstance().getString("networkstate"));
+        lblStatus = new Label(grpConnect,SWT.NONE);
+        lblStatus.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false,5,1));
+        lblStatus.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
+        lblStatus.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+        lblStatus.setText(ClientConfigurationController.getInstance().getString("disconnected"));
+        
+
+        
         btnConnect.addListener(SWT.Selection, new Listener() {
 
 			public void handleEvent(Event arg0) {
 				// Fileserver mss beter starten bij opstarten van applicatie???
                                 // Hier beter enkel de logon op het netwerk
-                                ClientController.getInstance().logon(
+                                if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logon"))){
+                                    ClientController.getInstance().startServerConversation();    
+                                    ClientController.getInstance().logon(
                                         txtAccountName.getText(),
                                         txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
-                                //PeerFacade.getInstance().getPeerFileServer().startServer();
-			}
+                                    //PeerFacade.getInstance().getPeerFileServer().startServer();
+                                }
+                                else if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logoff"))){
+                                    ClientController.getInstance().logoff(
+                                        txtAccountName.getText(),
+                                        txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
+                                    ClientController.getInstance().stopServerConversation();
+                                    lblStatus.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+                                    lblStatus.setText(ClientConfigurationController.getInstance().getString("disconnected"));
+                                    btnConnect.setText(ClientConfigurationController.getInstance().getString("logon"));
+                                    if(new File(ICON_LOGON).exists()){
+                                        btnConnect.setImage(new Image(Display.getCurrent(), ICON_LOGON));
+        }                           }
+                                }
         	
         });
-        Button btnCreateNew=new Button(grpConnect, SWT.NONE);
-        btnCreateNew.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false,1,1));
-        btnCreateNew.setText(ClientConfigurationController.getInstance().getString("create"));
+        
         btnCreateNew.addListener(SWT.Selection, new Listener() {
 
 			public void handleEvent(Event arg0) {
@@ -68,6 +116,29 @@ public class HomePanel extends AbstractPanel {
         	
         });
         
+        
+        
+    }
+
+    public void receivedCommando(final Commando c) {
+        this.getDisplay().asyncExec(
+            new Runnable() {
+                public void run(){
+                    if(c instanceof WelcomeCommando){
+                       lblStatus.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
+                       lblStatus.setText(ClientConfigurationController.getInstance().getString("connected"));
+                       btnConnect.setText(ClientConfigurationController.getInstance().getString("logoff"));
+                       if(new File(ICON_LOGOFF).exists()){
+                               btnConnect.setImage(new Image(Display.getCurrent(), ICON_LOGOFF));
+                       }
+                    }
+                    else if (c instanceof LogNiLukNiCommando){
+                       lblStatus.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+                       lblStatus.setText(((LogNiLukNiCommando)c).getMessage());
+                    }
+                    
+                }
+        });
     }
 
 }
