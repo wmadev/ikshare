@@ -3,7 +3,7 @@
  * and open the template in the editor.
  */
 
-package ikshare.client.gui.configuration;
+package ikshare.client.configuration;
 
 import java.io.File;
 import java.util.Calendar;
@@ -14,16 +14,45 @@ import java.util.Calendar;
  *
  * @author awosy
  */
-public class Configuration {
+public class ClientConfiguration {
     private String language;
     private String nickname;
     private Calendar birthday;
     private File sharedFolder;
+    private String ikshareServerAddress;
+    private int ikshareServerPort;
+    private int fileTransferPort;
     
-    public Configuration(){
+    public ClientConfiguration(){
         
     }
 
+    public int getFileTransferPort() {
+        return fileTransferPort;
+    }
+
+    public void setFileTransferPort(int fileTransferPort) {
+        this.fileTransferPort = fileTransferPort;
+    }
+
+    public String getIkshareServerAddress() {
+        return ikshareServerAddress;
+    }
+
+    public void setIkshareServerAddress(String ikshareServerAddress) {
+        this.ikshareServerAddress = ikshareServerAddress;
+    }
+
+    public int getIkshareServerPort() {
+        return ikshareServerPort;
+    }
+
+    public void setIkshareServerPort(int ikshareServerPort) {
+        this.ikshareServerPort = ikshareServerPort;
+    }
+
+    
+    
     public File getSharedFolder(){
         return sharedFolder;
     }

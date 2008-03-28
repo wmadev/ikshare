@@ -3,10 +3,9 @@
  * and open the template in the editor.
  */
 
-package ikshare.client.gui.configuration;
+package ikshare.client.configuration;
 
 import ikshare.client.gui.MainScreen;
-import ikshare.client.gui.configuration.Configuration;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
@@ -20,8 +19,6 @@ import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
-import javax.xml.xpath.XPath;
-import javax.xml.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -31,17 +28,17 @@ import org.w3c.dom.NodeList;
  *
  * @author awosy
  */
-public class ConfigurationController {
-    private static ConfigurationController instance;
-    private Configuration config;
+public class ClientConfigurationController {
+    private static ClientConfigurationController instance;
+    private ClientConfiguration config;
     
-    private ConfigurationController() {
+    private ClientConfigurationController() {
         loadConfiguration();
     }
     
-    public static ConfigurationController getInstance(){
+    public static ClientConfigurationController getInstance(){
         if(instance == null){
-            instance = new ConfigurationController();
+            instance = new ClientConfigurationController();
         }
         return instance;
     }
@@ -59,23 +56,24 @@ public class ConfigurationController {
             
             // if the config file is not found, return default configuration
             if(!configFile.exists()){
-                config = new DefaultConfiguration();
+                config = new DefaultClientConfiguration();
             }
             else{
-                config = new Configuration();
+                config = new ClientConfiguration();
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder parser = factory.newDocumentBuilder();
                 // TODO: If document is not valid return default
                 Document doc = parser.parse(configFile);
                 loadUserSettings(doc,config);
+                loadNetworkSettings(doc,config);
             }
         }catch (Exception e) {
             e.printStackTrace();
-            config = new DefaultConfiguration();
+            config = new DefaultClientConfiguration();
         } 
     }
         
-    private void loadUserSettings(Document doc,Configuration config){
+    private void loadUserSettings(Document doc,ClientConfiguration config){
         Node node = doc.getDocumentElement().getElementsByTagName("user-settings").item(0);
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
@@ -96,21 +94,46 @@ public class ConfigurationController {
             }
         }
     }
+    private void loadNetworkSettings(Document doc,ClientConfiguration config){
+        Node node = doc.getDocumentElement().getElementsByTagName("network-settings").item(0);
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node child = childNodes.item(i);
+            if (child.getNodeName().equals("ikshare-server-address")){
+                config.setIkshareServerAddress(((Element) child).getTextContent());
+            }else if(child.getNodeName().equals("ikshare-server-port")){
+                try{
+                    config.setIkshareServerPort(Integer.parseInt(((Element) child).getTextContent()));
+                }
+                catch(NumberFormatException e){
+                    config.setIkshareServerPort(6000);
+                }
+            }else if(child.getNodeName().equals("file-transfer-port")){
+                try{
+                    config.setIkshareServerPort(Integer.parseInt(((Element) child).getTextContent()));
+                }
+                catch(NumberFormatException e){
+                    config.setIkshareServerPort(6666);
+                }
+            }
+        }
+    }
     
     public void saveConfiguration(){
         saveConfiguration(config);
     }
     
-    public void saveConfiguration(Configuration config) {
+    public void saveConfiguration(ClientConfiguration config) {
          try{
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder parser = factory.newDocumentBuilder();
             Document doc = parser.newDocument();
             Element configurationNode = doc.createElement("ikshare-configuration");
             Element userSettingsNode = buildUserSettingsNode(doc);
+            Element networkSettingsNode = buildNetworkSettingsNode(doc);
             configurationNode.appendChild(userSettingsNode);
+            configurationNode.appendChild(networkSettingsNode);
             doc.appendChild(configurationNode);
-            System.out.println("resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"configuration.xml");
             FileOutputStream out = new FileOutputStream("resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"configuration.xml");
           
                 
@@ -150,6 +173,26 @@ public class ConfigurationController {
         userSettings.appendChild(sharedFolder);
         return userSettings;
     }
+    private Element buildNetworkSettingsNode(Document doc){
+        Element networkSettings = doc.createElement("network-settings");
+        // Ikshare server address
+        Element serverAddress = doc.createElement("ikshare-server-address");
+        serverAddress.appendChild(doc.createTextNode(config.getIkshareServerAddress()));
+        
+        // Ikshare server port
+        Element serverPort = doc.createElement("ikshare-server-port");
+        serverPort.appendChild(doc.createTextNode(String.valueOf(config.getIkshareServerPort())));
+        
+        // File transfer port
+        Element transferPort = doc.createElement("file-transfer-port");
+        transferPort.appendChild(doc.createTextNode(String.valueOf(config.getFileTransferPort())));
+        
+        // add to networksettings
+        networkSettings.appendChild(serverAddress);
+        networkSettings.appendChild(serverPort);
+        networkSettings.appendChild(transferPort);
+        return networkSettings;
+    }
     
     public String getString(String key){
         try{
@@ -159,7 +202,7 @@ public class ConfigurationController {
             return "-- KeyNotFound --";
         }
     }
-    public Configuration getConfiguration(){
+    public ClientConfiguration getConfiguration(){
         return config;
     }
 }

@@ -5,7 +5,7 @@
 
 package ikshare.client.gui;
 
-import ikshare.client.gui.configuration.ConfigurationController;
+import ikshare.client.configuration.ClientConfigurationController;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
@@ -30,7 +30,7 @@ public class InfoBar extends Composite {
      */    
     private void init() {
         Label lblDownload = new Label(this,SWT.FILL);
-        lblDownload.setText(ConfigurationController.getInstance().getString("numberofdownloads")+":");
+        lblDownload.setText(ClientConfigurationController.getInstance().getString("numberofdownloads")+":");
         GridData data=new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
         lblDownload.setLayoutData(data);
         
@@ -41,7 +41,7 @@ public class InfoBar extends Composite {
         lblNrDownload.setLayoutData(data2);
         
         Label lblUpload = new Label(this,SWT.NONE);
-        lblUpload.setText(ConfigurationController.getInstance().getString("numberofuploads")+":");
+        lblUpload.setText(ClientConfigurationController.getInstance().getString("numberofuploads")+":");
         data=new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
         lblUpload.setLayoutData(data);
         
@@ -50,7 +50,7 @@ public class InfoBar extends Composite {
         lblNrUpload.setLayoutData(data2);
         
         Label lblShared = new Label(this,SWT.NONE);
-        lblShared.setText(ConfigurationController.getInstance().getString("numberofsharedfiles")+":");
+        lblShared.setText(ClientConfigurationController.getInstance().getString("numberofsharedfiles")+":");
         data=new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
         lblShared.setLayoutData(data);
         
