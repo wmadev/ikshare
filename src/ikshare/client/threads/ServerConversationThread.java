@@ -1,28 +1,16 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.threads;
 
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CommandoParser;
-import ikshare.protocol.command.WelcomeCommando;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- *
- * @author awosy
- */
 public class ServerConversationThread implements Runnable{
 
     private Socket serverConnection;
@@ -48,8 +36,8 @@ public class ServerConversationThread implements Runnable{
         try {
             while (running) {
                 String inputLine = incomingReader.readLine();
+                System.out.println(inputLine);
                 if (inputLine != null) {
-                    System.out.println(inputLine);
                     Commando c = CommandoParser.getInstance().parse(inputLine);
 	            EventController.getInstance().triggerCommandoReceivedEvent(c);
                 }
@@ -62,12 +50,9 @@ public class ServerConversationThread implements Runnable{
     
     public void sendCommand(Commando command){
         outputWriter.println(command.toString());
-        System.out.println("SEND: "+command.toString());
     }
     
     public void stop(){
         running = false;
     }
-
-    
 }
