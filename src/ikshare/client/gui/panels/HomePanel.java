@@ -1,16 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.gui.panels;
 
 import ikshare.client.ClientController;
 import ikshare.client.gui.AbstractPanel;
-import ikshare.client.configuration.ClientConfiguration;
-import ikshare.client.configuration.ClientConfigurationController;
-import ikshare.domain.PeerFacade;
-
+import ikshare.client.configuration.*;
+import ikshare.client.gui.dialogs.CreateAccountDialog;
+import ikshare.client.gui.dialogs.CreateAccountDialogData;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.protocol.command.Commando;
@@ -18,8 +12,7 @@ import ikshare.protocol.command.LogNiLukNiCommando;
 import ikshare.protocol.command.WelcomeCommando;
 import java.io.File;
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.Color;
-import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
@@ -82,38 +75,43 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
 
         
         btnConnect.addListener(SWT.Selection, new Listener() {
-
-			public void handleEvent(Event arg0) {
-				// Fileserver mss beter starten bij opstarten van applicatie???
-                                // Hier beter enkel de logon op het netwerk
-                                if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logon"))){
-                                    ClientController.getInstance().startServerConversation();    
-                                    ClientController.getInstance().logon(
-                                        txtAccountName.getText(),
-                                        txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
+            public void handleEvent(Event arg0) {
+                // Fileserver mss beter starten bij opstarten van applicatie???
+                // Hier beter enkel de logon op het netwerk
+                if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logon"))){
+                    ClientController.getInstance().startServerConversation();
+                    ClientController.getInstance().logon(
+                        txtAccountName.getText(),
+                        txtAccountPassword.getText(),
+                        ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
                                     //PeerFacade.getInstance().getPeerFileServer().startServer();
-                                }
-                                else if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logoff"))){
-                                    ClientController.getInstance().logoff(
-                                        txtAccountName.getText(),
-                                        txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
-                                    ClientController.getInstance().stopServerConversation();
-                                    lblStatus.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
-                                    lblStatus.setText(ClientConfigurationController.getInstance().getString("disconnected"));
-                                    btnConnect.setText(ClientConfigurationController.getInstance().getString("logon"));
-                                    if(new File(ICON_LOGON).exists()){
-                                        btnConnect.setImage(new Image(Display.getCurrent(), ICON_LOGON));
-        }                           }
-                                }
-        	
+                }
+                else if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logoff"))){
+                    ClientController.getInstance().logoff(
+                        txtAccountName.getText(),
+                        txtAccountPassword.getText(),
+                        ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
+                        ClientController.getInstance().stopServerConversation();
+                        lblStatus.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+                        lblStatus.setText(ClientConfigurationController.getInstance().getString("disconnected"));
+                        btnConnect.setText(ClientConfigurationController.getInstance().getString("logon"));
+                        if(new File(ICON_LOGON).exists()){
+                            btnConnect.setImage(new Image(Display.getCurrent(), ICON_LOGON));
+                        }
+                }
+            }
         });
-        
         btnCreateNew.addListener(SWT.Selection, new Listener() {
-
-			public void handleEvent(Event arg0) {
-				 // Popup waarin nieuwe account kan gemaakt worden
-			}
-        	
+            public void handleEvent(Event arg0){
+                // Popup waarin nieuwe account kan gemaakt worden
+                CreateAccountDialog dialog = new CreateAccountDialog(getShell());
+                CreateAccountDialogData data = dialog.open();
+                if( data!=null){
+                    txtAccountName.setText(data.getAccountName());
+                    txtAccountPassword.setText(data.getAccountPassword());
+                    ClientController.getInstance().logon(data.getAccountName(), data.getAccountPassword(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
+                }
+            }
         });
         
         

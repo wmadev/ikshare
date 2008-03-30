@@ -6,6 +6,7 @@
 package ikshare.client;
 
 import ikshare.client.threads.ServerConversationThread;
+import ikshare.protocol.command.CreateAccountCommando;
 import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
 import java.util.concurrent.ExecutorService;
@@ -28,6 +29,16 @@ public class ClientController {
         if(instance == null)
             instance = new ClientController();
         return instance;
+    }
+
+    public void createAccount(String accountName, String accountPassword, String accountEmail) {
+
+        CreateAccountCommando cac = new CreateAccountCommando();
+        cac.setAccountName(accountName);
+        cac.setPassword(accountPassword);
+        cac.setEmail(accountEmail);
+        startServerConversation();
+        serverConversation.sendCommand(cac);
     }
 
     public void logoff(String accountName, String password, int port) {

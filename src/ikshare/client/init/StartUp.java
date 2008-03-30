@@ -20,6 +20,7 @@ public class StartUp {
 	}
 	private StartUp()
 	{
+           
               MainScreen.getInstance();                
 	}
 
