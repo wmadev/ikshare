@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package ikshare.server.configuration;
 
 import java.io.File;
@@ -14,11 +10,9 @@ import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
-/**
- *
- * @author awosy
- */
 public class ServerConfigurationController {
 
     private static ServerConfigurationController instance;
@@ -52,7 +46,7 @@ public class ServerConfigurationController {
                 DocumentBuilder parser = factory.newDocumentBuilder();
                 // TODO: If document is not valid return default
                 Document doc = parser.parse(configFile);
-                //loadUserSettings(doc,config);
+                loadServerSettings(doc,config);
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -62,7 +56,27 @@ public class ServerConfigurationController {
     public ServerConfiguration getConfiguration(){
         return config;
     }
-    public void saveConfiguration(){
+
+    private void loadServerSettings(Document doc, ServerConfiguration config) {
+        Node node = doc.getDocumentElement().getElementsByTagName("server-settings").item(0);
+        NodeList childNodes = node.getChildNodes();
+        for (int i = 0; i < childNodes.getLength(); i++) {
+            Node child = childNodes.item(i);
+            if (child.getNodeName().equals("DatabaseType")){
+                config.setDatabaseType(((Element) child).getTextContent());
+            }else if(child.getNodeName().equals("DatabaseDriver")){
+                config.setDatabaseDriver(((Element) child).getTextContent());
+            }else if(child.getNodeName().equals("databaseUser")){
+                config.setDatabaseUser(((Element) child).getTextContent());
+            }else if(child.getNodeName().equals("databasePassword")){
+                config.setDatabasePassword(((Element)child).getTextContent());
+            }else if(child.getNodeName().equals("databaseURL")){
+                config.setDatabaseURL(((Element)child).getTextContent());
+            }
+        }
+    }
+    
+    /*public void saveConfiguration(){
         saveConfiguration(config);
     }
     
@@ -93,10 +107,6 @@ public class ServerConfigurationController {
     
     private Element buildNetworkSettingsNode(Document doc){
         return null;
-    }
-    
-    
-    
-    
-    
+    }*/
+        
 }

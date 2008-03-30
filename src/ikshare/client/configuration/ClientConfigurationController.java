@@ -1,11 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.configuration;
 
-import ikshare.client.gui.MainScreen;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
@@ -24,10 +18,6 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-/**
- *
- * @author awosy
- */
 public class ClientConfigurationController {
     private static ClientConfigurationController instance;
     private ClientConfiguration config;
@@ -136,8 +126,7 @@ public class ClientConfigurationController {
             doc.appendChild(configurationNode);
             FileOutputStream out = new FileOutputStream("resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"configuration.xml");
           
-                
-            
+             
             Transformer transformer = TransformerFactory.newInstance().newTransformer();
             DOMSource source = new DOMSource(doc);
             StreamResult result = new StreamResult(out);

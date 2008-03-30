@@ -16,7 +16,7 @@ import java.util.Calendar;
 class DefaultClientConfiguration extends ClientConfiguration {
 
     public DefaultClientConfiguration()  {
-        super.setNickname("J@n@ ;)");
+        super.setNickname("nick ;)");
         super.setLanguage("en");
         Calendar date = Calendar.getInstance();
         date.set(Calendar.DAY_OF_MONTH, 17);

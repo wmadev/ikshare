@@ -1,19 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.configuration;
 
 import java.io.File;
 import java.util.Calendar;
 
-
-
-/**
- *
- * @author awosy
- */
 public class ClientConfiguration {
     private String language;
     private String nickname;
