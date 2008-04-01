@@ -80,10 +80,10 @@ public class CreateAccountDialog extends Dialog implements ServerConversationLis
         lblError.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,4,1));
         lblError.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
         btnCreate = new Button (shell, SWT.PUSH);
-        btnCreate.setText ("Create");
+        btnCreate.setText (ClientConfigurationController.getInstance().getString("create"));
         //btnCreate.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,true,false,1,1));
         btnCancel = new Button (shell, SWT.PUSH);
-        btnCancel.setText ("Cancel");
+        btnCancel.setText (ClientConfigurationController.getInstance().getString("cancel"));
         //btnCancel.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,true,false,1,1));
         
         
@@ -122,7 +122,8 @@ public class CreateAccountDialog extends Dialog implements ServerConversationLis
         valid = true;
         String errMessage = "";
         // validate account name
-        Pattern p = Pattern.compile("(.){5,32}+");
+        Pattern p = Pattern.compile("[\\w-\\.\\@_]{5,32}+");
+        
         Matcher m = p.matcher(name);
         if(!m.matches()){
             errMessage+=ClientConfigurationController.getInstance().getString("invalidaccountname")+"\n\n";
@@ -136,7 +137,8 @@ public class CreateAccountDialog extends Dialog implements ServerConversationLis
         }
         
         // validate email
-        p = Pattern.compile("(.)+[@](.)+\\.(.){2,3}+");
+        p = Pattern.compile("[\\w]+[@][\\w]+\\.[\\w]{2,3}+");
+        
         m = p.matcher(email);
         if(!m.matches()){
             errMessage+=ClientConfigurationController.getInstance().getString("invalidaccountemail")+"\n\n";
