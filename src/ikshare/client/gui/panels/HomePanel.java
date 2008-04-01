@@ -3,6 +3,8 @@ package ikshare.client.gui.panels;
 import ikshare.client.ClientController;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.configuration.*;
+import ikshare.client.gui.ExceptionWindow;
+import ikshare.client.gui.MainScreen;
 import ikshare.client.gui.custom.UIFileBrowser;
 import ikshare.client.gui.dialogs.CreateAccountDialog;
 import ikshare.client.gui.dialogs.CreateAccountDialogData;
@@ -12,6 +14,9 @@ import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.LogNiLukNiCommando;
 import ikshare.protocol.command.WelcomeCommando;
 import java.io.File;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.*;
 import org.eclipse.swt.layout.*;
@@ -80,11 +85,13 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                 // Fileserver mss beter starten bij opstarten van applicatie???
                 // Hier beter enkel de logon op het netwerk
                 if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logon"))){
-                    ClientController.getInstance().startServerConversation();
-                    ClientController.getInstance().logon(
-                        txtAccountName.getText(),
-                        txtAccountPassword.getText(),
-                        ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
+                    try {
+                        ClientController.getInstance().startServerConversation();
+                        ClientController.getInstance().logon(txtAccountName.getText(), txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
+                        
+                    } catch (IOException ex) {
+                        new ExceptionWindow(ex,MainScreen.getInstance(),false);
+                    }
                                     //PeerFacade.getInstance().getPeerFileServer().startServer();
                 }
                 else if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logoff"))){

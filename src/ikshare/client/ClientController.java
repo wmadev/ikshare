@@ -9,6 +9,7 @@ import ikshare.client.threads.ServerConversationThread;
 import ikshare.protocol.command.CreateAccountCommando;
 import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
+import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -31,7 +32,7 @@ public class ClientController {
         return instance;
     }
 
-    public void createAccount(String accountName, String accountPassword, String accountEmail) {
+    public void createAccount(String accountName, String accountPassword, String accountEmail) throws IOException {
 
         CreateAccountCommando cac = new CreateAccountCommando();
         cac.setAccountName(accountName);
@@ -49,7 +50,7 @@ public class ClientController {
         serverConversation.sendCommand(loc);
     }
     
-    public void startServerConversation(){
+    public void startServerConversation() throws IOException{
         serverConversation = new ServerConversationThread();
         executorService.execute(serverConversation);
     }
