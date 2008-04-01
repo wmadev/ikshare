@@ -72,7 +72,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
         Label lblCurrentState = new Label(grpConnect,SWT.NONE);
         lblCurrentState.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false,1,1));
         lblCurrentState.setText(ClientConfigurationController.getInstance().getString("networkstate"));
-        lblStatus = new Label(grpConnect,SWT.NONE);
+        lblStatus = new Label(grpConnect,SWT.BORDER);
         lblStatus.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false,5,1));
         lblStatus.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WHITE));
         lblStatus.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
@@ -114,7 +114,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                 // Popup waarin nieuwe account kan gemaakt worden
                 CreateAccountDialog dialog = new CreateAccountDialog(getShell());
                 CreateAccountDialogData data = dialog.open();
-                if( data!=null){
+                if(data!=null){
                     txtAccountName.setText(data.getAccountName());
                     txtAccountPassword.setText(data.getAccountPassword());
                     ClientController.getInstance().logon(data.getAccountName(), data.getAccountPassword(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
@@ -126,6 +126,15 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
         grpShared.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
         grpShared.setText(ClientConfigurationController.getInstance().getString("sharedfiles"));
         UIFileBrowser browser = new UIFileBrowser(grpShared, ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
+        
+        Button btnTest = new Button(this,SWT.NONE);
+        btnTest.setText("TEST");
+        btnTest.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
+        btnTest.addListener(SWT.Selection, new Listener() {
+            public void handleEvent(Event arg0){
+                ClientController.getInstance().share(txtAccountName.getText(), ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
+            }
+        });
         
         
     }

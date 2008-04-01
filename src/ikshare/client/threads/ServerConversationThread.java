@@ -46,7 +46,9 @@ public class ServerConversationThread implements Runnable{
     }
     
     public void sendCommand(Commando command){
-        outputWriter.println(command.toString());
+        if(running){
+            outputWriter.println(command.toString());
+        }
     }
     
     public void stop(){

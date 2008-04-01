@@ -91,7 +91,13 @@ public class CommandoParser {
         }     
         if (commandoString.startsWith(bundle.getString("canceltransfer"))) {
             return new CancelTransferCommando(commandoString);
-        }   
+        }
+        if (commandoString.startsWith(bundle.getString("share"))){
+            return new ShareCommando(commandoString);
+        }
+        if (commandoString.startsWith(bundle.getString("servererror"))){
+            return new ServerErrorCommando(commandoString);
+        }
         throw new CommandNotFoundException(commandoString);
     }
 }

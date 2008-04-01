@@ -159,9 +159,9 @@ public class CreateAccountDialog extends Dialog implements ServerConversationLis
 
     public void receivedCommando(final Commando c) {
         if(!shell.isDisposed()){
-            shell.getDisplay().asyncExec(new Runnable() {
+            shell.getDisplay().asyncExec(new Runnable(){
                 public void run(){
-                    if( c instanceof InvalidRegisterCommando){
+                    if(c instanceof InvalidRegisterCommando){
                         lblError.setText(ClientConfigurationController.getInstance().getString("invalidregister")
                              +((InvalidRegisterCommando)c).getMessage()+"\n\n");
                     }
@@ -172,5 +172,4 @@ public class CreateAccountDialog extends Dialog implements ServerConversationLis
             });
         }
     }
-       
 }

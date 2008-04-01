@@ -57,9 +57,9 @@ public class ServerConfigurationController {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node child = childNodes.item(i);
-            if (child.getNodeName().equals("DatabaseType")){
+            if (child.getNodeName().equals("databaseType")){
                 config.setDatabaseType(((Element) child).getTextContent());
-            }else if(child.getNodeName().equals("DatabaseDriver")){
+            }else if(child.getNodeName().equals("databaseDriver")){
                 config.setDatabaseDriver(((Element) child).getTextContent());
             }else if(child.getNodeName().equals("databaseUser")){
                 config.setDatabaseUser(((Element) child).getTextContent());
