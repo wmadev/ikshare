@@ -31,5 +31,6 @@ public abstract class DatabaseFactory {
         }
     }
     public abstract AccountStorage getAccountStorage();
+    public abstract FileStorage getFileStorage();
     
 }

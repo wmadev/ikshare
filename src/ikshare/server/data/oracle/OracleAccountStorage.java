@@ -53,7 +53,7 @@ public class OracleAccountStorage implements AccountStorage {
         return exists;
     }
     
-    public boolean createAccount(Peer newUser) throws DatabaseException {
+    public synchronized boolean createAccount(Peer newUser) throws DatabaseException {
         boolean success = false;
         Connection conn = OracleDatabaseFactory.getConnection();
         try {
@@ -73,7 +73,7 @@ public class OracleAccountStorage implements AccountStorage {
         return success;
     }
     
-    public boolean checkPassword(Peer user) throws DatabaseException{
+    public synchronized boolean checkPassword(Peer user) throws DatabaseException{
         boolean correct = false;
         Connection conn = OracleDatabaseFactory.getConnection();
         try {
@@ -95,15 +95,15 @@ public class OracleAccountStorage implements AccountStorage {
         return correct;
     }
 
-    public boolean deleteAccount(int userID) {
+    public synchronized boolean deleteAccount(int userID) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean updateAccount(Peer user) {
+    public synchronized boolean updateAccount(Peer user) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean logon(Peer user) throws DatabaseException {
+    public synchronized boolean logon(Peer user) throws DatabaseException {
         boolean success = false;
         Connection conn = OracleDatabaseFactory.getConnection();
         try {
@@ -124,7 +124,7 @@ public class OracleAccountStorage implements AccountStorage {
         return success;
     }
 
-    public boolean logoff(Peer user) throws DatabaseException {
+    public synchronized boolean logoff(Peer user) throws DatabaseException {
         boolean success = false;
         Connection conn = OracleDatabaseFactory.getConnection();
         try {

@@ -9,6 +9,8 @@ import ikshare.client.threads.ServerConversationThread;
 import ikshare.protocol.command.CreateAccountCommando;
 import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
+import ikshare.protocol.command.ShareCommando;
+import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -62,6 +64,29 @@ public class ClientController {
         loc.setPort(port);
         serverConversation.sendCommand(loc);
         return true;
+    }
+    
+    public boolean share(String accountName,File root){
+        ShareCommando sc = new ShareCommando();
+        sc.setAccountName(accountName);
+        sc.setShares(voegtoe(root));
+        serverConversation.sendCommand(sc);
+        return true;
+    }
+    private String voegtoe(File file){
+        String line = "";
+        
+            if(file.isDirectory()){
+                File[] files = file.listFiles(); 
+                line+=file.getPath()+":DIR:"+files.length+";";
+                for(int i = 0;i<files.length;i++){
+                    line+=voegtoe(files[i]);
+                }
+            }else{
+               line+=file.getName()+":FILE:"+file.length()+";";
+            }
+        
+        return line;
     }
 
     public void stopServerConversation() {

@@ -11,6 +11,7 @@ import java.io.*;
 import java.net.Socket;
 import java.text.MessageFormat;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 /**
  *
  * @author awosy
@@ -49,6 +50,9 @@ public class HandleClientThread implements Runnable{
                     }
                     else if( c instanceof LogOffCommando){
                         handleLogoffCommando(c);
+                    }
+                    else if( c instanceof ShareCommando){
+                        handleShareCommando(c);
                     }
                     
                 }
@@ -133,6 +137,41 @@ public class HandleClientThread implements Runnable{
             ServerErrorCommando sec = new ServerErrorCommando();
             sec.setMessage(ex.getMessage());
             outputWriter.println(sec.toString());
+        }
+    }
+
+    private void handleShareCommando(Commando c) {
+        ShareCommando sc = (ShareCommando)c;
+        StringTokenizer tokenizer = new StringTokenizer(sc.getShares(),";");
+        String token = tokenizer.nextToken();
+        String[] split = token.split(":");
+        SharedFolder root = new SharedFolder(true, sc.getAccountName(),split[0]);
+        parseShares(root,Integer.parseInt(split[2]),tokenizer);
+        try {
+            ServerController.getInstance().addShares(sc.getAccountName(), root);
+            
+        }
+        catch (DatabaseException ex) {
+            ServerErrorCommando sec = new ServerErrorCommando();
+            sec.setMessage(ex.getMessage());
+            outputWriter.println(sec.toString());
+        }
+    }
+    private void parseShares(SharedFolder root,int number,StringTokenizer tokenizer){
+        while(number>0){
+            String token = tokenizer.nextToken();
+            String[] split = token.split(":");
+            if(split[1].equalsIgnoreCase("DIR") && Integer.parseInt(split[2])>0){
+                SharedFolder folder = new SharedFolder(true, root.getAccountName(), split[0]);
+                root.getSharedItems().add(folder);
+                parseShares(folder, Integer.parseInt(split[2]), tokenizer);
+            }
+            else{
+                if(Long.parseLong(split[2])>0){
+                    root.getSharedItems().add(new SharedFile(false,split[0],Long.parseLong(split[2])));
+                }
+            }
+            number--;
         }
     }
 }

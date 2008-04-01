@@ -6,6 +6,8 @@
 package ikshare.server;
 
 import ikshare.domain.Peer;
+import ikshare.domain.SharedFolder;
+import ikshare.domain.SharedItem;
 import ikshare.server.data.DatabaseException;
 import ikshare.server.data.DatabaseFactory;
 import java.util.concurrent.ExecutorService;
@@ -31,6 +33,10 @@ public class ServerController {
         if(instance == null)
             instance = new ServerController();
         return instance;
+    }
+
+    public boolean addShares(String accountName, SharedFolder root) throws DatabaseException {
+        return databaseFactory.getFileStorage().addShares(accountName,root);
     }
 
     public boolean checkPassword(Peer user) throws DatabaseException {

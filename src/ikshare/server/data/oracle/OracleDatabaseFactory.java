@@ -8,6 +8,7 @@ package ikshare.server.data.oracle;
 import ikshare.server.configuration.ServerConfiguration;
 import ikshare.server.data.AccountStorage;
 import ikshare.server.data.DatabaseFactory;
+import ikshare.server.data.FileStorage;
 import java.sql.Connection;
 
 /**
@@ -46,6 +47,11 @@ public class OracleDatabaseFactory extends DatabaseFactory {
     @Override
     public AccountStorage getAccountStorage() {
         return OracleAccountStorage.getInstance();
+    }
+    
+    @Override
+    public FileStorage getFileStorage(){
+        return OracleFileStorage.getInstance();
     }
 
 }
