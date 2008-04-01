@@ -3,6 +3,7 @@ package ikshare.client.gui.panels;
 import ikshare.client.ClientController;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.configuration.*;
+import ikshare.client.gui.custom.UIFileBrowser;
 import ikshare.client.gui.dialogs.CreateAccountDialog;
 import ikshare.client.gui.dialogs.CreateAccountDialogData;
 import ikshare.domain.event.EventController;
@@ -114,6 +115,10 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
             }
         });
         
+        Group grpShared = new Group(this,SWT.NONE);
+        grpShared.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
+        grpShared.setText(ClientConfigurationController.getInstance().getString("sharedfiles"));
+        UIFileBrowser browser = new UIFileBrowser(grpShared, ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
         
         
     }
