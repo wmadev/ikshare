@@ -7,11 +7,16 @@ package ikshare.client.gui.dialogs;
 
 import ikshare.client.ClientController;
 import ikshare.client.configuration.ClientConfigurationController;
+import ikshare.client.gui.ExceptionWindow;
+import ikshare.client.gui.MainScreen;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CreatedAccountCommando;
 import ikshare.protocol.command.InvalidRegisterCommando;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.swt.SWT;
@@ -55,7 +60,7 @@ public class CreateAccountDialog extends Dialog implements ServerConversationLis
         GridData secondColum = new GridData(SWT.FILL,SWT.FILL,true,false,3,1);
         firstColum.minimumHeight = secondColum.minimumHeight = 30;
         
-        Label info = new Label(shell,SWT.NONE);
+        Label info = new Label(shell,SWT.WRAP);
         info.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false,4,1));
         info.setText(ClientConfigurationController.getInstance().getString("createaccountinfo"));
         
@@ -90,12 +95,16 @@ public class CreateAccountDialog extends Dialog implements ServerConversationLis
         btnCreate.addListener(SWT.Selection, new Listener (){
             public void handleEvent (final Event event) {            
                     if(validate(txtAccountName.getText(),txtAccountPassword.getText(),txtAccountEmail.getText())){
+                    try {
                         data = new CreateAccountDialogData();
                         data.setAccountName(txtAccountName.getText());
                         data.setAccountPassword(txtAccountPassword.getText());
                         data.setAccountEmail(txtAccountEmail.getText());
                         ClientController.getInstance().startServerConversation();
-                        ClientController.getInstance().createAccount(data.getAccountName(),data.getAccountPassword(),data.getAccountEmail());
+                        ClientController.getInstance().createAccount(data.getAccountName(), data.getAccountPassword(), data.getAccountEmail());
+                    } catch (IOException ex) {
+                        new ExceptionWindow(ex,MainScreen.getInstance(),false);
+                    }
                      }
             
             }

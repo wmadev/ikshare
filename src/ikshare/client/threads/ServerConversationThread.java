@@ -18,18 +18,15 @@ public class ServerConversationThread implements Runnable{
     private BufferedReader incomingReader;
     private boolean running = false;
     
-    public ServerConversationThread(){
-        try{
+    public ServerConversationThread() throws IOException{
+    
             serverConnection = new Socket(
                 InetAddress.getByName(ClientConfigurationController.getInstance().getConfiguration().getIkshareServerAddress()),
                 ClientConfigurationController.getInstance().getConfiguration().getIkshareServerPort());
             outputWriter = new PrintWriter(serverConnection.getOutputStream(),true);
             incomingReader = new BufferedReader(new InputStreamReader(serverConnection.getInputStream()));
             running = true;
-        }
-        catch(IOException e){
-            e.printStackTrace();
-        }
+    
     }
     
     public void run() {
