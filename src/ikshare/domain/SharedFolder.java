@@ -13,6 +13,7 @@ public class SharedFolder extends SharedItem {
     private String accountName;
     private String path;
     private int parentID;
+    private int folderID;
 
     public SharedFolder(boolean folder,String accountName,String path){
         super.setFolder(folder);
@@ -40,12 +41,24 @@ public class SharedFolder extends SharedItem {
         this.parentID = parentID;
     }
 
+    public int getFolderID() {
+        return folderID;
+    }
+
+    public void setFolderID(int folderID) {
+        this.folderID = folderID;
+    }
+    
     public String getPath() {
         return path;
     }
 
     public void setPath(String path) {
         this.path = path;
+    }
+    @Override
+    public boolean equals(Object o){
+        return true;
     }
     
     
