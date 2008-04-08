@@ -76,19 +76,22 @@ public class OracleFileStorage implements FileStorage {
             ResultSet result = stmtAddFolder.executeQuery();
             result.next();
             int p = result.getInt(1);
+            ((SharedFolder)root).setFolderID(p);
             result.close();
             stmtAddFolder.close();
             for(SharedItem item :root.getSharedItems()){
                 addFolder(item,conn,p);
             }
         }else if(!root.isFolder()){
-            addFile((SharedFile)root,conn,parent);
+            ((SharedFile)root).setFolderID(parent);
+            addFile((SharedFile)root,conn);
         }
         
     }
-    private void addFile(SharedFile file,Connection conn,int folderID) throws SQLException{
+    private void addFile(SharedFile file,Connection conn) throws SQLException{
+        
         PreparedStatement stmtAddFile = conn.prepareStatement(bundle.getString("addFile"));
-        stmtAddFile.setInt(1, folderID);
+        stmtAddFile.setInt(1, file.getFolderID());
         stmtAddFile.setString(2, file.getName());
         stmtAddFile.setLong(3, file.getSize());
         stmtAddFile.executeUpdate();
