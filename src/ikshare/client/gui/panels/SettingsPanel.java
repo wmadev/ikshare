@@ -8,6 +8,7 @@ package ikshare.client.gui.panels;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.configuration.ClientConfiguration;
 import ikshare.client.configuration.ClientConfigurationController;
+import ikshare.domain.event.EventController;
 import java.io.File;
 import java.util.Calendar;
 import org.eclipse.swt.*;
@@ -67,6 +68,7 @@ public class SettingsPanel extends AbstractPanel{
                     config.setFileTransferPort(6666);
                 }
                 ClientConfigurationController.getInstance().saveConfiguration(config);
+                EventController.getInstance().triggerConfigurationUpdatedEvent(config);
             }
         });
     }
