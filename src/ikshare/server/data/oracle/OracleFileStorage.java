@@ -76,6 +76,7 @@ public class OracleFileStorage implements FileStorage {
             ResultSet result = stmtAddFolder.executeQuery();
             result.next();
             int p = result.getInt(1);
+            result.close();
             stmtAddFolder.close();
             for(SharedItem item :root.getSharedItems()){
                 addFolder(item,conn,p);
