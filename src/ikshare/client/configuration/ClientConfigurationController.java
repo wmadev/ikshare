@@ -41,10 +41,11 @@ public class ClientConfigurationController {
     public void loadConfiguration() {
         try {
             // Try to open config file
-            File configFile =  new File("resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"configuration.xml");
-            if(!new File("resources"+System.getProperty("file.separator")+"config").exists())
-                new File("resources"+System.getProperty("file.separator")+"config").mkdir();
-            
+            String sep = System.getProperty("file.separator");
+            File configFile =  new File(System.getProperty("user.home")+sep+"ikshare"+sep+"configuration.xml");
+            if(!new File(System.getProperty("user.home")+sep+"ikshare").exists()){
+                new File(System.getProperty("user.home")+sep+"ikshare").mkdir();
+            }
             // if the config file is not found, return default configuration
             if(!configFile.exists()){
                 config = new DefaultClientConfiguration();
@@ -125,7 +126,7 @@ public class ClientConfigurationController {
             configurationNode.appendChild(userSettingsNode);
             configurationNode.appendChild(networkSettingsNode);
             doc.appendChild(configurationNode);
-            FileOutputStream out = new FileOutputStream("resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"configuration.xml");
+            FileOutputStream out = new FileOutputStream(System.getProperty("user.home")+System.getProperty("file.separator")+"ikshare"+System.getProperty("file.separator")+"configuration.xml");
           
              
             Transformer transformer = TransformerFactory.newInstance().newTransformer();

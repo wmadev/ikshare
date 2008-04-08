@@ -322,7 +322,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
                             if(t.getId().equals(transfer.getId()))
                             {
                                 item.setText(2,ClientConfigurationController.getInstance().getString("finished"));
-                                item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GREEN));
+                                item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
                             }
                         }
                         for(TableItem item : tblUploadTransfer.getItems())
