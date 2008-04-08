@@ -1,5 +1,6 @@
 package ikshare.client.configuration;
 
+import ikshare.domain.event.EventController;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;

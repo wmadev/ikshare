@@ -6,8 +6,11 @@
 package ikshare.client.gui.custom;
 
 import eu.medsea.util.MimeUtil;
+import ikshare.client.configuration.ClientConfiguration;
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.client.gui.UtilityClass;
+import ikshare.domain.event.EventController;
+import ikshare.domain.event.listener.ClientConfigurationListener;
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
@@ -21,7 +24,7 @@ import org.eclipse.swt.widgets.*;
  *
  * @author awosy
  */
-public class UIFileBrowser{
+public class UIFileBrowser implements ClientConfigurationListener{
     private static String MIMETYPE_ICONS = "resources/icons/mimetypes/";
     private static String ICON_UP = "resources/icons/go_up.png";
     private Composite parent;
@@ -32,6 +35,7 @@ public class UIFileBrowser{
     
     public UIFileBrowser(Composite parent,File root){
         this.parent = parent;
+        EventController.getInstance().addClientConfigurationListener(this);
         parent.setLayout(new GridLayout(3,false));
         this.root = current = root;
         init();
@@ -64,6 +68,7 @@ public class UIFileBrowser{
         tblFileBrowser = new Table(parent,SWT.BORDER|SWT.FULL_SELECTION);
         tblFileBrowser.setLinesVisible (true);
         tblFileBrowser.setHeaderVisible (true);
+        
         tblFileBrowser.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,3,1));
         addTableColumn(tblFileBrowser,ClientConfigurationController.getInstance().getString("filename"),580,SWT.LEFT);
 	addTableColumn(tblFileBrowser,ClientConfigurationController.getInstance().getString("filetype"),70,SWT.LEFT);
@@ -205,6 +210,16 @@ public class UIFileBrowser{
 	column.pack();
 	column.setWidth(width);
 	column.setAlignment(align);
+    }
+
+    public void update(final ClientConfiguration config) {
+        parent.getDisplay().asyncExec(
+            new Runnable() {
+                public void run(){
+                    root = current = config.getSharedFolder();
+                    fillTable(root);
+            }
+        });
     }
     
 }
