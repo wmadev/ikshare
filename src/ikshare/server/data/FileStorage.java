@@ -5,7 +5,9 @@
 
 package ikshare.server.data;
 
+import ikshare.domain.SearchResult;
 import ikshare.domain.SharedFolder;
+import java.util.List;
 
 /**
  *
@@ -13,4 +15,5 @@ import ikshare.domain.SharedFolder;
  */
 public interface FileStorage {
     public boolean addShares(String accountName,SharedFolder root) throws DatabaseException;
+    public List<SearchResult> basicSearch(String name) throws DatabaseException;
 }
