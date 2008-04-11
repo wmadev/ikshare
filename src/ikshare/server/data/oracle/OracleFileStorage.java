@@ -5,6 +5,7 @@
 
 package ikshare.server.data.oracle;
 
+import ikshare.domain.SearchResult;
 import ikshare.domain.SharedFile;
 import ikshare.domain.SharedFolder;
 import ikshare.domain.SharedItem;
@@ -14,6 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.ResourceBundle;
 
 /**
@@ -96,6 +98,10 @@ public class OracleFileStorage implements FileStorage {
         stmtAddFile.setLong(3, file.getSize());
         stmtAddFile.executeUpdate();
         stmtAddFile.close();
+    }
+
+    public List<SearchResult> basicSearch(String name) throws DatabaseException {
+        throw new UnsupportedOperationException("Not supported yet.");
     }
     
     

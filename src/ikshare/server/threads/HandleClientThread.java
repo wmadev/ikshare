@@ -162,7 +162,8 @@ public class HandleClientThread implements Runnable{
             String token = tokenizer.nextToken();
             String[] split = token.split(":");
             if(split[1].equalsIgnoreCase("DIR") && Integer.parseInt(split[2])>0){
-                SharedFolder folder = new SharedFolder(true, root.getAccountName(), split[0]);
+                SharedFolder folder = new SharedFolder(true, root.getAccountName(),
+                        split[0].substring(split[0].indexOf(System.getProperty("file.separator"),2)));
                 root.getSharedItems().add(folder);
                 parseShares(folder, Integer.parseInt(split[2]), tokenizer);
             }

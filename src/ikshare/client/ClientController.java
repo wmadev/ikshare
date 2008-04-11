@@ -73,19 +73,18 @@ public class ClientController {
         serverConversation.sendCommand(sc);
         return true;
     }
+    
     private String voegtoe(File file){
         String line = "";
-        
-            if(file.isDirectory()){
-                File[] files = file.listFiles(); 
-                line+=file.getPath()+":DIR:"+files.length+";";
-                for(int i = 0;i<files.length;i++){
-                    line+=voegtoe(files[i]);
-                }
-            }else{
-               line+=file.getName()+":FILE:"+file.length()+";";
+        if(file.isDirectory()){
+            File[] files = file.listFiles(); 
+            line+=file.getPath()+":DIR:"+files.length+";";
+            for(int i = 0;i<files.length;i++){
+                line+=voegtoe(files[i]);
             }
-        
+        }else{
+           line+=file.getName()+":FILE:"+file.length()+";";
+        }
         return line;
     }
 

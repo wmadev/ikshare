@@ -19,14 +19,13 @@ import java.io.File;
 import java.util.Date;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.layout.RowData;
-import org.eclipse.swt.layout.RowLayout;
 import org.eclipse.swt.widgets.*;
 
 /**
@@ -35,14 +34,44 @@ import org.eclipse.swt.widgets.*;
  */
 public class SearchPanel extends AbstractPanel{
     private static String ICON_SEARCH="resources/icons/sp_found.png";
-	private Table tblResults;
-	
+    private Table tblResults;
+    private boolean advanced = false;
+    	
     public SearchPanel(String text,String icon){
         super(text,icon);
         GridLayout gl = new GridLayout(1,false);
         this.setLayout(gl);
         this.init();
         this.load();
+    }
+    private Group drawAdvancedSearch(Composite parent) {
+        Group grpAdvanced = new Group(parent, SWT.BORDER);
+        grpAdvanced.setLayout(new GridLayout(2,false));
+        grpAdvanced.setText("Advanced Search");
+        grpAdvanced.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
+        Label lblSearchBasic = new Label(grpAdvanced,SWT.NONE);
+        lblSearchBasic.setText("Keyword");
+        GridData gd=new GridData(SWT.LEFT, SWT.CENTER, false,false, 1,1);
+        gd.widthHint = 100;
+        lblSearchBasic.setLayoutData(gd);
+        Text txtKeyword = new Text(grpAdvanced,SWT.BORDER);
+        txtKeyword.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
+        return grpAdvanced;
+    }
+    
+    private Group drawBasicSearch(Composite parent) {
+        Group grpBasic = new Group(parent, SWT.BORDER);
+        grpBasic.setLayout(new GridLayout(2,false));
+        grpBasic.setText("Basic Search");
+        grpBasic.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
+        Label lblSearchBasic = new Label(grpBasic,SWT.NONE);
+        lblSearchBasic.setText("Keyword");
+        GridData gd=new GridData(SWT.LEFT, SWT.CENTER, false,false, 1,1);
+        gd.widthHint = 100;
+        lblSearchBasic.setLayoutData(gd);
+        Text txtKeyword = new Text(grpBasic,SWT.BORDER);
+        txtKeyword.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
+        return grpBasic;
     }
         
     private void load() {
@@ -60,18 +89,63 @@ public class SearchPanel extends AbstractPanel{
 	}
 
 	private void init() {
-        //SearchOptions
-        Composite options = new Composite(this, SWT.BORDER);
-        GridData gd=new GridData(SWT.FILL, SWT.FILL, true,false, 1,1);
-        gd.heightHint = 100;
-        options.setLayoutData(gd);
+        //Search query
+        final Composite cmpSearch = new Composite(this,SWT.NONE);
+        cmpSearch.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false,1,1));
+        final StackLayout layout = new StackLayout();
+        cmpSearch.setLayout(layout);
+        
+        
+        layout.topControl = drawBasicSearch(cmpSearch);
+        
+        Composite cmpButtons = new Composite(this,SWT.NONE);
+        cmpButtons.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,false,false,2,1));
+        cmpButtons.setLayout(new GridLayout(2,false));
+        Button btnAdvanced = new Button(cmpButtons,SWT.BORDER);
+        btnAdvanced.setText("Advanced search");
+        btnAdvanced.addListener(SWT.Selection, new Listener(){
+
+                   public void handleEvent(Event e) {
+                       Display.getCurrent().asyncExec(
+            new Runnable() {
+                public void run(){
+                       
+                       if(!advanced){
+                            advanced = true;
+                            
+                            layout.topControl = drawAdvancedSearch(cmpSearch);
+                        }
+                        else{
+                            advanced = false;
+                            
+                            layout.topControl = drawBasicSearch(cmpSearch);
+                        }
+                        cmpSearch.layout();
+                    }
+        });                     
+                }
+        
+                });
+                
+
+
+        btnAdvanced.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,false, 1,1));
+        Button btnSearch = new Button(cmpButtons,SWT.BORDER);
+        btnSearch.setText("Search");
+        btnSearch.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,false, 1,1));
+              
+        
+        /*Label lblSize
+        Label lbl*/
+        
+        
+        
+        
+        
+        
         //SearchResults
         Composite results = new Composite(this, SWT.BORDER);
         results.setLayout(new FillLayout());
-        
-
-        
-        
         
         GridData gd2=new GridData(SWT.FILL, SWT.FILL, true,true, 1,1);
         results.setLayoutData(gd2);
