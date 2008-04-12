@@ -9,6 +9,13 @@ public class SearchResult {
     private String name;
     private long size;
     private boolean folder;
+    
+    public SearchResult(String name, String owner, long size, boolean folder){
+        this.name=name;
+        this.owner=owner;
+        this.size=size;
+        this.folder=folder;
+    }
 
     public boolean isFolder() {
         return folder;
