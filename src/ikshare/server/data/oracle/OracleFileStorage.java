@@ -15,6 +15,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
 
@@ -101,7 +102,25 @@ public class OracleFileStorage implements FileStorage {
     }
 
     public List<SearchResult> basicSearch(String name) throws DatabaseException {
-        throw new UnsupportedOperationException("Not supported yet.");
+        ArrayList<SearchResult> results=new ArrayList<SearchResult>();
+        Connection conn = OracleDatabaseFactory.getConnection();
+        try {
+            PreparedStatement stmtBasicSearch = conn.prepareStatement(bundle.getString("basicSearch"));
+            stmtBasicSearch.setString(1, name);
+            ResultSet result = stmtBasicSearch.executeQuery();
+            while(result.next()){
+                SearchResult sr=new SearchResult(result.getString("FILENAME"),result.getString("ACCOUNTNAME"),result.getLong("SIZE"),false);
+                results.add(sr);
+            }
+            result.close();
+            stmtBasicSearch.close();
+        } catch (SQLException e) {
+            
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
+        } finally {
+            OracleDatabaseFactory.freeConnection(conn);
+        }
+       return  results;
     }
     
     

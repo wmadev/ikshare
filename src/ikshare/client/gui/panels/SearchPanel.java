@@ -101,7 +101,7 @@ public class SearchPanel extends AbstractPanel{
         Composite cmpButtons = new Composite(this,SWT.NONE);
         cmpButtons.setLayoutData(new GridData(SWT.RIGHT,SWT.FILL,false,false,2,1));
         cmpButtons.setLayout(new GridLayout(2,false));
-        Button btnAdvanced = new Button(cmpButtons,SWT.BORDER);
+        final Button btnAdvanced = new Button(cmpButtons,SWT.BORDER);
         btnAdvanced.setText("Advanced search");
         btnAdvanced.addListener(SWT.Selection, new Listener(){
 
@@ -112,12 +112,12 @@ public class SearchPanel extends AbstractPanel{
                        
                        if(!advanced){
                             advanced = true;
-                            
+                            btnAdvanced.setText("Basic search");
                             layout.topControl = drawAdvancedSearch(cmpSearch);
                         }
                         else{
                             advanced = false;
-                            
+                            btnAdvanced.setText("Advanced search");
                             layout.topControl = drawBasicSearch(cmpSearch);
                         }
                         cmpSearch.layout();
