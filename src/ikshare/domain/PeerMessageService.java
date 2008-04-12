@@ -2,7 +2,6 @@ package ikshare.domain;
 
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
-import ikshare.domain.event.listener.FileTransferListener;
 import ikshare.protocol.command.CancelTransferCommando;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CommandoParser;
@@ -16,7 +15,6 @@ import ikshare.protocol.command.GiveConnCommando;
 import ikshare.protocol.command.GivePeerCommando;
 import ikshare.protocol.command.MyTurnCommando;
 import ikshare.protocol.command.PassTurnCommando;
-import ikshare.protocol.command.WelcomeCommando;
 import ikshare.protocol.command.YourTurnCommando;
 import ikshare.protocol.exception.CommandNotFoundException;
 
@@ -25,11 +23,8 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.InetAddress;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 

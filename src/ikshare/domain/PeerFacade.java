@@ -112,11 +112,6 @@ public class PeerFacade {
 		return instance;
 	}
 
-	@SuppressWarnings("unused")
-	private void loadPeer() {
-		//TODO: load peer from xml file;
-	}
-
 	public Peer getPeer() {
 		return peer;
 	}
@@ -219,8 +214,6 @@ public class PeerFacade {
 	}
 	
 	public void cancelDownloadThread(Transfer selected) {
-		// TODO Auto-generated method stub
-		System.out.println(selected);
 		getPeerFileDownloadThreadForTransfer(selected).stop();
 		selected.setState(TransferState.CANCELEDDOWNLOAD);
 		EventController.getInstance().triggerDownloadCanceledEvent(selected);
