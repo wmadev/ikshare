@@ -1,5 +1,6 @@
 package ikshare.domain;
 
+import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.FileTransferListener;
 
@@ -17,7 +18,7 @@ import java.util.concurrent.Executors;
  *
  * @author jonas
  */
-public class PeerFileDownloadThread implements Runnable, FileTransferListener {
+public class PeerFileDownloadThread implements Runnable {
 
     private BufferedInputStream inStream;
     private FileOutputStream fileOutput;
@@ -38,10 +39,9 @@ public class PeerFileDownloadThread implements Runnable, FileTransferListener {
 	}
 
     public PeerFileDownloadThread(InetAddress address, Transfer transfer) {
-		EventController.getInstance().addFileTransferListener(this);
         try {
-            receiveSocket = new Socket(address, 6002);
-            receiveSocket.setSoTimeout(5000);
+            receiveSocket = new Socket(address, ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
+            receiveSocket.setSoTimeout(10000);
             buffer = new byte[2048];
         } catch (Exception e) {
             e.printStackTrace();
@@ -64,9 +64,10 @@ public class PeerFileDownloadThread implements Runnable, FileTransferListener {
             Date now = null;
             while (!receiveSocket.isClosed() && inStream != null && (n = inStream.read(buffer)) > 0) {
                 transfer.setNumberOfBlocksFinished(transfer.getNumberOfBlocksFinished()+1);
-                now = new Date();
 
-                transfer.setSpeed(transfer.getNumberOfBlocksFinished()*2048/(now.getTime()-startUpload.getTime()));
+                now = new Date();
+                
+                transfer.setSpeed(transfer.getNumberOfBlocksFinished()*transfer.getBlockSize()*1000/(Math.max(now.getTime()-startUpload.getTime(), 1)));
                 transfer.setRemainingTime((now.getTime()-startUpload.getTime())/(transfer.getNumberOfBlocksFinished())*(transfer.getNumberOfBlocks()-transfer.getNumberOfBlocksFinished())/1000);
 
                 EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
@@ -98,53 +99,22 @@ public class PeerFileDownloadThread implements Runnable, FileTransferListener {
     public void start() {
         service = Executors.newFixedThreadPool(1);
         service.execute(this);
-        System.out.println("dus..");
+        System.out.println("Downloadthread gestart.");
     }
     
     public void stop() {
-    	System.out.println("stop downloadthread");
     	try {
-    		if (receiveSocket==null && inStream==null){
+    		if (receiveSocket != null)
     			receiveSocket.close();
+    		if (inStream != null)
     			inStream.close();
-    		}
 		} catch (IOException e) {
 			transfer.setState(TransferState.FAILED);
 			EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
 			e.printStackTrace();
 		} finally {
 			service.shutdown();
-			System.out.println("stopped downloadthread");
+			System.out.println("Downloadthread gestopt.");
 		}
     }
-
-	public void transferCanceled(Transfer transfer) {
-		stop();
-		
-	}
-
-	public void transferFailed(Transfer transfer) {
-		stop();
-		
-	}
-
-	public void transferFinished(Transfer transfer) {
-		stop();
-		
-	}
-
-	public void transferStarted(Transfer transfer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void transferStateChanged(Transfer transfer) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void transferStopped(Transfer transfer) {
-		stop();
-		
-	}
 }

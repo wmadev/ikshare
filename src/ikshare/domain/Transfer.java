@@ -14,18 +14,21 @@ import java.io.File;
 public class Transfer {
     private String id;
     private File file;
-    private long fileSize;
     private int state;
-    private int numberOfBlocksFinished;
-    private int numberOfBlocks;
-    private long speed;
-    private long remainingTime;
+    private long numberOfBlocksFinished, numberOfBlocks, speed, remainingTime, fileSize, blockSize;
     private Peer peer;
     
     public Transfer(){
         
     }
+    
+	public long getBlockSize() {
+		return blockSize;
+	}
 
+	public void setBlockSize(long blockSize) {
+		this.blockSize = blockSize;
+	}
 
 	public long getRemainingTime() {
         return remainingTime;
@@ -43,19 +46,19 @@ public class Transfer {
         this.id = id;
     }
     
-    public int getNumberOfBlocks() {
+    public long getNumberOfBlocks() {
         return numberOfBlocks;
     }
 
-    public void setNumberOfBlocks(int numberOfBlocks) {
+    public void setNumberOfBlocks(long numberOfBlocks) {
         this.numberOfBlocks = numberOfBlocks;
     }
 
-    public int getNumberOfBlocksFinished() {
+    public long getNumberOfBlocksFinished() {
         return numberOfBlocksFinished;
     }
 
-    public void setNumberOfBlocksFinished(int numberOfBlocksFinished) {
+    public void setNumberOfBlocksFinished(long numberOfBlocksFinished) {
         this.numberOfBlocksFinished = numberOfBlocksFinished;
     }
    
@@ -99,4 +102,8 @@ public class Transfer {
     public void setState(int state) {
         this.state = state;
     }
+    
+    public boolean equals (Object transfer) {
+		return ((Transfer)transfer).getId().equals(this.getId());	
+    }    
 }

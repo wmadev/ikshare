@@ -2,8 +2,8 @@ package ikshare.protocol.command;
 
 public class YourTurnCommando extends Commando {
 
-    private String accountName,  fileName,  path;
-    private int size,  blockSize;
+    private String accountName,  fileName,  path, transferId;
+    private long size,  blockSize;
 
     public YourTurnCommando() {
         super();
@@ -14,14 +14,25 @@ public class YourTurnCommando extends Commando {
         setAccountName(commandoLine.get(1));
         setFileName(commandoLine.get(2));
         setPath(commandoLine.get(3));
-        setSize(Integer.parseInt(commandoLine.get(4)));
-        if (commandoLine.size()==6)
-            setBlockSize(Integer.parseInt(commandoLine.get(5)));
+        setTransferId(commandoLine.get(4));
+        setSize(Integer.parseInt(commandoLine.get(5)));
+        if (commandoLine.size()==7)
+            setBlockSize(Integer.parseInt(commandoLine.get(6)));
         else
             setBlockSize(Integer.parseInt(commandoBundle.getString("blocksize")));
     }
 
-    public String getAccountName() {
+    
+    
+    public String getTransferId() {
+		return transferId;
+	}
+
+	public void setTransferId(String transferId) {
+		this.transferId = transferId;
+	}
+
+	public String getAccountName() {
         return accountName;
     }
 
@@ -29,19 +40,19 @@ public class YourTurnCommando extends Commando {
         this.accountName = accountName;
     }
 
-    public int getBlockSize() {
+    public long getBlockSize() {
         return blockSize;
     }
 
-    public void setBlockSize(int blockSize) {
+    public void setBlockSize(long blockSize) {
         this.blockSize = blockSize;
     }
 
-    public int getSize() {
+    public long getSize() {
         return size;
     }
 
-    public void setSize(int size) {
+    public void setSize(long size) {
         this.size = size;
     }
 
@@ -63,6 +74,6 @@ public class YourTurnCommando extends Commando {
     @Override
     public String toString() {
         String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("yourturn")+del+getAccountName()+del+getFileName()+del+getPath()+del+getSize()+del+getBlockSize();
+        return commandoBundle.getString("yourturn")+del+getAccountName()+del+getFileName()+del+getPath()+del+getTransferId()+del+getSize()+del+getBlockSize();
     }  
 }

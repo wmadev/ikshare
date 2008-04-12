@@ -2,7 +2,7 @@ package ikshare.protocol.command;
 
 public class FileNotFoundCommando extends Commando {
 
-    private String accountName,  fileName,  path;
+    private String accountName,  fileName,  path, transferId;
 
     public FileNotFoundCommando() {
         super();
@@ -13,9 +13,20 @@ public class FileNotFoundCommando extends Commando {
         setAccountName(commandoLine.get(1));
         setFileName(commandoLine.get(2));
         setPath(commandoLine.get(3));
+        setTransferId(commandoLine.get(4));
     }
 
-    public void setAccountName(String accountName) {
+    
+    
+    public String getTransferId() {
+		return transferId;
+	}
+
+	public void setTransferId(String transferId) {
+		this.transferId = transferId;
+	}
+
+	public void setAccountName(String accountName) {
         this.accountName = accountName;
     }
 
@@ -47,6 +58,6 @@ public class FileNotFoundCommando extends Commando {
         } else {
             del=commandoBundle.getString("commandoDelimiter");
         }
-        return commandoBundle.getString("filenotfound")+del+getAccountName()+del+getFileName()+del+getPath();
+        return commandoBundle.getString("filenotfound")+del+getAccountName()+del+getFileName()+del+getPath()+del+getTransferId();
     }
 }
