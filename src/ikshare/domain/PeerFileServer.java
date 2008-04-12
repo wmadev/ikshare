@@ -1,5 +1,7 @@
 package ikshare.domain;
 
+import ikshare.client.configuration.ClientConfigurationController;
+
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.ExecutorService;
@@ -13,7 +15,7 @@ public class PeerFileServer extends Thread implements Runnable {
 	public PeerFileServer() {
 		running=true;
 		try {
-	        fileServerSocket = new ServerSocket(6002);
+	        fileServerSocket = new ServerSocket(ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
 	        fileServerSocket.setReuseAddress(true);
 		} catch (IOException ioException) {
 			ioException.printStackTrace();
@@ -27,7 +29,7 @@ public class PeerFileServer extends Thread implements Runnable {
 	            if (service!=null) {
 	            	PeerFileUploadThread peerFileUploadThread = new PeerFileUploadThread(fileServerSocket.accept());
 	            	peerFileUploadThread.setTransfer(PeerFacade.getInstance().getUploadTransferForFileName("testmiddelgroot.rar"));
-	            	
+	            	PeerFacade.getInstance().getUploadThreads().add(peerFileUploadThread);
 	            	service.execute(peerFileUploadThread);
 	            }
 	            	

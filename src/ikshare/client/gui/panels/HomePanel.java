@@ -8,6 +8,7 @@ import ikshare.client.gui.MainScreen;
 import ikshare.client.gui.custom.UIFileBrowser;
 import ikshare.client.gui.dialogs.CreateAccountDialog;
 import ikshare.client.gui.dialogs.CreateAccountDialogData;
+import ikshare.domain.PeerFacade;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.protocol.command.Commando;
@@ -85,14 +86,16 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                 // Fileserver mss beter starten bij opstarten van applicatie???
                 // Hier beter enkel de logon op het netwerk
                 if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logon"))){
-                    try {
+                    /*
+                	try {
                         ClientController.getInstance().startServerConversation();
                         ClientController.getInstance().logon(txtAccountName.getText(), txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
                         
                     } catch (IOException ex) {
                         new ExceptionWindow(ex,MainScreen.getInstance(),false);
                     }
-                                    //PeerFacade.getInstance().getPeerFileServer().startServer();
+                    */
+                                    PeerFacade.getInstance().getPeerFileServer().startServer();
                 }
                 else if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logoff"))){
                     ClientController.getInstance().logoff(
@@ -123,7 +126,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
         });
         
         Group grpShared = new Group(this,SWT.NONE);
-        grpShared.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
+        grpShared.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false,2,1));
         grpShared.setText(ClientConfigurationController.getInstance().getString("sharedfiles"));
         UIFileBrowser browser = new UIFileBrowser(grpShared, ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
         

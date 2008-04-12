@@ -1,5 +1,8 @@
 package ikshare.domain;
 
+import ikshare.client.configuration.ClientConfigurationController;
+import ikshare.domain.event.EventController;
+import ikshare.protocol.command.CancelTransferCommando;
 import ikshare.protocol.command.FileRequestCommando;
 
 import java.io.IOException;
@@ -7,6 +10,7 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 public class PeerFacade {
 	private static PeerFacade instance;
@@ -16,6 +20,8 @@ public class PeerFacade {
 	private PeerFileServer peerFileServer;
 
 	private ArrayList<Transfer> uploadTransfers, downloadTransfers;
+	private ArrayList<PeerFileDownloadThread> downloadThreads;
+	private ArrayList<PeerFileUploadThread> uploadThreads;
 
 	private PeerMessageService peerMessageService;
 
@@ -40,11 +46,16 @@ public class PeerFacade {
 	}
 
 	protected PeerFacade() {
-
+		
 		//test
 		try {
 			peer = new Peer("Monet", InetAddress.getLocalHost());
-			otherPeer = new Peer("Degas", InetAddress.getByName("192.168.1.4"));
+			otherPeer = new Peer("Pizarro", InetAddress.getByName("192.168.1.2"));
+			
+			/*
+			peer = new Peer("Pizarro", InetAddress.getLocalHost());
+			otherPeer = new Peer("Monet", InetAddress.getByName("192.168.1.3"));
+			*/
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -55,40 +66,27 @@ public class PeerFacade {
 
 		downloadTransfers = new ArrayList<Transfer>();
 		uploadTransfers = new ArrayList<Transfer>();
+		
+		downloadThreads = new ArrayList<PeerFileDownloadThread>();
+		uploadThreads = new ArrayList<PeerFileUploadThread>();
 
 		peerMessageService = new PeerMessageService();
 	}
 
-	public void startDownloadThread(Transfer transfer) {
-		PeerFileDownloadThread peerFileDownloadThread;
-		peerFileDownloadThread = new PeerFileDownloadThread(otherPeer.getInternetAddress(), transfer);
 
-		peerFileDownloadThread.start();
-
-	}
-	
-	public void startUploadThread(Transfer transfer) {
-		PeerFileDownloadThread peerFileDownloadThread;
-		try {
-			peerFileDownloadThread = new PeerFileDownloadThread(InetAddress.getLocalHost(), transfer);
-
-			peerFileDownloadThread.start();
-		} catch (UnknownHostException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-	}
 
 	public void addToDownloads(Transfer transfer) {
 
 		downloadTransfers.add(transfer);
 		
 		FileRequestCommando frc = new FileRequestCommando();
-		frc.setAccountName(otherPeer.getAccountName());
+		frc.setAccountName(peer.getAccountName());
 		frc.setPath("C://");
 		frc.setFileName("testmiddelgroot.rar");
+		frc.setTransferId(transfer.getId());
 		try {
-			peerMessageService.sendMessage(new Socket(otherPeer.getInternetAddress(), 6000), frc);
+			peerMessageService.setSendSocket(new Socket(otherPeer.getInternetAddress(), ClientConfigurationController.getInstance().getConfiguration().getIkshareServerPort()));
+			peerMessageService.sendMessage(frc);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -144,6 +142,102 @@ public class PeerFacade {
 			}
 		}
 		return ret;
+	}
+	
+	public Transfer getDownloadTransferForId(String transferId) {
+		Transfer ret=null;
+		boolean found = false;
+		ListIterator<Transfer> iterator = downloadTransfers.listIterator();
+		while(!found && iterator.hasNext()) {
+			Transfer current = iterator.next();
+			if (current.getId().equals(transferId)) {
+				ret = current;
+				found = true;
+			}
+		}
+		return ret;
+	}
+	public Transfer getUploadTransferForId(String transferId) {
+		Transfer ret=null;
+		boolean found = false;
+		ListIterator<Transfer> iterator = uploadTransfers.listIterator();
+		while(!found && iterator.hasNext()) {
+			Transfer current = iterator.next();
+			if (current.getId().equals(transferId)) {
+				ret = current;
+				found = true;
+			}
+		}
+		return ret;
+	}
+	public PeerFileDownloadThread getPeerFileDownloadThreadForTransfer(Transfer t) {
+		return getPeerFileDownloadThreadForTransferId(t.getId());
+	}
+	public PeerFileUploadThread getPeerFileUploadThreadForTransfer(Transfer t) {
+		return getPeerFileUploadThreadForTransferId(t.getId());
+	}
+	public PeerFileDownloadThread getPeerFileDownloadThreadForTransferId(String transferId) {
+		PeerFileDownloadThread ret=null;
+		boolean found = false;
+		ListIterator<PeerFileDownloadThread> iterator = downloadThreads.listIterator();
+		while(!found && iterator.hasNext()) {
+			PeerFileDownloadThread current = iterator.next();
+			if (current.getTransfer().getId().equals(transferId)) {
+				ret = current;
+				found = true;
+			}
+		}
+		return ret;
+	}
+	public PeerFileUploadThread getPeerFileUploadThreadForTransferId(String transferId) {
+		PeerFileUploadThread ret=null;
+		boolean found = false;
+		ListIterator<PeerFileUploadThread> iterator = uploadThreads.listIterator();
+		while(!found && iterator.hasNext()) {
+			PeerFileUploadThread current = iterator.next();
+			if (current.getTransfer().getId().equals(transferId)) {
+				ret = current;
+				found = true;
+			}
+		}
+		return ret;
+	}
+
+	public ArrayList<PeerFileDownloadThread> getDownloadThreads() {
+		return downloadThreads;
+	}
+
+	public ArrayList<PeerFileUploadThread> getUploadThreads() {
+		return uploadThreads;
+	}
+
+	public void startDownloadThread(Transfer transfer) {
+		PeerFileDownloadThread peerFileDownloadThread;
+		peerFileDownloadThread = new PeerFileDownloadThread(otherPeer.getInternetAddress(), transfer);
+		downloadThreads.add(peerFileDownloadThread);
+		peerFileDownloadThread.start();
+	}
+	
+	public void cancelDownloadThread(Transfer selected) {
+		// TODO Auto-generated method stub
+		System.out.println(selected);
+		getPeerFileDownloadThreadForTransfer(selected).stop();
+		selected.setState(TransferState.CANCELEDDOWNLOAD);
+		EventController.getInstance().triggerDownloadCanceledEvent(selected);
+		
+		CancelTransferCommando ctc = new CancelTransferCommando();
+		ctc.setTransferId(selected.getId());
+		peerMessageService.sendMessage(ctc);
+	}
+	
+	public void pauseDownloadThread(Transfer selected) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void resumeDownloadThread(Transfer selected) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
