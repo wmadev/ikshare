@@ -1,7 +1,6 @@
 package ikshare.domain;
 
 import ikshare.domain.event.EventController;
-import ikshare.domain.event.listener.FileTransferListener;
 
 import java.io.BufferedOutputStream;
 import java.io.File;
@@ -9,7 +8,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.Socket;
 import java.util.Date;
-import java.util.concurrent.TimeoutException;
 
 /**
  * 

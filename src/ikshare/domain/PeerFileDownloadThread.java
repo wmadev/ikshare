@@ -2,7 +2,6 @@ package ikshare.domain;
 
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
-import ikshare.domain.event.listener.FileTransferListener;
 
 import java.io.BufferedInputStream;
 import java.io.File;
