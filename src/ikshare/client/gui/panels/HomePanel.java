@@ -86,7 +86,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                 // Fileserver mss beter starten bij opstarten van applicatie???
                 // Hier beter enkel de logon op het netwerk
                 if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logon"))){
-                    /*
+                    
                 	try {
                         ClientController.getInstance().startServerConversation();
                         ClientController.getInstance().logon(txtAccountName.getText(), txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
@@ -94,7 +94,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                     } catch (IOException ex) {
                         new ExceptionWindow(ex,MainScreen.getInstance(),false);
                     }
-                    */
+                    
                                     PeerFacade.getInstance().getPeerFileServer().startServer();
                 }
                 else if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logoff"))){

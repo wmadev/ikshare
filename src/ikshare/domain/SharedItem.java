@@ -5,19 +5,29 @@
 
 package ikshare.domain;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
 /**
  *
  * @author awosy
  */
-public class SharedItem {
+public class SharedItem implements Serializable{
     private boolean folder;
     private ArrayList<SharedItem> sharedItems;
+    private SharedItemState state;
     
     public SharedItem(){
         folder = false;
         sharedItems = new ArrayList<SharedItem>();
+    }
+
+    public SharedItemState getState() {
+        return state;
+    }
+
+    public void setState(SharedItemState state) {
+        this.state = state;
     }
 
     public boolean isFolder() {
