@@ -69,7 +69,7 @@ public class UIFileBrowser implements ClientConfigurationListener{
         tblFileBrowser.setLinesVisible (true);
         tblFileBrowser.setHeaderVisible (true);
         GridData data = new GridData(SWT.FILL, SWT.FILL, true, true,3,1);
-        data.heightHint = tblFileBrowser.getItemHeight();
+        data.heightHint = 10*tblFileBrowser.getItemHeight();
         tblFileBrowser.setLayoutData(data);
         addTableColumn(tblFileBrowser,ClientConfigurationController.getInstance().getString("filename"),580,SWT.LEFT);
 	addTableColumn(tblFileBrowser,ClientConfigurationController.getInstance().getString("filetype"),70,SWT.LEFT);

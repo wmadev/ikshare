@@ -36,7 +36,9 @@ public class PeerMessageService extends Thread implements Runnable{
 	private int port;
 	public PeerMessageService() {
     	running = true;
-    	port = ClientConfigurationController.getInstance().getConfiguration().getIkshareServerPort();
+    	// Moet poort zijn van andere peer veronderstel ik? ipv van de ikshareserverpoort?
+        // Best voor testen geen poorten gebruiken waar anderen verwachten dat iets anders werkt :p
+        port = 7000;//ClientConfigurationController.getInstance().getConfiguration().getIkshareServerPort();
     	try {
 			messageServer = new ServerSocket(port);
 			messageServer.setReceiveBufferSize(100);
