@@ -239,7 +239,6 @@ public class PeerMessageService extends Thread implements Runnable{
 	    	t.setId(fcc.getTransferId());
 	    	t.setPeer(new Peer(frc.getAccountName()));
 	    	t.setBlockSize(2048);
-	    	t.setFileSize(f.length());
 	    	t.setState(TransferState.UPLOADING);
 	    	PeerFacade.getInstance().addToUploads(t);
 	    	EventController.getInstance().triggerDownloadStartedEvent(t);
@@ -274,7 +273,6 @@ public class PeerMessageService extends Thread implements Runnable{
 		
 		t.setFileSize(ytc.getSize());
 		t.setBlockSize(ytc.getBlockSize());
-		t.setNumberOfBlocks((long) Math.ceil(t.getFileSize()/t.getBlockSize()));
 		PeerFacade.getInstance().startDownloadThread(PeerFacade.getInstance().getDownloadTransferForId(mtc.getTransferId()));	
 	}
 
