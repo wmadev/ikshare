@@ -55,10 +55,10 @@ public class MainScreen {
         doLayout();
         // Add toolbar to the shell
         doToolbar();
-        // Add infobar to the shell
-        doInfobar();
         // Add composite to shell
         doComposite();
+        // Add infobar to the shell
+        doInfobar();
 
         addPanel(new HomePanel(ClientConfigurationController.getInstance().getString("home"),"resources/icons/tb_home.png"));
         addPanel (new SearchPanel(ClientConfigurationController.getInstance().getString("search"),"resources/icons/tb_search.png"));
@@ -138,7 +138,7 @@ public class MainScreen {
             Rectangle rect = shell.getBounds();
             int x = (bounds.x+(bounds.width-rect.width)/2);
             int y = (bounds.y+(bounds.height-rect.height)/2);
-            GridLayout gl = new GridLayout(2,false);
+            GridLayout gl = new GridLayout(1,false);
             //shell.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,2));
             gl.marginHeight = gl.marginWidth = gl.verticalSpacing = 0;
             shell.setLocation(x, y);
