@@ -6,10 +6,12 @@
 package ikshare.server;
 
 import ikshare.domain.Peer;
+import ikshare.domain.SearchResult;
 import ikshare.domain.SharedFolder;
 import ikshare.domain.SharedItem;
 import ikshare.server.data.DatabaseException;
 import ikshare.server.data.DatabaseFactory;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -52,6 +54,10 @@ public class ServerController {
     }
     public boolean checkAccount(Peer newUser) throws DatabaseException{
         return databaseFactory.getAccountStorage().checkAccountName(newUser);
+    }
+
+    public List<SearchResult> findBasic(String keyword) throws DatabaseException {
+        return databaseFactory.getFileStorage().basicSearch(keyword);
     }
 
     public boolean logoff(Peer user) throws DatabaseException {

@@ -8,7 +8,6 @@ import ikshare.protocol.command.CommandoParser;
 import ikshare.protocol.command.FileConfirmCommando;
 import ikshare.protocol.command.FileNotFoundCommando;
 import ikshare.protocol.command.FileRequestCommando;
-import ikshare.protocol.command.FoundCommando;
 import ikshare.protocol.command.FoundItAllCommando;
 import ikshare.protocol.command.GetConnCommando;
 import ikshare.protocol.command.GiveConnCommando;
@@ -109,11 +108,7 @@ public class PeerMessageService extends Thread implements Runnable{
 		System.out.println(c);
 		System.out.println("");
 		
-		
-		if (c instanceof FoundCommando) {
-			handleFoundCommando((FoundCommando) c);
-		}
-		else if (c instanceof FoundItAllCommando) {
+		if (c instanceof FoundItAllCommando) {
 			handleFoundItAllCommando((FoundItAllCommando) c);
 		}
 		else if (c instanceof GivePeerCommando) {
@@ -287,11 +282,6 @@ public class PeerMessageService extends Thread implements Runnable{
 		EventController.getInstance().triggerDownloadFailedEvent(current);
 	}
 	
-	private void handleFoundCommando(FoundCommando fc) {
-		// TODO Auto-generated method stub
-		
-	}
-
 	public void sendMessage(Commando commando) {
 		System.out.println("Verstuurd Commando");
 		System.out.println("------------------");

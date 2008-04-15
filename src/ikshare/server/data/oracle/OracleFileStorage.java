@@ -19,9 +19,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 /**
  *
  * @author awosy
@@ -86,20 +83,22 @@ public class OracleFileStorage implements FileStorage {
     }
 
     public synchronized List<SearchResult> basicSearch(String name) throws DatabaseException {
-        ArrayList<SearchResult> results=new ArrayList<SearchResult>();
+        ArrayList<SearchResult> results = null;
         Connection conn = OracleDatabaseFactory.getConnection();
         try {
             PreparedStatement stmtBasicSearch = conn.prepareStatement(bundle.getString("basicSearch"));
             stmtBasicSearch.setString(1, name);
             ResultSet result = stmtBasicSearch.executeQuery();
+            results =new ArrayList<SearchResult>();
             while(result.next()){
-                SearchResult sr=new SearchResult(result.getString("FILENAME"),result.getString("ACCOUNTNAME"),result.getLong("SIZE"),false);
+                SearchResult sr=new SearchResult(result.getString(bundle.getString("filename")),
+                        result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("size")),false);
                 results.add(sr);
             }
             result.close();
             stmtBasicSearch.close();
         } catch (SQLException e) {
-            
+            results = null;
             throw new DatabaseException(bundle.getString("ERROR_Database"));
         } finally {
             OracleDatabaseFactory.freeConnection(conn);

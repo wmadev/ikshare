@@ -5,6 +5,7 @@
 
 package ikshare.client.gui.panels;
 
+import ikshare.client.ClientController;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.UtilityClass;
 import ikshare.client.configuration.ClientConfigurationController;
@@ -16,8 +17,10 @@ import ikshare.domain.TransferState;
 import ikshare.domain.event.EventController;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Date;
 
+import java.util.HashMap;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.MouseAdapter;
@@ -30,6 +33,8 @@ public class SearchPanel extends AbstractPanel{
     private static String ICON_SEARCH="resources/icons/sp_found.png";
     private Table tblResults;
     private boolean advanced = false;
+    private HashMap<String,TabItem> searches;
+    private Text txtKeyword;
     	
     public SearchPanel(String text,String icon){
         super(text,icon);
@@ -48,8 +53,8 @@ public class SearchPanel extends AbstractPanel{
         GridData gd=new GridData(SWT.LEFT, SWT.CENTER, false,false, 1,1);
         gd.widthHint = 100;
         lblSearchName.setLayoutData(gd);
-        Text txtName = new Text(grpAdvanced,SWT.BORDER);
-        txtName.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
+        txtKeyword = new Text(grpAdvanced,SWT.BORDER);
+        txtKeyword.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
         final Button btnAndOr= new  Button(grpAdvanced, SWT.BORDER);
         btnAndOr.setText("And");
         btnAndOr.setLayoutData(new GridData(SWT.LEFT,SWT.FILL, false, false, 2, 1));
@@ -98,7 +103,7 @@ public class SearchPanel extends AbstractPanel{
         GridData gd=new GridData(SWT.LEFT, SWT.CENTER, false,false, 1,1);
         gd.widthHint = 100;
         lblSearchBasic.setLayoutData(gd);
-        Text txtKeyword = new Text(grpBasic,SWT.BORDER);
+        txtKeyword = new Text(grpBasic,SWT.BORDER);
         txtKeyword.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
         return grpBasic;
     }
@@ -108,7 +113,7 @@ public class SearchPanel extends AbstractPanel{
 		SearchResult searchResult=null;
 		
 		
-		searchResult = new SearchResult(new Date().getTime()+"",new Peer("Monet"), new File("C:\\/" + "testmiddelgroot.rar"));
+		//searchResult = new SearchResult(new Date().getTime()+"",new Peer("Monet"), new File("C:\\/" + "testmiddelgroot.rar"));
 		ti = new TableItem(tblResults, SWT.NONE);
 		ti.setText(0, searchResult.getFile().getName());
 		//ti.setText(1,UtilityClass.formatFileSize());
@@ -135,45 +140,7 @@ public class SearchPanel extends AbstractPanel{
         results.setLayoutData(gd2);
         TabFolder folder=new TabFolder(results, SWT.BORDER);
         
-        //Eerste resultaat
-        TabItem result1 = new TabItem(folder,SWT.BORDER);
-        if(new File(ICON_SEARCH).exists()){
-            result1.setImage(new Image(Display.getCurrent(), ICON_SEARCH));
-        }
-        result1.setText(ClientConfigurationController.getInstance().getString("result")+" 1");
-        
-        Composite cmpResult1 = new Composite(folder, SWT.NONE);
-        cmpResult1.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,3,1));
-        cmpResult1.setLayout(new GridLayout(1,false));
-        
-        tblResults = new Table(cmpResult1,SWT.FULL_SELECTION | SWT.BORDER);
-        tblResults.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
-	tblResults.setLinesVisible (true);
-        tblResults.setHeaderVisible (true);
-        tblResults.addMouseListener(new MouseAdapter() {
-            public void mouseDoubleClick(MouseEvent event) {
-		                    final int selectedRow = tblResults.getSelectionIndex();
-		                    if (selectedRow == -1) 
-		                        return;
-		                    
-		                    SearchResult selected = (SearchResult)tblResults.getItem(selectedRow).getData("results");
-		                    if (selected!=null) {
-		                    	Transfer newTransfer = new Transfer();
-		                    	newTransfer.setId(new Date().getTime()+"");
-		                    	newTransfer.setFile(selected.getFile());
-		                    	newTransfer.setPeer(selected.getPeer());
-		                    	newTransfer.setState(TransferState.DOWNLOADING);
-		                    	PeerFacade.getInstance().addToDownloads(newTransfer);
-		                    	EventController.getInstance().triggerDownloadStartedEvent(newTransfer);
-		                    }
-                        }
-                    });
-
-        result1.setControl(cmpResult1);
-        addTableColumn(tblResults,ClientConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
-	addTableColumn(tblResults,ClientConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
-        addTableColumn(tblResults,ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
-        
+          
          //Search Buttons
         Composite cmpButtons = new Composite(this,SWT.NONE);
         cmpButtons.setLayoutData(new GridData(SWT.RIGHT,SWT.END,false,false,1,1));
@@ -214,9 +181,67 @@ public class SearchPanel extends AbstractPanel{
         Button btnSearch = new Button(cmpButtons,SWT.BORDER);
         btnSearch.setText("Search");
         btnSearch.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,false, 1,1));
-            
+              btnSearch.addListener(SWT.Selection, new Listener(){
+
+            public void handleEvent(Event event) {
+                if(!advanced){
+                    String searchId = String.valueOf(new Date().getTime());
+                    
+                    ClientController.getInstance().findBasic(searchId, txtKeyword.getText());
+                    //TableItem item= new TableItem(tblResults, SWT.NONE);
+                    //item.setData("searchid", searchId);
+		
+		
+		
+                    
+                }
+                
+            }
+        });
     }
     
+    private TabItem createTabItem(String searchId){
+        /*TabItem tab = new TabItem(folder,SWT.BORDER);
+        if(new File(ICON_SEARCH).exists()){
+            result1.setImage(new Image(Display.getCurrent(), ICON_SEARCH));
+        }
+        result1.setText(ClientConfigurationController.getInstance().getString("result")+" 1");
+        
+        Composite cmpResult1 = new Composite(folder, SWT.NONE);
+        cmpResult1.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,3,1));
+        cmpResult1.setLayout(new GridLayout(1,false));
+        
+        tblResults = new Table(cmpResult1,SWT.FULL_SELECTION | SWT.BORDER);
+        tblResults.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
+	tblResults.setLinesVisible (true);
+        tblResults.setHeaderVisible (true);
+        tblResults.addMouseListener(new MouseAdapter() {
+            public void mouseDoubleClick(MouseEvent event) {
+		                    final int selectedRow = tblResults.getSelectionIndex();
+		                    if (selectedRow == -1) 
+		                        return;
+		                    
+		                    SearchResult selected = (SearchResult)tblResults.getItem(selectedRow).getData("results");
+		                    if (selected!=null) {
+		                    	Transfer newTransfer = new Transfer();
+		                    	newTransfer.setId(new Date().getTime()+"");
+		                    	newTransfer.setFile(selected.getFile());
+		                    	newTransfer.setPeer(selected.getPeer());
+		                    	newTransfer.setState(TransferState.DOWNLOADING);
+		                    	PeerFacade.getInstance().addToDownloads(newTransfer);
+		                    	EventController.getInstance().triggerDownloadStartedEvent(newTransfer);
+		                    }
+                        }
+                    });
+
+        result1.setControl(cmpResult1);
+        addTableColumn(tblResults,ClientConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
+	addTableColumn(tblResults,ClientConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
+        addTableColumn(tblResults,ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
+         * */
+        return null;
+    }
+        
     private void addTableColumn(Table table, String text, int width, int align) {
         TableColumn column = new TableColumn(table, SWT.NONE);
 	column.setText(text);
