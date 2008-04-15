@@ -87,18 +87,20 @@ public class OracleFileStorage implements FileStorage {
         Connection conn = OracleDatabaseFactory.getConnection();
         try {
             PreparedStatement stmtBasicSearch = conn.prepareStatement(bundle.getString("basicSearch"));
-            stmtBasicSearch.setString(1, name);
+            
+            stmtBasicSearch.setString(1, "%"+name+"%");
             ResultSet result = stmtBasicSearch.executeQuery();
             results =new ArrayList<SearchResult>();
             while(result.next()){
-                SearchResult sr=new SearchResult(result.getString(bundle.getString("filename")),
-                        result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("size")),false);
+                SearchResult sr=new SearchResult(result.getString(bundle.getString("filename"))
+                        ,result.getString(bundle.getString("accountname")),Long.parseLong(result.getString(bundle.getString("filesize"))),false);
                 results.add(sr);
             }
             result.close();
             stmtBasicSearch.close();
         } catch (SQLException e) {
             results = null;
+            e.printStackTrace();
             throw new DatabaseException(bundle.getString("ERROR_Database"));
         } finally {
             OracleDatabaseFactory.freeConnection(conn);
