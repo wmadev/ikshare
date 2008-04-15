@@ -9,6 +9,7 @@ import ikshare.client.threads.ServerConversationThread;
 import ikshare.client.threads.ShareSynchronisationThread;
 import ikshare.domain.SharedItem;
 import ikshare.protocol.command.CreateAccountCommando;
+import ikshare.protocol.command.FindBasicCommando;
 import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
 import ikshare.protocol.command.StartShareSynchronisationCommando;
@@ -67,6 +68,14 @@ public class ClientController {
         serverConversation.sendCommand(loc);
         return true;
     }
+    public boolean findBasic(String searchId,String keyword){
+        FindBasicCommando fbc = new FindBasicCommando();
+        fbc.setKeyword(keyword);
+        fbc.setSearchID(searchId);
+        serverConversation.sendCommand(fbc);
+        return true;
+    }
+    
     private SharedItem generateShareTree(File root){
         return null;
     }
