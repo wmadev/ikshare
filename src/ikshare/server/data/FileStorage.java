@@ -14,6 +14,9 @@ import java.util.List;
  * @author awosy
  */
 public interface FileStorage {
-    public boolean addShares(String accountName,SharedFolder root) throws DatabaseException;
+
+    public boolean addSharedFile(int parentFolderID, String name, long size) throws DatabaseException;
+
+    public int addSharedFolder(String path, String accountName, String name, int parentFolderId) throws DatabaseException;
     public List<SearchResult> basicSearch(String name) throws DatabaseException;
 }

@@ -6,10 +6,13 @@
 package ikshare.client;
 
 import ikshare.client.threads.ServerConversationThread;
+import ikshare.client.threads.ShareSynchronisationThread;
+import ikshare.domain.SharedItem;
 import ikshare.protocol.command.CreateAccountCommando;
 import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
 import ikshare.protocol.command.ShareCommando;
+import ikshare.protocol.command.StartShareSynchronisationCommando;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
@@ -65,12 +68,12 @@ public class ClientController {
         serverConversation.sendCommand(loc);
         return true;
     }
+    private SharedItem generateShareTree(File root){
+        return null;
+    }
     
-    public boolean share(String accountName,File root){
-        ShareCommando sc = new ShareCommando();
-        sc.setAccountName(accountName);
-        sc.setShares(voegtoe(root));
-        serverConversation.sendCommand(sc);
+    public boolean share(String accountName,File root) throws IOException{
+        executorService.execute(new ShareSynchronisationThread(accountName,root));
         return true;
     }
     
