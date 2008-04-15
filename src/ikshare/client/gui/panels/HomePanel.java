@@ -95,7 +95,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                         new ExceptionWindow(ex,MainScreen.getInstance(),false);
                     }
                     
-                                    PeerFacade.getInstance().getPeerFileServer().startServer();
+                        //            PeerFacade.getInstance().getPeerFileServer().startServer();
                 }
                 else if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logoff"))){
                     ClientController.getInstance().logoff(

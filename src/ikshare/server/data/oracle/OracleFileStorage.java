@@ -88,7 +88,7 @@ public class OracleFileStorage implements FileStorage {
         try {
             PreparedStatement stmtBasicSearch = conn.prepareStatement(bundle.getString("basicSearch"));
             
-            stmtBasicSearch.setString(1, "%"+name+"%");
+            stmtBasicSearch.setString(1, "%"+name.toLowerCase()+"%");
             ResultSet result = stmtBasicSearch.executeQuery();
             results =new ArrayList<SearchResult>();
             while(result.next()){

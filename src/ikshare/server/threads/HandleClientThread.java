@@ -131,7 +131,7 @@ public class HandleClientThread implements Runnable{
             sec.setMessage(ex.getMessage());
             outputWriter.println(sec.toString());
         }
-        if(results!= null){
+        if(results!= null && results.size()>=1){
             for(SearchResult result : results){
                 FoundResultCommando frc = new FoundResultCommando();
                 frc.setSearchID(fbc.getSearchID());
@@ -145,7 +145,7 @@ public class HandleClientThread implements Runnable{
             NoResultsFoundCommando nrfc = new NoResultsFoundCommando();
             nrfc.setSearchID(fbc.getSearchID());
             nrfc.setKeyword(fbc.getKeyword());
-            outputWriter.println(fbc.toString());
+            outputWriter.println(nrfc.toString());
         }
     }
 
