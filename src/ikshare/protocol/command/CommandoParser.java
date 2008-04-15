@@ -35,7 +35,7 @@ public class CommandoParser {
         else if (commandoString.startsWith(bundle.getString("getpeer"))) {
             return new GetPeerCommando(commandoString);
         }
-        else if (commandoString.startsWith(bundle.getString("foundResult"))) {
+        else if (commandoString.startsWith(bundle.getString("foundresult"))) {
             return new FoundResultCommando(commandoString);
         }
         else if (commandoString.startsWith(bundle.getString("founditall"))) {
