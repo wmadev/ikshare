@@ -1,6 +1,5 @@
 package ikshare.client.configuration;
 
-import ikshare.domain.event.EventController;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.Calendar;
@@ -8,12 +7,14 @@ import java.util.Locale;
 import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -107,6 +108,12 @@ public class ClientConfigurationController {
                 catch(NumberFormatException e){
                     config.setFileTransferPort(6666);
                 }
+            }else if(child.getNodeName().equals("message-port")) {
+            	try {
+            		config.setMessagePort(6001);
+            	} catch (NumberFormatException e) {
+            		config.setMessagePort(6001);
+            	}
             }
         }
     }
@@ -178,10 +185,14 @@ public class ClientConfigurationController {
         Element transferPort = doc.createElement("file-transfer-port");
         transferPort.appendChild(doc.createTextNode(String.valueOf(config.getFileTransferPort())));
         
+        Element messagePort = doc.createElement("message-port");
+        messagePort.appendChild(doc.createTextNode(String.valueOf(config.getMessagePort())));
+        
         // add to networksettings
         networkSettings.appendChild(serverAddress);
         networkSettings.appendChild(serverPort);
         networkSettings.appendChild(transferPort);
+        networkSettings.appendChild(messagePort);
         return networkSettings;
     }
     
