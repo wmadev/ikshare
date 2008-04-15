@@ -17,5 +17,8 @@ public class TransferState {
     public static final int DOWNLOADING= 5;
     public static final int UPLOADING = 6;
     public static final int CANCELEDUPLOAD = 7;
-    public static final int PAUSED = 8;
+    public static final int PAUSEDDOWNLOAD = 8;
+    public static final int PAUSEDUPLOAD = 9;
+	public static final int RESUMEDDOWNLOAD = 10;
+	public static final int RESUMEDUPLOAD = 11;
 }

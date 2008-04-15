@@ -38,6 +38,7 @@ public class PeerFileDownloadThread implements Runnable {
 	}
 
     public PeerFileDownloadThread(InetAddress address, Transfer transfer) {
+    	System.out.println("PeerFileDownloadThread aanmaken");
         try {
             receiveSocket = new Socket(address, ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
             receiveSocket.setSoTimeout(10000);
@@ -50,7 +51,7 @@ public class PeerFileDownloadThread implements Runnable {
 
 	public void run() {
         try {
-            outputFile = new File(transfer.getFile().getName());
+            outputFile = new File(ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+System.getProperty("file.separator")+transfer.getFile().getName());
             fileOutput = new FileOutputStream(outputFile);
             inStream = new BufferedInputStream( receiveSocket.getInputStream());
             
@@ -79,19 +80,17 @@ public class PeerFileDownloadThread implements Runnable {
             fileOutput.flush();
 
         } catch (Exception e) {
-        	transfer.setState(TransferState.FAILED);
-        	EventController.getInstance().triggerDownloadFailedEvent(transfer);
-        } finally {
-            try {
-				fileOutput.close();
-	            inStream.close();
-	            inStream = null;
-	            receiveSocket.close();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
+			if (transfer.getState() == TransferState.CANCELEDDOWNLOAD)
+				EventController.getInstance().triggerDownloadCanceledEvent(transfer);
+			else if (transfer.getState() == TransferState.PAUSEDDOWNLOAD)
+				EventController.getInstance().triggerDownloadPausedEvent(transfer);
+			else {
+				transfer.setState(TransferState.FAILED);
 				e.printStackTrace();
+				EventController.getInstance().triggerDownloadFailedEvent(transfer);
 			}
-
+        } finally {
+            stop();
         }
     }
     
@@ -103,10 +102,16 @@ public class PeerFileDownloadThread implements Runnable {
     
     public void stop() {
     	try {
+    		if (fileOutput != null)
+    			fileOutput.close();
     		if (receiveSocket != null)
     			receiveSocket.close();
     		if (inStream != null)
     			inStream.close();
+    		fileOutput = null;
+    		receiveSocket = null;
+    		inStream = null;
+    		System.gc();
 		} catch (IOException e) {
 			transfer.setState(TransferState.FAILED);
 			EventController.getInstance().triggerDownloadStateChangedEvent(transfer);

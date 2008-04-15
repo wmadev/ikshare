@@ -4,6 +4,8 @@ import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
 import ikshare.protocol.command.CancelTransferCommando;
 import ikshare.protocol.command.FileRequestCommando;
+import ikshare.protocol.command.PauseTransferCommando;
+import ikshare.protocol.command.ResumeTransferCommando;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -22,6 +24,8 @@ public class PeerFacade {
 	private ArrayList<Transfer> uploadTransfers, downloadTransfers;
 	private ArrayList<PeerFileDownloadThread> downloadThreads;
 	private ArrayList<PeerFileUploadThread> uploadThreads;
+	
+	private Transfer lastTransferToStart;
 
 	private PeerMessageService peerMessageService;
 
@@ -62,7 +66,7 @@ public class PeerFacade {
 		}
 
 		peerFileServer = new PeerFileServer();
-		peerFileServer.start();
+		peerFileServer.startServer();
 
 		downloadTransfers = new ArrayList<Transfer>();
 		uploadTransfers = new ArrayList<Transfer>();
@@ -75,17 +79,19 @@ public class PeerFacade {
 
 
 
-	public void addToDownloads(Transfer transfer) {
-
+	public void addToDownloads(Transfer transfer) {		
 		downloadTransfers.add(transfer);
 		
 		FileRequestCommando frc = new FileRequestCommando();
+		if (true) {
+			//TODO splitten van de transferfile naar een path en een bestandsnaam
+		}
 		frc.setAccountName(peer.getAccountName());
-		frc.setPath("C://");
-		frc.setFileName("testmiddelgroot.rar");
+		frc.setPath(transfer.getFile().getFolder());
+		frc.setFileName(transfer.getFile().getFileName());
 		frc.setTransferId(transfer.getId());
 		try {
-			peerMessageService.setSendSocket(new Socket(otherPeer.getInternetAddress(), ClientConfigurationController.getInstance().getConfiguration().getIkshareServerPort()));
+			peerMessageService.setSendSocket(new Socket(otherPeer.getInternetAddress(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort()));
 			peerMessageService.sendMessage(frc);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -95,6 +101,7 @@ public class PeerFacade {
 	
 	public void addToUploads(Transfer transfer) {
 		uploadTransfers.add(transfer);
+		setLastTransferToStart(transfer);
 	}
 
 	public ArrayList<Transfer> getDownloadTransfers() {
@@ -219,18 +226,42 @@ public class PeerFacade {
 		EventController.getInstance().triggerDownloadCanceledEvent(selected);
 		
 		CancelTransferCommando ctc = new CancelTransferCommando();
+		ctc.setAccountName(getPeer().getAccountName());
 		ctc.setTransferId(selected.getId());
 		peerMessageService.sendMessage(ctc);
 	}
 	
 	public void pauseDownloadThread(Transfer selected) {
-		// TODO Auto-generated method stub
+		getPeerFileDownloadThreadForTransfer(selected).stop();
+		selected.setState(TransferState.PAUSEDDOWNLOAD);
+		EventController.getInstance().triggerDownloadPausedEvent(selected);
 		
+		PauseTransferCommando ptc = new PauseTransferCommando();
+		ptc.setAccountName(peer.getAccountName());
+		ptc.setSentBlocks(selected.getNumberOfBlocksFinished());
+		ptc.setTransferId(selected.getId());
+		peerMessageService.sendMessage(ptc);
 	}
 
 	public void resumeDownloadThread(Transfer selected) {
-		// TODO Auto-generated method stub
+		selected.setState(TransferState.RESUMEDDOWNLOAD);
+		EventController.getInstance().triggerDownloadResumedEvent(selected);
 		
+		ResumeTransferCommando rtc = new ResumeTransferCommando();
+		rtc.setAccountName(peer.getAccountName());
+		rtc.setSentBlocks(selected.getNumberOfBlocksFinished());
+		rtc.setTransferId(selected.getId());
+		peerMessageService.sendMessage(rtc);
 	}
 
+	public Transfer getLastTransferToStart() {
+		System.out.println(lastTransferToStart.getId());
+		System.out.println(lastTransferToStart.getFile().getFolder()+""+lastTransferToStart.getFile().getFileName());
+		
+		return lastTransferToStart;
+	}
+	
+	public void setLastTransferToStart(Transfer lastTransferToStart) {
+		this.lastTransferToStart = lastTransferToStart;
+	}
 }
