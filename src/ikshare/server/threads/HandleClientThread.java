@@ -142,7 +142,10 @@ public class HandleClientThread implements Runnable{
                 outputWriter.println(frc.toString());
             }
         }else{
-            // no results found commando sturen
+            NoResultsFoundCommando nrfc = new NoResultsFoundCommando();
+            nrfc.setSearchID(fbc.getSearchID());
+            nrfc.setKeyword(fbc.getKeyword());
+            outputWriter.println(fbc.toString());
         }
     }
 
