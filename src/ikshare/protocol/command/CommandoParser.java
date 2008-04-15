@@ -92,11 +92,20 @@ public class CommandoParser {
         else if (commandoString.startsWith(bundle.getString("canceltransfer"))) {
             return new CancelTransferCommando(commandoString);
         }
-        else if (commandoString.startsWith(bundle.getString("share"))){
-            return new ShareCommando(commandoString);
-        }
         else if (commandoString.startsWith(bundle.getString("servererror"))){
             return new ServerErrorCommando(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("startsharesync"))){
+            return new StartShareSynchronisationCommando(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("addshare"))){
+            return new AddShareCommando(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("receivefolderid"))){
+            return new ReceiveFolderIdCommando(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("endsharesync"))){
+            return new EndShareSynchronisationCommando(commandoString);
         }
         else if (commandoString.startsWith(bundle.getString("pausetransfer"))){
             return new PauseTransferCommando(commandoString);
