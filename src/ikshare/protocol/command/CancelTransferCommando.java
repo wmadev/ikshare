@@ -2,15 +2,24 @@ package ikshare.protocol.command;
 
 public class CancelTransferCommando extends Commando {
 
-    private String transferId;
+    private String transferId, accountName;
 
     public CancelTransferCommando() {
         super();
     }
 
-    public CancelTransferCommando(String commandoString) {
+    public String getAccountName() {
+		return accountName;
+	}
+
+	public void setAccountName(String accountName) {
+		this.accountName = accountName;
+	}
+
+	public CancelTransferCommando(String commandoString) {
         super(commandoString);
-        setTransferId(commandoLine.get(1));
+        setAccountName(commandoLine.get(1));
+        setTransferId(commandoLine.get(2));
     }
 
     public void setTransferId(String transferId) {
@@ -30,6 +39,6 @@ public class CancelTransferCommando extends Commando {
         } else {
             del=commandoBundle.getString("commandoDelimiter");
         }
-        return commandoBundle.getString("canceltransfer")+del+getTransferId();
+        return commandoBundle.getString("canceltransfer")+del+getAccountName()+del+getTransferId();
     }
 }
