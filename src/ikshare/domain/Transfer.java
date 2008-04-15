@@ -5,15 +5,13 @@
 
 package ikshare.domain;
 
-import java.io.File;
-
 /**
  *
  * @author awosy
  */
 public class Transfer {
     private String id;
-    private File file;
+    private IKShareFile file;
     private int state;
     private long numberOfBlocksFinished, numberOfBlocks, speed, remainingTime, fileSize, blockSize;
     private Peer peer;
@@ -63,11 +61,11 @@ public class Transfer {
     }
    
     
-    public File getFile() {
+    public IKShareFile getFile() {
         return file;
     }
 
-    public void setFile(File file) {
+    public void setFile(IKShareFile file) {
         this.file = file;
     }
 

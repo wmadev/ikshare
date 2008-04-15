@@ -52,11 +52,11 @@ public class SearchResult {
     
     
         private Peer peer;
-	private File file;
+	private IKShareFile file;
 	private HashMap<String, String> metadata;
 	private String id;
 	
-	public SearchResult(String id, Peer peer, File file) {
+	public SearchResult(String id, Peer peer, IKShareFile file) {
 		this.id = id;
 		this.peer = peer;
 		this.file = file;
@@ -77,11 +77,11 @@ public class SearchResult {
 
 
 
-	public File getFile() {
+	public IKShareFile getFile() {
 		return file;
 	}
 
-	public void setFile(File file) {
+	public void setFile(IKShareFile file) {
 		this.file = file;
 	}
 

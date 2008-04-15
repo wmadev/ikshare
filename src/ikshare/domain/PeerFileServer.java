@@ -4,6 +4,7 @@ import ikshare.client.configuration.ClientConfigurationController;
 
 import java.io.IOException;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -26,9 +27,14 @@ public class PeerFileServer extends Thread implements Runnable {
 	public void run() {
         try {
         	while (running) {
+
+            	System.out.println(service);
 	            if (service!=null) {
-	            	PeerFileUploadThread peerFileUploadThread = new PeerFileUploadThread(fileServerSocket.accept());
-	            	peerFileUploadThread.setTransfer(PeerFacade.getInstance().getUploadTransferForFileName("testmiddelgroot.rar"));
+
+	            	Socket s = fileServerSocket.accept();
+	            	System.out.println(s.getPort());
+	            	PeerFileUploadThread peerFileUploadThread = new PeerFileUploadThread(s);
+	            	peerFileUploadThread.setTransfer(PeerFacade.getInstance().getLastTransferToStart());
 	            	PeerFacade.getInstance().getUploadThreads().add(peerFileUploadThread);
 	            	service.execute(peerFileUploadThread);
 	            }
@@ -54,5 +60,6 @@ public class PeerFileServer extends Thread implements Runnable {
 	public void startServer() {
 		running=true;
         service = Executors.newCachedThreadPool();
+        start();
 	}
 }

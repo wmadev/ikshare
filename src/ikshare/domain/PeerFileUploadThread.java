@@ -36,6 +36,7 @@ public class PeerFileUploadThread implements Runnable {
 	}
 
 	public PeerFileUploadThread(Socket receiveSocket) {
+		System.out.println("uploadthread");
 		sendSocket = receiveSocket;
 
 		buffer = new byte[2048];
@@ -49,6 +50,8 @@ public class PeerFileUploadThread implements Runnable {
 			outStream = new BufferedOutputStream(sendSocket.getOutputStream());
 
 			sendFile = transfer.getFile();
+			System.out.println(sendFile.getAbsolutePath());
+			
 			transfer.setFileSize(sendFile.length());
 			transfer.setNumberOfBlocks((int) (Math.ceil(transfer.getFileSize() / 2048)));
 			EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
@@ -73,12 +76,14 @@ public class PeerFileUploadThread implements Runnable {
 			transfer.setState(TransferState.FINISHED);
 			EventController.getInstance().triggerDownloadFinishedEvent(transfer);
 		} catch (Exception e) {
-			if (transfer.getState() != TransferState.CANCELEDUPLOAD) {
+			if (transfer.getState() == TransferState.CANCELEDUPLOAD)
+				EventController.getInstance().triggerDownloadCanceledEvent(transfer);
+			else if (transfer.getState() == TransferState.PAUSEDUPLOAD)
+				EventController.getInstance().triggerDownloadPausedEvent(transfer);
+			else {
 				transfer.setState(TransferState.FAILED);
 				e.printStackTrace();
 				EventController.getInstance().triggerDownloadFailedEvent(transfer);
-			} else {
-				EventController.getInstance().triggerDownloadCanceledEvent(transfer);
 			}
 		} finally {
 			stop();
@@ -87,10 +92,16 @@ public class PeerFileUploadThread implements Runnable {
 	
 	public void stop() {
 		try {
-			fileInput.close();
-			sendSocket.close();
-			outStream.close();
+			if (fileInput != null)
+				fileInput.close();
+			if (sendSocket != null)
+				sendSocket.close();
+			if (outStream != null)
+				outStream.close();
+			fileInput = null;
+			sendSocket = null;
 			outStream = null;
+			System.gc();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

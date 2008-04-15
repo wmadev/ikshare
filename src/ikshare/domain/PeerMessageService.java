@@ -15,11 +15,12 @@ import ikshare.protocol.command.GiveConnCommando;
 import ikshare.protocol.command.GivePeerCommando;
 import ikshare.protocol.command.MyTurnCommando;
 import ikshare.protocol.command.PassTurnCommando;
+import ikshare.protocol.command.PauseTransferCommando;
+import ikshare.protocol.command.ResumeTransferCommando;
 import ikshare.protocol.command.YourTurnCommando;
 import ikshare.protocol.exception.CommandNotFoundException;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
@@ -38,7 +39,7 @@ public class PeerMessageService extends Thread implements Runnable{
     	running = true;
     	// Moet poort zijn van andere peer veronderstel ik? ipv van de ikshareserverpoort?
         // Best voor testen geen poorten gebruiken waar anderen verwachten dat iets anders werkt :p
-        port = 7000;//ClientConfigurationController.getInstance().getConfiguration().getIkshareServerPort();
+        port = ClientConfigurationController.getInstance().getConfiguration().getMessagePort();//ClientConfigurationController.getInstance().getConfiguration().getIkshareServerPort();
     	try {
 			messageServer = new ServerSocket(port);
 			messageServer.setReceiveBufferSize(100);
@@ -67,11 +68,11 @@ public class PeerMessageService extends Thread implements Runnable{
 	        
 	        try
 	        {
-	            // Step 1. Establish server connection
+	        	// Step 1. Establish server connection
 	            link = messageServer.accept();
 	            link.setSoTimeout(2000);
 	            //System.out.println("verbonden");
-	            sendSocket = new Socket(link.getInetAddress(), ClientConfigurationController.getInstance().getConfiguration().getIkshareServerPort());
+	            sendSocket = new Socket(link.getInetAddress(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
 	            sendSocket.setSoTimeout(10000);
 	             
 	            // Step 2. Set up input stream
@@ -106,6 +107,7 @@ public class PeerMessageService extends Thread implements Runnable{
 		System.out.println("Ontvangen Commando");
 		System.out.println("------------------");
 		System.out.println(c);
+		System.out.println("");
 		
 		
 		if (c instanceof FoundCommando) {
@@ -144,11 +146,19 @@ public class PeerMessageService extends Thread implements Runnable{
 		else if (c instanceof CancelTransferCommando) {
 			handleCancelTransferCommando((CancelTransferCommando) c);
 		}
+		else if (c instanceof PauseTransferCommando) {
+			handlePauseTransferCommando((PauseTransferCommando) c);
+		}
+		else if (c instanceof ResumeTransferCommando) {
+			handleResumeTransferCommando((ResumeTransferCommando) c);
+		}
 		else if(c instanceof Commando) {
 			handleOtherCommandos(c);
 		}
 
 	}
+
+
 
 	private void handleOtherCommandos(Commando c) {
 		try {
@@ -164,7 +174,21 @@ public class PeerMessageService extends Thread implements Runnable{
 		canceledTransfer.setState(TransferState.CANCELEDUPLOAD);
 		EventController.getInstance().triggerDownloadCanceledEvent(canceledTransfer);
 		
-		PeerFacade.getInstance().getPeerFileUploadThreadForTransfer(canceledTransfer);
+		PeerFacade.getInstance().getPeerFileUploadThreadForTransfer(canceledTransfer).stop();
+	}
+
+	private void handlePauseTransferCommando(PauseTransferCommando ptc) {
+		Transfer pausedTransfer = PeerFacade.getInstance().getUploadTransferForId(ptc.getTransferId());
+		pausedTransfer.setState(TransferState.PAUSEDUPLOAD);
+		EventController.getInstance().triggerDownloadPausedEvent(pausedTransfer);
+		
+		PeerFacade.getInstance().getPeerFileUploadThreadForTransfer(pausedTransfer).stop();
+	}
+	
+	private void handleResumeTransferCommando(ResumeTransferCommando rtc) {
+		Transfer resumedTransfer = PeerFacade.getInstance().getUploadTransferForId(rtc.getTransferId());
+		resumedTransfer.setState(TransferState.RESUMEDUPLOAD);
+		EventController.getInstance().triggerDownloadResumedEvent(resumedTransfer);
 	}
 
 	private void handleGiveConnCommando(GiveConnCommando givecc) {
@@ -199,7 +223,8 @@ public class PeerMessageService extends Thread implements Runnable{
 	}
 
 	private void handleFileRequestCommando(FileRequestCommando frc) {
-		File f = new File(frc.getPath().replace('\\', '/')+frc.getFileName());
+		//File f = new File(frc.getPath().replace('\\', '/')+frc.getFileName());
+		IKShareFile f = new IKShareFile(frc.getPath(),frc.getFileName());
 		
 		if( f.exists() ) {
 	    	FileConfirmCommando fcc = new FileConfirmCommando();
@@ -271,6 +296,7 @@ public class PeerMessageService extends Thread implements Runnable{
 		System.out.println("Verstuurd Commando");
 		System.out.println("------------------");
 		System.out.println(commando);
+		System.out.println("");
 		
 		//System.out.println("[" +commando + "] wordt gezonden naar " + s.getInetAddress().getHostAddress() + " op poort " + s.getPort());
 
