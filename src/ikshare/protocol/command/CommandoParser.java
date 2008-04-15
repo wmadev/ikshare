@@ -38,6 +38,9 @@ public class CommandoParser {
         else if (commandoString.startsWith(bundle.getString("foundresult"))) {
             return new FoundResultCommando(commandoString);
         }
+        else if( commandoString.startsWith(bundle.getString("noresultsfound"))){
+            return new NoResultsFoundCommando(commandoString);
+        }
         else if (commandoString.startsWith(bundle.getString("founditall"))) {
             return new FoundItAllCommando(commandoString);
         }
