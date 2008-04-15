@@ -18,4 +18,6 @@ public interface FileTransferListener {
     public void transferStateChanged(Transfer transfer);
     public void transferFailed(Transfer transfer);
     public void transferFinished(Transfer transfer);
+	public void transferPaused(Transfer transfer);
+	public void transferResumed(Transfer transfer);
 }
