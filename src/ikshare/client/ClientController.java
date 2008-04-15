@@ -11,7 +11,6 @@ import ikshare.domain.SharedItem;
 import ikshare.protocol.command.CreateAccountCommando;
 import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
-import ikshare.protocol.command.ShareCommando;
 import ikshare.protocol.command.StartShareSynchronisationCommando;
 import java.io.File;
 import java.io.IOException;
