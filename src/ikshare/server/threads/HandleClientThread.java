@@ -131,14 +131,18 @@ public class HandleClientThread implements Runnable{
             sec.setMessage(ex.getMessage());
             outputWriter.println(sec.toString());
         }
-        for(SearchResult result : results){
-            FoundResultCommando frc = new FoundResultCommando();
-            frc.setSearchID(result.getId());
-            frc.setFolder(result.isFolder());
-            frc.setAccountName(result.getOwner());
-            frc.setName(result.getName());
-            frc.setSize(result.getSize());
-            outputWriter.println(frc.toString());
+        if(results!= null){
+            for(SearchResult result : results){
+                FoundResultCommando frc = new FoundResultCommando();
+                frc.setSearchID(fbc.getSearchID());
+                frc.setFolder(result.isFolder());
+                frc.setAccountName(result.getOwner());
+                frc.setName(result.getName());
+                frc.setSize(result.getSize());
+                outputWriter.println(frc.toString());
+            }
+        }else{
+            // no results found commando sturen
         }
     }
 

@@ -28,7 +28,7 @@ public class ClientController {
     private ServerConversationThread serverConversation;
     
     private ClientController(){
-        executorService = Executors.newCachedThreadPool(); 
+        executorService = Executors.newCachedThreadPool();
     }
     
     public static ClientController getInstance(){
