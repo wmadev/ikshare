@@ -23,6 +23,7 @@ public class SharedFolder extends SharedItem {
     public SharedFolder(boolean b, String path) {
         super.setFolder(b);
         setPath(path);
+        setParentID(0);
     }
 
     public SharedFolder(boolean folder,String accountName,String path){
@@ -68,6 +69,9 @@ public class SharedFolder extends SharedItem {
     }
     
     public String getPath() {
+        if(getParentId()!=0){
+            return path.substring(path.lastIndexOf(System.getProperty("file.separator")));
+        }
         return path;
     }
 
