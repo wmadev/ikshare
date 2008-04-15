@@ -135,7 +135,11 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
         btnTest.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
         btnTest.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event arg0){
-                ClientController.getInstance().share(txtAccountName.getText(), ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
+                try {
+                    ClientController.getInstance().share(txtAccountName.getText(), ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
+                } catch (IOException ex) {
+                    new ExceptionWindow(ex,MainScreen.getInstance(),false);
+                }
             }
         });
         
