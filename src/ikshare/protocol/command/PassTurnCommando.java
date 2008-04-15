@@ -2,7 +2,7 @@ package ikshare.protocol.command;
 
 public class PassTurnCommando extends Commando {
 
-    private String accountName,  fileName,  path;
+    private String accountName,  fileName,  path, transferId;
     
     public PassTurnCommando() {
         super();
@@ -13,6 +13,7 @@ public class PassTurnCommando extends Commando {
         setAccountName(commandoLine.get(1));
         setFileName(commandoLine.get(2));
         setPath(commandoLine.get(3));
+        setTransferId(commandoLine.get(4));
     }
 
     public void setAccountName(String accountName) {
@@ -42,6 +43,14 @@ public class PassTurnCommando extends Commando {
     @Override
     public String toString() {
         String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("passturn")+del+getAccountName()+del+getFileName()+del+getPath();
+        return commandoBundle.getString("passturn")+del+getAccountName()+del+getFileName()+del+getPath()+del+getTransferId();
     }
+
+	public String getTransferId() {
+		return transferId;
+	}
+
+	public void setTransferId(String transferId) {
+		this.transferId = transferId;
+	}
 }
