@@ -3,6 +3,7 @@
  */
 package ikshare.server.threads;
 
+import com.sun.xml.internal.txw2.output.ResultFactory;
 import ikshare.domain.*;
 import ikshare.protocol.command.*;
 import ikshare.server.*;
@@ -11,6 +12,7 @@ import java.io.*;
 import java.net.Socket;
 import java.text.MessageFormat;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
@@ -67,6 +69,9 @@ public class HandleClientThread implements Runnable{
                     else if( c instanceof EndShareSynchronisationCommando){
                         handleEndShareSynchronisation(c);
                     }
+                    else if( c instanceof FindBasicCommando){
+                        handleFindBasicCommando(c);
+                    }
                         
                     
                 }
@@ -114,6 +119,28 @@ public class HandleClientThread implements Runnable{
 
     private void handleEndShareSynchronisation(Commando c) {
         running = false;
+    }
+
+    private void handleFindBasicCommando(Commando c) {
+        List<SearchResult> results = null;
+        FindBasicCommando fbc = (FindBasicCommando)c;
+        try{
+            results = ServerController.getInstance().findBasic(fbc.getKeyword());
+        }
+        catch (DatabaseException ex) {
+            ServerErrorCommando sec = new ServerErrorCommando();
+            sec.setMessage(ex.getMessage());
+            outputWriter.println(sec.toString());
+        }
+        for(SearchResult result : results){
+            FoundResultCommando frc = new FoundResultCommando();
+            frc.setSearchID(result.getId());
+            frc.setFolder(result.isFolder());
+            frc.setAccountName(result.getOwner());
+            frc.setName(result.getName());
+            frc.setSize(result.getSize());
+            outputWriter.println(frc.toString());
+        }
     }
 
     private void handleLogoffCommando(Commando c) {
