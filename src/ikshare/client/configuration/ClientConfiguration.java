@@ -9,8 +9,7 @@ public class ClientConfiguration {
     private Calendar birthday;
     private File sharedFolder;
     private String ikshareServerAddress;
-    private int ikshareServerPort;
-    private int fileTransferPort;
+    private int ikshareServerPort, messagePort, fileTransferPort;
     
     public ClientConfiguration(){
         
@@ -42,7 +41,15 @@ public class ClientConfiguration {
 
     
     
-    public File getSharedFolder(){
+    public int getMessagePort() {
+		return messagePort;
+	}
+
+	public void setMessagePort(int messagePort) {
+		this.messagePort = messagePort;
+	}
+
+	public File getSharedFolder(){
         return sharedFolder;
     }
     public void setSharedFolder(File file){
