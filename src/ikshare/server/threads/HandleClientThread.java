@@ -10,8 +10,14 @@ import ikshare.server.data.*;
 import java.io.*;
 import java.net.Socket;
 import java.text.MessageFormat;
+import java.util.Iterator;
+import java.util.Map;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author awosy
@@ -22,7 +28,8 @@ public class HandleClientThread implements Runnable{
     private PrintWriter outputWriter;
     private BufferedReader incomingReader;
     private ResourceBundle bundle;
-    
+    private String accountName;
+        
     public HandleClientThread(Socket socket){
         try {
             clientSocket = socket;
@@ -51,9 +58,16 @@ public class HandleClientThread implements Runnable{
                     else if( c instanceof LogOffCommando){
                         handleLogoffCommando(c);
                     }
-                    else if( c instanceof ShareCommando){
-                        handleShareCommando(c);
+                    else if( c instanceof StartShareSynchronisationCommando){
+                        handleShareSynchronisation(c);
                     }
+                    else if(c instanceof AddShareCommando){
+                        handleAddShareCommando(c);
+                    }
+                    else if( c instanceof EndShareSynchronisationCommando){
+                        handleEndShareSynchronisation(c);
+                    }
+                        
                     
                 }
             }
@@ -72,7 +86,7 @@ public class HandleClientThread implements Runnable{
         }
         return text;
     }
-    
+
     private void handleCreateAccountCommando(Commando c) {
         CreateAccountCommando cac = (CreateAccountCommando)c;
         Peer newUser = new Peer(cac.getAccountName(),cac.getPassword(),cac.getEmail());
@@ -96,6 +110,10 @@ public class HandleClientThread implements Runnable{
             sec.setMessage(ex.getMessage());
             outputWriter.println(sec.toString());
         }
+    }
+
+    private void handleEndShareSynchronisation(Commando c) {
+        running = false;
     }
 
     private void handleLogoffCommando(Commando c) {
@@ -140,7 +158,7 @@ public class HandleClientThread implements Runnable{
         }
     }
 
-    private void handleShareCommando(Commando c) {
+    /*private void handleShareCommando(Commando c) {
         ShareCommando sc = (ShareCommando)c;
         StringTokenizer tokenizer = new StringTokenizer(sc.getShares(),";");
         String token = tokenizer.nextToken();
@@ -149,7 +167,7 @@ public class HandleClientThread implements Runnable{
         parseShares(root,Integer.parseInt(split[2]),tokenizer);
         try {
             ServerController.getInstance().addShares(sc.getAccountName(), root);
-            
+            printTree(root);
         }
         catch (DatabaseException ex) {
             ServerErrorCommando sec = new ServerErrorCommando();
@@ -157,6 +175,22 @@ public class HandleClientThread implements Runnable{
             outputWriter.println(sec.toString());
         }
     }
+        private static void printTree(SharedItem root) {
+        if(root.isFolder()){
+            System.out.println("Folder: "+root.getState()+" : "+
+                    ((SharedFolder)root).getFolderID()+" : "+
+                    ((SharedFolder)root).getParentID()+" : "+
+                    ((SharedFolder)root).getName());
+            for(SharedItem item:root.getSharedItems()){
+                printTree((SharedItem)item);    
+            }
+            
+        }
+        else {
+            System.out.println("File: "+root.getState()+" : "+((SharedFile)root).getFolderID()+" : "+((SharedFile)root).getName());
+        }
+    }
+    
     private void parseShares(SharedFolder root,int number,StringTokenizer tokenizer){
         while(number>0){
             String token = tokenizer.nextToken();
@@ -174,5 +208,35 @@ public class HandleClientThread implements Runnable{
             }
             number--;
         }
+    }*/
+
+    private void handleShareSynchronisation(Commando c) {
+        StartShareSynchronisationCommando sssc = (StartShareSynchronisationCommando)c;
+        accountName = sssc.getAccountName();
     }
+    private void handleAddShareCommando(Commando c) {
+        AddShareCommando asc = (AddShareCommando)c;
+        if(asc.isDirectory()){
+            try {
+                int id = ServerController.getInstance().addSharedFolder(asc.getPath(), accountName, asc.getName(), asc.getParentFolderID());
+                ReceiveFolderIdCommando rfic = new ReceiveFolderIdCommando();
+                rfic.setFolderId(id);
+                outputWriter.println(rfic.toString());
+            } catch (DatabaseException ex) {
+                ServerErrorCommando sec = new ServerErrorCommando();
+                sec.setMessage(ex.getMessage());
+                outputWriter.println(sec.toString());
+            }
+        }
+        else{
+             try {
+                ServerController.getInstance().addSharedFile(asc.getParentFolderID(),asc.getName(), asc.getSize());
+            } catch (DatabaseException ex) {
+                ServerErrorCommando sec = new ServerErrorCommando();
+                sec.setMessage(ex.getMessage());
+                outputWriter.println(sec.toString());
+            }
+        }
+    }
+    
 }
