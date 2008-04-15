@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.gui;
 
 import ikshare.client.configuration.ClientConfigurationController;
@@ -18,10 +13,10 @@ public class InfoBar extends Composite {
      */
     public InfoBar(Shell shell,int flags){
         super(shell,flags);
-        GridData gd = new GridData(SWT.FILL, SWT.FILL, false, true, 1,1 );
-        gd.widthHint=180;
+        GridData gd = new GridData(SWT.FILL, SWT.CENTER, true, false, 1,1 );
+        //gd.heightHint=50;
         this.setLayoutData(gd);
-        GridLayout gl = new GridLayout(2,false);
+        GridLayout gl = new GridLayout(6,false);
         this.setLayout(gl);
         this.init();
     }
