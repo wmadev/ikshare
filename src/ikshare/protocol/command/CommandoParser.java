@@ -26,8 +26,8 @@ public class CommandoParser {
         else if (commandoString.startsWith(bundle.getString("pong"))) {
             return new PongCommando(commandoString);
         }
-        else if (commandoString.startsWith(bundle.getString("find"))) {
-            return new FindCommando(commandoString);
+        else if (commandoString.startsWith(bundle.getString("findbasic"))) {
+            return new FindBasicCommando(commandoString);
         }
         else if (commandoString.startsWith(bundle.getString("nevermind"))) {
             return new NeverMindCommando(commandoString);
