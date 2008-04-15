@@ -238,7 +238,7 @@ public class PeerFacade {
 		
 		PauseTransferCommando ptc = new PauseTransferCommando();
 		ptc.setAccountName(peer.getAccountName());
-		ptc.setSentBlocks(selected.getNumberOfBlocksFinished());
+		ptc.setSentBlocks(selected.getNumberOfBytesFinished());
 		ptc.setTransferId(selected.getId());
 		peerMessageService.sendMessage(ptc);
 	}
@@ -249,7 +249,7 @@ public class PeerFacade {
 		
 		ResumeTransferCommando rtc = new ResumeTransferCommando();
 		rtc.setAccountName(peer.getAccountName());
-		rtc.setSentBlocks(selected.getNumberOfBlocksFinished());
+		rtc.setSentBlocks(selected.getNumberOfBytesFinished());
 		rtc.setTransferId(selected.getId());
 		peerMessageService.sendMessage(rtc);
 	}

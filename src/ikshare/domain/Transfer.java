@@ -13,12 +13,12 @@ public class Transfer {
     private String id;
     private IKShareFile file;
     private TransferState state;
-    private long numberOfBlocksFinished, numberOfBlocks, speed, remainingTime, fileSize, blockSize;
+    private long numberOfBytesFinished, speed, remainingTime, fileSize, blockSize;
     private Peer peer;
     
     
     public int getProgress() {
-    	return (int)Math.round((double)numberOfBlocksFinished/(double)numberOfBlocks * 100);
+    	return (int)Math.round((double)numberOfBytesFinished/(double)fileSize * 100);
     }
     
     public Transfer(){
@@ -48,21 +48,13 @@ public class Transfer {
     public void setId(String id) {
         this.id = id;
     }
-    
-    public long getNumberOfBlocks() {
-        return numberOfBlocks;
+
+    public long getNumberOfBytesFinished() {
+        return numberOfBytesFinished;
     }
 
-    public void setNumberOfBlocks(long numberOfBlocks) {
-        this.numberOfBlocks = numberOfBlocks;
-    }
-
-    public long getNumberOfBlocksFinished() {
-        return numberOfBlocksFinished;
-    }
-
-    public void setNumberOfBlocksFinished(long numberOfBlocksFinished) {
-        this.numberOfBlocksFinished = numberOfBlocksFinished;
+    public void setNumberOfBytesFinished(long numberOfBlocksFinished) {
+        this.numberOfBytesFinished = numberOfBlocksFinished;
     }
    
     
