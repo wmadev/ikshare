@@ -46,49 +46,49 @@ public class SearchPanel extends AbstractPanel{
         //((GridData)(parent.getLayoutData())).heightHint=200;
         Group grpAdvanced = new Group(parent, SWT.BORDER);
         grpAdvanced.setLayout(new GridLayout(1,false));
-        grpAdvanced.setText("Advanced Search");
+        grpAdvanced.setText(ClientConfigurationController.getInstance().getString("advanced"));
         grpAdvanced.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true, 1,1));
         Label lblSearchName = new Label(grpAdvanced,SWT.NONE);
-        lblSearchName.setText("Name");
+        lblSearchName.setText(ClientConfigurationController.getInstance().getString("name"));
         GridData gd=new GridData(SWT.LEFT, SWT.CENTER, false,false, 1,1);
         gd.widthHint = 100;
         lblSearchName.setLayoutData(gd);
         txtKeyword = new Text(grpAdvanced,SWT.BORDER);
         txtKeyword.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
         final Button btnAndOr= new  Button(grpAdvanced, SWT.BORDER);
-        btnAndOr.setText("And");
+        btnAndOr.setText(ClientConfigurationController.getInstance().getString("and"));
         btnAndOr.setLayoutData(new GridData(SWT.LEFT,SWT.FILL, false, false, 2, 1));
         btnAndOr.addListener(SWT.Selection, new Listener() {
             public void handleEvent(Event e) {
-                if(btnAndOr.getText().equalsIgnoreCase("And")){
-                    btnAndOr.setText("Or");
+                if(btnAndOr.getText().equalsIgnoreCase(ClientConfigurationController.getInstance().getString("and"))){
+                    btnAndOr.setText(ClientConfigurationController.getInstance().getString("or"));
                 }
                 else{
-                    btnAndOr.setText("And");
+                    btnAndOr.setText(ClientConfigurationController.getInstance().getString("and"));
                 }
              }
         });
         Label lblSearchType = new Label(grpAdvanced,SWT.NONE);
-        lblSearchType.setText("Type");
+        lblSearchType.setText(ClientConfigurationController.getInstance().getString("type"));
         lblSearchType.setLayoutData(gd);
         Text txtType = new Text(grpAdvanced,SWT.BORDER);
         txtType.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
         Label lblSearchSize = new Label(grpAdvanced,SWT.NONE);
-        lblSearchSize.setText("Size");
+        lblSearchSize.setText(ClientConfigurationController.getInstance().getString("size"));
         lblSearchSize.setLayoutData(gd);
         Text txtSize = new Text(grpAdvanced,SWT.BORDER);
         txtSize.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
         Label lblSearchFolder = new Label(grpAdvanced,SWT.NONE);
-        lblSearchFolder.setText("Folder");
+        lblSearchFolder.setText(ClientConfigurationController.getInstance().getString("folder"));
         lblSearchFolder.setLayoutData(gd);
         Composite radioButtons= new Composite(grpAdvanced, SWT.NONE);
         radioButtons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
         radioButtons.setLayout(new FillLayout());
         Button rbFile=new Button(radioButtons, SWT.RADIO);
-        rbFile.setText("File");
+        rbFile.setText(ClientConfigurationController.getInstance().getString("file"));
         rbFile.setSelection(true);
         Button rbFolder=new Button(radioButtons, SWT.RADIO);
-        rbFolder.setText("Folder");
+        rbFolder.setText(ClientConfigurationController.getInstance().getString("folder"));
         return grpAdvanced;
     };
     
@@ -96,7 +96,7 @@ public class SearchPanel extends AbstractPanel{
         //((GridData)(parent.getLayoutData())).heightHint=75;
         Group grpBasic = new Group(parent, SWT.BORDER);
         grpBasic.setLayout(new GridLayout(1,false));
-        grpBasic.setText("Basic Search");
+        grpBasic.setText(ClientConfigurationController.getInstance().getString("basic"));
         grpBasic.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
         Label lblSearchBasic = new Label(grpBasic,SWT.NONE);
         lblSearchBasic.setText("Keyword");
@@ -109,7 +109,7 @@ public class SearchPanel extends AbstractPanel{
     }
         
     private void load() {
-		TableItem ti=null;
+		/*TableItem ti=null;
 		SearchResult searchResult=null;
 		
 		
@@ -118,7 +118,7 @@ public class SearchPanel extends AbstractPanel{
 		ti.setText(0, searchResult.getFile().getName());
 		//ti.setText(1,UtilityClass.formatFileSize());
 		ti.setText(2, searchResult.getPeer().getAccountName());
-		ti.setData("results",searchResult);
+		ti.setData("results",searchResult);*/
 		
 	}
 
@@ -146,7 +146,7 @@ public class SearchPanel extends AbstractPanel{
         cmpButtons.setLayoutData(new GridData(SWT.RIGHT,SWT.END,false,false,1,1));
         cmpButtons.setLayout(new GridLayout(2,false));
         final Button btnAdvanced = new Button(cmpButtons,SWT.BORDER);
-        btnAdvanced.setText("Advanced search");
+        btnAdvanced.setText(ClientConfigurationController.getInstance().getString("advanced"));
         btnAdvanced.addListener(SWT.Selection, new Listener(){
 
                    public void handleEvent(Event e) {
@@ -156,14 +156,14 @@ public class SearchPanel extends AbstractPanel{
                        
                        if(!advanced){
                             advanced = true;
-                            btnAdvanced.setText("Basic search");
+                            btnAdvanced.setText(ClientConfigurationController.getInstance().getString("basic"));
                             gd.heightHint=200;
                             cmpSearch.setLayoutData(gd);
                             layout.topControl = drawAdvancedSearch(cmpSearch);
                         }
                         else{
                             advanced = false;
-                            btnAdvanced.setText("Advanced search");
+                            btnAdvanced.setText(ClientConfigurationController.getInstance().getString("advanced"));
                             gd.heightHint=75;
                             cmpSearch.setLayoutData(gd);
                             layout.topControl = drawBasicSearch(cmpSearch);
@@ -179,7 +179,7 @@ public class SearchPanel extends AbstractPanel{
 
         btnAdvanced.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,false, 1,1));
         Button btnSearch = new Button(cmpButtons,SWT.BORDER);
-        btnSearch.setText("Search");
+        btnSearch.setText(ClientConfigurationController.getInstance().getString("search"));
         btnSearch.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,false, 1,1));
               btnSearch.addListener(SWT.Selection, new Listener(){
 
