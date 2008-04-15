@@ -53,7 +53,8 @@ public class PeerFileUploadThread implements Runnable {
 			System.out.println(sendFile.getAbsolutePath());
 			
 			transfer.setFileSize(sendFile.length());
-			transfer.setNumberOfBlocks((int) (Math.ceil(transfer.getFileSize() / 2048)));
+			transfer.setNumberOfBlocks((int) (Math.ceil(transfer.getFileSize() / transfer.getBlockSize())));
+			
 			EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
 
 			fileInput = new FileInputStream(sendFile.getAbsolutePath());
@@ -66,6 +67,8 @@ public class PeerFileUploadThread implements Runnable {
 				outStream.flush();
 				transfer.setNumberOfBlocksFinished(transfer.getNumberOfBlocksFinished() + 1);
 				now = new Date();
+				
+				
 
                 transfer.setSpeed(transfer.getNumberOfBlocksFinished()*transfer.getBlockSize()*1000/(Math.max(now.getTime()-startUpload.getTime(), 1)));
                 transfer.setRemainingTime((now.getTime()-startUpload.getTime())/(transfer.getNumberOfBlocksFinished())*(transfer.getNumberOfBlocks()-transfer.getNumberOfBlocksFinished())/1000);
@@ -76,7 +79,7 @@ public class PeerFileUploadThread implements Runnable {
 			transfer.setState(TransferState.FINISHED);
 			EventController.getInstance().triggerDownloadFinishedEvent(transfer);
 		} catch (Exception e) {
-			if (transfer.getState() == TransferState.CANCELEDUPLOAD)
+			if (transfer.getState() == TransferState.CANCELLEDUPLOAD)
 				EventController.getInstance().triggerDownloadCanceledEvent(transfer);
 			else if (transfer.getState() == TransferState.PAUSEDUPLOAD)
 				EventController.getInstance().triggerDownloadPausedEvent(transfer);

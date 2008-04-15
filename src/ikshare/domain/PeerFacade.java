@@ -54,7 +54,7 @@ public class PeerFacade {
 		//test
 		try {
 			peer = new Peer("Monet", InetAddress.getLocalHost());
-			otherPeer = new Peer("Pizarro", InetAddress.getByName("192.168.1.2"));
+			otherPeer = new Peer("Gershwin", InetAddress.getByName("192.168.16.136"));
 			
 			/*
 			peer = new Peer("Pizarro", InetAddress.getLocalHost());
@@ -222,7 +222,7 @@ public class PeerFacade {
 	
 	public void cancelDownloadThread(Transfer selected) {
 		getPeerFileDownloadThreadForTransfer(selected).stop();
-		selected.setState(TransferState.CANCELEDDOWNLOAD);
+		selected.setState(TransferState.CANCELLEDDOWNLOAD);
 		EventController.getInstance().triggerDownloadCanceledEvent(selected);
 		
 		CancelTransferCommando ctc = new CancelTransferCommando();

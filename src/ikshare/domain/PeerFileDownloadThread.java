@@ -80,7 +80,7 @@ public class PeerFileDownloadThread implements Runnable {
             fileOutput.flush();
 
         } catch (Exception e) {
-			if (transfer.getState() == TransferState.CANCELEDDOWNLOAD)
+			if (transfer.getState() == TransferState.CANCELLEDDOWNLOAD)
 				EventController.getInstance().triggerDownloadCanceledEvent(transfer);
 			else if (transfer.getState() == TransferState.PAUSEDDOWNLOAD)
 				EventController.getInstance().triggerDownloadPausedEvent(transfer);

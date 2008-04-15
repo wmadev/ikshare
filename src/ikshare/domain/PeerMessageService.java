@@ -171,7 +171,7 @@ public class PeerMessageService extends Thread implements Runnable{
 
 	private void handleCancelTransferCommando(CancelTransferCommando ctc) {
 		Transfer canceledTransfer = PeerFacade.getInstance().getUploadTransferForId(ctc.getTransferId());
-		canceledTransfer.setState(TransferState.CANCELEDUPLOAD);
+		canceledTransfer.setState(TransferState.CANCELLEDUPLOAD);
 		EventController.getInstance().triggerDownloadCanceledEvent(canceledTransfer);
 		
 		PeerFacade.getInstance().getPeerFileUploadThreadForTransfer(canceledTransfer).stop();
@@ -238,6 +238,8 @@ public class PeerMessageService extends Thread implements Runnable{
 	    	t.setFile(f);
 	    	t.setId(fcc.getTransferId());
 	    	t.setPeer(new Peer(frc.getAccountName()));
+	    	t.setBlockSize(2048);
+	    	t.setFileSize(f.length());
 	    	t.setState(TransferState.UPLOADING);
 	    	PeerFacade.getInstance().addToUploads(t);
 	    	EventController.getInstance().triggerDownloadStartedEvent(t);
@@ -245,7 +247,7 @@ public class PeerMessageService extends Thread implements Runnable{
 	    	YourTurnCommando ytc = new YourTurnCommando();
 	    	ytc.setAccountName(PeerFacade.getInstance().getPeer().getAccountName());
 	    	ytc.setSize(f.length());
-	    	ytc.setBlockSize(2048);
+	    	ytc.setBlockSize(t.getBlockSize());
 	    	ytc.setFileName(frc.getFileName());
 	    	ytc.setPath(frc.getPath());
 	    	ytc.setTransferId(frc.getTransferId());
