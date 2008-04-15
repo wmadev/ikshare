@@ -35,8 +35,12 @@ public class ServerController {
         return instance;
     }
 
-    public boolean addShares(String accountName, SharedFolder root) throws DatabaseException {
-        return databaseFactory.getFileStorage().addShares(accountName,root);
+    public boolean addSharedFile(int parentFolderID, String name, long size) throws DatabaseException {
+        return databaseFactory.getFileStorage().addSharedFile(parentFolderID,name,size);
+    }
+
+    public int addSharedFolder(String path, String accountName, String name, int parentFolderId) throws DatabaseException {
+        return databaseFactory.getFileStorage().addSharedFolder(path,accountName,name,parentFolderId);
     }
 
     public boolean checkPassword(Peer user) throws DatabaseException {
