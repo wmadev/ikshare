@@ -9,6 +9,7 @@ import ikshare.domain.SearchResult;
 import ikshare.domain.SharedFile;
 import ikshare.domain.SharedFolder;
 import ikshare.domain.SharedItem;
+import ikshare.domain.SharedItemState;
 import ikshare.server.data.DatabaseException;
 import ikshare.server.data.FileStorage;
 import java.sql.Connection;
@@ -18,6 +19,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -37,71 +40,52 @@ public class OracleFileStorage implements FileStorage {
         return instance;
     }
 
-    public boolean addShares(String accountName,SharedFolder root) throws DatabaseException {
-        boolean success = false;
+    public synchronized int addSharedFolder(String path, String accountName, String name, int parentFolderId) throws DatabaseException{
+        int id = 0;
         Connection conn = OracleDatabaseFactory.getConnection();
         try {
-            conn.setAutoCommit(false);
-            addFolder(root,conn,0);
-            conn.commit();
-        } catch (SQLException e) {
-            success = false;
-            try{
-                conn.rollback();
-            }
-            catch(SQLException ex){
-                ex.printStackTrace();
-                throw new DatabaseException(bundle.getString("ERROR_Database"));
-            }
-            e.printStackTrace();
-            throw new DatabaseException(bundle.getString("ERROR_Database"));
-        } finally {
-            try{
-                conn.setAutoCommit(true);
-            }
-            catch(SQLException ex){
-                ex.printStackTrace();
-                throw new DatabaseException(bundle.getString("ERROR_Database"));
-            }
-            OracleDatabaseFactory.freeConnection(conn);
-        }
-        return success;
-    }
-    private void addFolder(SharedItem root, Connection conn,int parent) throws SQLException {
-        if(root.isFolder() && root.getSharedItems().size()>0){
             PreparedStatement stmtAddFolder = conn.prepareStatement(bundle.getString("addFolder"));
-            stmtAddFolder.setString(1,((SharedFolder)root).getPath());
-            stmtAddFolder.setString(2, ((SharedFolder)root).getAccountName());
-            stmtAddFolder.setInt(3, parent);
-            stmtAddFolder.setString(4, ((SharedFolder)root).getName());
+            stmtAddFolder.setString(1, path);
+            stmtAddFolder.setString(2, accountName);
+            stmtAddFolder.setInt(3, parentFolderId);
+            stmtAddFolder.setString(4, name);
             stmtAddFolder.executeUpdate();
             stmtAddFolder = conn.prepareStatement(bundle.getString("getLastFolderId"));
             ResultSet result = stmtAddFolder.executeQuery();
             result.next();
-            int p = result.getInt(1);
-            ((SharedFolder)root).setFolderID(p);
+            id = result.getInt(1);
             result.close();
             stmtAddFolder.close();
-            for(SharedItem item :root.getSharedItems()){
-                addFolder(item,conn,p);
-            }
-        }else if(!root.isFolder()){
-            ((SharedFile)root).setFolderID(parent);
-            addFile((SharedFile)root,conn);
+       } catch (SQLException e) {
+            id = 0;
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
+        } finally {
+            OracleDatabaseFactory.freeConnection(conn);
         }
-        
+        return id;
     }
-    private void addFile(SharedFile file,Connection conn) throws SQLException{
-        
-        PreparedStatement stmtAddFile = conn.prepareStatement(bundle.getString("addFile"));
-        stmtAddFile.setInt(1, file.getFolderID());
-        stmtAddFile.setString(2, file.getName());
-        stmtAddFile.setLong(3, file.getSize());
-        stmtAddFile.executeUpdate();
-        stmtAddFile.close();
+    
+     public boolean addSharedFile(int parentFolderID, String name, long size) throws DatabaseException {
+        boolean success = false;
+        Connection conn = OracleDatabaseFactory.getConnection();
+        try {
+            PreparedStatement stmtAddFile = conn.prepareStatement(bundle.getString("addFile"));
+            stmtAddFile.setInt(1, parentFolderID);
+            stmtAddFile.setString(2, name);
+            stmtAddFile.setLong(3, size);
+            stmtAddFile.executeUpdate();
+            stmtAddFile.close();
+            success = true;
+       } catch (SQLException e) {
+            success = false;
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
+        } finally {
+            OracleDatabaseFactory.freeConnection(conn);
+        }
+        return success;
     }
 
-    public List<SearchResult> basicSearch(String name) throws DatabaseException {
+    public synchronized List<SearchResult> basicSearch(String name) throws DatabaseException {
         ArrayList<SearchResult> results=new ArrayList<SearchResult>();
         Connection conn = OracleDatabaseFactory.getConnection();
         try {
@@ -122,8 +106,4 @@ public class OracleFileStorage implements FileStorage {
         }
        return  results;
     }
-    
-    
-   
-
 }
