@@ -16,12 +16,23 @@ public class SharedItem implements Serializable{
     private boolean folder;
     private ArrayList<SharedItem> sharedItems;
     private SharedItemState state;
-    
+    private int parentId;
+        
     public SharedItem(){
         folder = false;
         sharedItems = new ArrayList<SharedItem>();
     }
 
+    public int getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(int parentId) {
+        this.parentId = parentId;
+    }
+
+    
+    
     public SharedItemState getState() {
         return state;
     }
