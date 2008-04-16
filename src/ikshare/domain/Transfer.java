@@ -5,12 +5,15 @@
 
 package ikshare.domain;
 
+import java.util.Date;
+
 /**
  *
  * @author awosy
  */
 public class Transfer {
     private String id;
+    private Date startTransfer;
     private IKShareFile file;
     private TransferState state;
     private long numberOfBytesFinished, speed, remainingTime, fileSize, blockSize;
@@ -34,7 +37,7 @@ public class Transfer {
 	}
 
 	public long getRemainingTime() {
-        return remainingTime;
+		return remainingTime;
     }
 
     public void setRemainingTime(long remainingTime) {
@@ -83,7 +86,7 @@ public class Transfer {
     }
 
     public long getSpeed() {
-        return speed;
+    	return speed;
     }
 
     public void setSpeed(long speed) {
@@ -100,5 +103,15 @@ public class Transfer {
     
     public boolean equals (Object transfer) {
 		return ((Transfer)transfer).getId().equals(this.getId());	
-    }    
+    }
+
+	public Date getStartTransfer() {
+		return startTransfer;
+	}
+
+	public void setStartTransfer(Date startTransfer) {
+		this.startTransfer = startTransfer;
+	}
+    
+    
 }

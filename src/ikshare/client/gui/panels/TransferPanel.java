@@ -19,6 +19,7 @@ import java.io.File;
 import java.util.Date;
 
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.events.MouseListener;
@@ -37,6 +38,7 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
 import org.eclipse.swt.widgets.MenuItem;
+import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
@@ -131,7 +133,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 
 		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
 		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
-		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("progress"), 65, SWT.RIGHT);
+		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("progress"), 100, SWT.RIGHT);
 		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("state"), 150, SWT.RIGHT);
 		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("speed"),100,SWT.RIGHT);
 		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
@@ -156,7 +158,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		tblUploadTransfer.setHeaderVisible (true);
 		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
 		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("progress"), 65, SWT.RIGHT);
+		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("progress"), 100, SWT.RIGHT);
 		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("state"), 150, SWT.RIGHT);
 		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("speed"),100,SWT.RIGHT);
 		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
@@ -202,24 +204,34 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 				new Runnable() {
 					public void run(){
 						TableItem item = null;
+						ProgressBar bar = null;
 						if(transfer.getState() == TransferState.DOWNLOADING){
 							item = new TableItem(tblDownloadTransfer,SWT.NONE);
 							item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("downloading"));
+							bar = new ProgressBar(tblDownloadTransfer, SWT.SMOOTH);
+							bar.setSelection(0);
+					        TableEditor editor = new TableEditor(tblDownloadTransfer);
+					        editor.grabHorizontal = editor.grabVertical = true;
+					        editor.setEditor(bar, item, 2);
 						}
 						else if(transfer.getState() == TransferState.UPLOADING){
 							item = new TableItem(tblUploadTransfer,SWT.NONE);
 							item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("uploading"));
+							bar = new ProgressBar(tblUploadTransfer, SWT.SMOOTH);
+							bar.setSelection(0);
+					        TableEditor editor = new TableEditor(tblUploadTransfer);
+					        editor.grabHorizontal = editor.grabVertical = true;
+					        editor.setEditor(bar, item, 2);
 						}
 
 						if (item != null) {
-							//System.out.println(transfer.getFile().getName()==null);
 							item.setText(TransferPanel.fileNamePos,transfer.getFile().getName());
 							item.setText(TransferPanel.sizePos,UtilityClass.formatFileSize(transfer.getFileSize()));
-
 							item.setText(TransferPanel.speedPos,"0");
 							item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
 							item.setText(TransferPanel.userPos, transfer.getPeer().getAccountName());
 							item.setData("transfer",transfer);
+							item.setData("progressbar", bar);
 						}
 
 					}
@@ -270,11 +282,11 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 								Transfer t = (Transfer) item.getData("transfer");
 								if(t.getId().equals(transfer.getId()))
 								{
-									item.setText(TransferPanel.fileNamePos, UtilityClass.formatFileSize(t.getFileSize()));
+									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
 									item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
 									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
 									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
-									item.setText(TransferPanel.progressPos, transfer.getProgress() + " %");
+									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
 								}
 							}
 						}
@@ -284,11 +296,11 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 								Transfer t = (Transfer) item.getData("transfer");
 								if(t.getId().equals(transfer.getId()))
 								{
-									item.setText(TransferPanel.fileNamePos, UtilityClass.formatFileSize(t.getFileSize()));
+									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
 									item.setText(TransferPanel.speedPos, UtilityClass.formatFileSize(transfer.getSpeed()));
 									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
 									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
-									item.setText(TransferPanel.progressPos, transfer.getProgress() + " %");
+									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
 								}
 							}
 						}

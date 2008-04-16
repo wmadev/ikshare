@@ -12,6 +12,7 @@ import ikshare.protocol.command.FoundItAllCommando;
 import ikshare.protocol.command.GetConnCommando;
 import ikshare.protocol.command.GiveConnCommando;
 import ikshare.protocol.command.GivePeerCommando;
+import ikshare.protocol.command.GoForItCommando;
 import ikshare.protocol.command.MyTurnCommando;
 import ikshare.protocol.command.PassTurnCommando;
 import ikshare.protocol.command.PauseTransferCommando;
@@ -132,6 +133,9 @@ public class PeerMessageService extends Thread implements Runnable{
 		else if (c instanceof PassTurnCommando) {
 			handlePassTurnCommando((PassTurnCommando) c);
 		}
+		else if (c instanceof GoForItCommando) {
+			handleGoForItCommando((GoForItCommando) c);
+		}
 		else if (c instanceof GetConnCommando) {
 			handleGetConnCommando((GetConnCommando) c);
 		}
@@ -154,6 +158,12 @@ public class PeerMessageService extends Thread implements Runnable{
 	}
 
 
+
+	private void handleGoForItCommando(GoForItCommando gfic) {
+		Transfer t = PeerFacade.getInstance().getDownloadTransferForId(gfic.getTransferId());
+		PeerFacade.getInstance().startDownloadThread(PeerFacade.getInstance().getDownloadTransferForId(gfic.getTransferId()));	
+
+	}
 
 	private void handleOtherCommandos(Commando c) {
 		try {
@@ -203,8 +213,11 @@ public class PeerMessageService extends Thread implements Runnable{
 	}
 
 	private void handleMyTurnCommando(MyTurnCommando mtc) {
-		// TODO Auto-generated method stub
-		
+		System.out.println("kom ik hier wel?");
+		GoForItCommando gfic = new GoForItCommando();
+		gfic.setAccountName(PeerFacade.getInstance().getPeer().getAccountName());
+		gfic.setTransferId(mtc.getTransferId());
+		sendMessage(gfic);		
 	}
 
 	private void handleGivePeerCommando(GivePeerCommando gpc) {
@@ -256,7 +269,7 @@ public class PeerMessageService extends Thread implements Runnable{
 		}
 	}
 
-	private void handleYourTurnCommando(YourTurnCommando ytc) {		
+	private void handleYourTurnCommando(YourTurnCommando ytc) {			
 		MyTurnCommando mtc = new MyTurnCommando();
 		mtc.setAccountName(PeerFacade.getInstance().getDownloadTransferForId(ytc.getTransferId()).getPeer().getAccountName());
 		mtc.setFileName(ytc.getFileName());
@@ -264,11 +277,10 @@ public class PeerMessageService extends Thread implements Runnable{
 		mtc.setTransferId(ytc.getTransferId());
 		sendMessage(mtc);
 		
-		Transfer t = PeerFacade.getInstance().getDownloadTransferForId(mtc.getTransferId());
-		
+		Transfer t = PeerFacade.getInstance().getDownloadTransferForId(ytc.getTransferId());
 		t.setFileSize(ytc.getSize());
 		t.setBlockSize(ytc.getBlockSize());
-		PeerFacade.getInstance().startDownloadThread(PeerFacade.getInstance().getDownloadTransferForId(mtc.getTransferId()));	
+		
 	}
 
 	private void handleFileConfirmCommando(FileConfirmCommando fcc) {
