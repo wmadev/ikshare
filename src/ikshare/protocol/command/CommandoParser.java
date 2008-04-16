@@ -65,6 +65,9 @@ public class CommandoParser {
         else if (commandoString.startsWith(bundle.getString("passturn"))) {
             return new PassTurnCommando(commandoString);
         }
+        else if (commandoString.startsWith(bundle.getString("goforit"))) {
+        	return new GoForItCommando(commandoString);
+        }
         else if (commandoString.startsWith(bundle.getString("getconn"))) {
             return new GetConnCommando(commandoString);
         }
