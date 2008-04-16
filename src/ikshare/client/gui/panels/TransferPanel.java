@@ -207,7 +207,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 						ProgressBar bar = null;
 						if(transfer.getState() == TransferState.DOWNLOADING){
 							item = new TableItem(tblDownloadTransfer,SWT.NONE);
-							item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("downloading"));
+							item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("queued"));
 							bar = new ProgressBar(tblDownloadTransfer, SWT.SMOOTH);
 							bar.setSelection(0);
 					        TableEditor editor = new TableEditor(tblDownloadTransfer);
@@ -216,7 +216,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 						}
 						else if(transfer.getState() == TransferState.UPLOADING){
 							item = new TableItem(tblUploadTransfer,SWT.NONE);
-							item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("uploading"));
+							item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("queued"));
 							bar = new ProgressBar(tblUploadTransfer, SWT.SMOOTH);
 							bar.setSelection(0);
 					        TableEditor editor = new TableEditor(tblUploadTransfer);
