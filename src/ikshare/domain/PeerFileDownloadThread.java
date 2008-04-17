@@ -9,6 +9,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -51,7 +54,19 @@ public class PeerFileDownloadThread implements Runnable {
 
 	public void run() {
         try {
-            outputFile = new File(ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+System.getProperty("file.separator")+transfer.getFile().getName());
+        	String fileName = ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+System.getProperty("file.separator")+transfer.getFile().getName();
+        	int lastIndexOfPoint = fileName.lastIndexOf(".");
+        	System.out.println(lastIndexOfPoint);
+        	String fileNamePrefix = fileName.substring(0, lastIndexOfPoint);
+        	String extension=fileName.substring(lastIndexOfPoint);
+
+        	outputFile = new File(fileNamePrefix+extension);
+            int fileNumber=1;
+            while (outputFile.exists()) {
+            	 outputFile = new File(fileNamePrefix + "[" + fileNumber + "]" + extension);
+            	 fileNumber++;
+            }
+            
             fileOutput = new FileOutputStream(outputFile);
             inStream = new BufferedInputStream( receiveSocket.getInputStream());
             

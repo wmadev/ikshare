@@ -54,7 +54,7 @@ public class PeerFacade {
 		//test
 		try {
 			peer = new Peer("Monet", InetAddress.getLocalHost());
-			otherPeer = new Peer("Gershwin", InetAddress.getLocalHost());
+			otherPeer = new Peer("Pizarro", InetAddress.getLocalHost());
 			
 			/*
 			peer = new Peer("Pizarro", InetAddress.getLocalHost());
