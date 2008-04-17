@@ -47,7 +47,7 @@ public class SearchPanel extends AbstractPanel{
         Group grpAdvanced = new Group(parent, SWT.BORDER);
         grpAdvanced.setLayout(new GridLayout(1,false));
         grpAdvanced.setText(ClientConfigurationController.getInstance().getString("advanced"));
-        grpAdvanced.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,true, 1,1));
+        grpAdvanced.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false,true, 1,1));
         Label lblSearchName = new Label(grpAdvanced,SWT.NONE);
         lblSearchName.setText(ClientConfigurationController.getInstance().getString("name"));
         GridData gd=new GridData(SWT.LEFT, SWT.CENTER, false,false, 1,1);
@@ -82,9 +82,10 @@ public class SearchPanel extends AbstractPanel{
         Label lblSearchSize = new Label(grpAdvanced,SWT.NONE);
         lblSearchSize.setText(ClientConfigurationController.getInstance().getString("size"));
         lblSearchSize.setLayoutData(gd);
+        
         Composite cmpSize= new Composite(grpAdvanced, SWT.NONE);
         cmpSize.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
-        cmpSize.setLayout(new GridLayout(6,false));
+        cmpSize.setLayout(new GridLayout(3,false));
         Label lblMin=new Label(cmpSize, SWT.NONE);
         lblMin.setText(ClientConfigurationController.getInstance().getString("between"));
         lblMin.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true,false, 1,1));
@@ -94,12 +95,16 @@ public class SearchPanel extends AbstractPanel{
         cbSize1.setItems(new String[] {"-----","byte", "Kbyte", "Mbyte", "Gbyte"});
         cbSize1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
         cbSize1.select(0);
-        Label lblMax=new Label(cmpSize, SWT.NONE);
+        
+        Composite cmpSize2= new Composite(grpAdvanced, SWT.NONE);
+        cmpSize2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
+        cmpSize2.setLayout(new GridLayout(3,false));
+        Label lblMax=new Label(cmpSize2, SWT.NONE);
         lblMax.setText(ClientConfigurationController.getInstance().getString("and"));
         lblMax.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true,false, 1,1));
-        Text txtMax=new Text(cmpSize,SWT.BORDER);
+        Text txtMax=new Text(cmpSize2,SWT.BORDER);
         txtMax.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
-        Combo cbSize2 = new Combo(cmpSize ,SWT.DROP_DOWN | SWT.READ_ONLY);
+        Combo cbSize2 = new Combo(cmpSize2 ,SWT.DROP_DOWN | SWT.READ_ONLY);
         cbSize2.setItems(new String[] {"-----","byte", "Kbyte", "Mbyte", "Gbyte"});
         cbSize2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
         cbSize2.select(0);
@@ -123,7 +128,9 @@ public class SearchPanel extends AbstractPanel{
         Group grpBasic = new Group(parent, SWT.BORDER);
         grpBasic.setLayout(new GridLayout(1,false));
         grpBasic.setText(ClientConfigurationController.getInstance().getString("basic"));
-        grpBasic.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true,false, 1,1));
+        GridData gdbasic=new GridData(SWT.FILL, SWT.FILL, false,false, 1,1);
+        gdbasic.widthHint=250;
+        grpBasic.setLayoutData(gdbasic);
         Label lblSearchBasic = new Label(grpBasic,SWT.NONE);
         lblSearchBasic.setText("Keyword");
         GridData gd=new GridData(SWT.LEFT, SWT.CENTER, false,false, 1,1);
@@ -151,9 +158,9 @@ public class SearchPanel extends AbstractPanel{
 	private void init() {
         //Search options
         final Composite cmpSearch = new Composite(this,SWT.NONE);
-        final GridData gd=new GridData(SWT.FILL,SWT.FILL,true,true,1,1);
+        final GridData gd=new GridData(SWT.FILL,SWT.FILL,false,true,1,1);
         gd.horizontalIndent=gd.verticalIndent=0;
-        gd.widthHint=150;
+        gd.widthHint=250;
         cmpSearch.setLayoutData(gd);
         final StackLayout layout = new StackLayout();
         cmpSearch.setLayout(layout);
