@@ -194,6 +194,8 @@ public class PeerMessageService extends Thread implements Runnable{
 		Transfer resumedTransfer = PeerFacade.getInstance().getUploadTransferForId(rtc.getTransferId());
 		resumedTransfer.setState(TransferState.RESUMEDUPLOAD);
 		EventController.getInstance().triggerDownloadResumedEvent(resumedTransfer);
+		
+		PeerFacade.getInstance().startResumeThread(PeerFacade.getInstance().getDownloadTransferForId(rtc.getTransferId()));	
 	}
 
 	private void handleGiveConnCommando(GiveConnCommando givecc) {

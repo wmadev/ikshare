@@ -54,20 +54,30 @@ public class PeerFileDownloadThread implements Runnable {
 
 	public void run() {
         try {
-        	String fileName = ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+System.getProperty("file.separator")+transfer.getFile().getName();
-        	int lastIndexOfPoint = fileName.lastIndexOf(".");
-        	System.out.println(lastIndexOfPoint);
-        	String fileNamePrefix = fileName.substring(0, lastIndexOfPoint);
-        	String extension=fileName.substring(lastIndexOfPoint);
-
-        	outputFile = new File(fileNamePrefix+extension);
-            int fileNumber=1;
-            while (outputFile.exists()) {
-            	 outputFile = new File(fileNamePrefix + "[" + fileNumber + "]" + extension);
-            	 fileNumber++;
-            }
+        	
+        	boolean resumingDownload = (transfer.getDownloadLocation()!="");
+        	
+        	if(!resumingDownload)
+        	{
+	        	String fileName = ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+System.getProperty("file.separator")+transfer.getFile().getName();
+	        	int lastIndexOfPoint = fileName.lastIndexOf(".");
+	        	System.out.println(lastIndexOfPoint);
+	        	String fileNamePrefix = fileName.substring(0, lastIndexOfPoint);
+	        	String extension=fileName.substring(lastIndexOfPoint);
+	
+	        	outputFile = new File(fileNamePrefix+extension);
+	            int fileNumber=1;
+	            while (outputFile.exists()) {
+	            	 outputFile = new File(fileNamePrefix + "[" + fileNumber + "]" + extension);
+	            	 fileNumber++;
+	            }
+        	}
+        	else
+        	{
+        		outputFile = new File(transfer.getDownloadLocation());
+        	}
             
-            fileOutput = new FileOutputStream(outputFile);
+            fileOutput = new FileOutputStream(outputFile, resumingDownload);
             inStream = new BufferedInputStream( receiveSocket.getInputStream());
             
             int n;
