@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.gui.panels;
 
 import ikshare.client.ClientController;
@@ -16,6 +11,9 @@ import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;
 import ikshare.domain.event.EventController;
 
+import ikshare.domain.event.listener.ServerConversationListener;
+import ikshare.protocol.command.Commando;
+import ikshare.protocol.command.FoundResultCommando;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
@@ -29,15 +27,17 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public class SearchPanel extends AbstractPanel{
+public class SearchPanel extends AbstractPanel implements ServerConversationListener{
     private static String ICON_SEARCH="resources/icons/sp_found.png";
     private Table tblResults;
     private boolean advanced = false;
     private HashMap<String,TabItem> searches;
     private Text txtKeyword;
+    private TabFolder folder;
     	
     public SearchPanel(String text,String icon){
         super(text,icon);
+        EventController.getInstance().addServerConversationListener(this);
         this.setLayout(new GridLayout(2,false));
         this.init();
         this.load();
@@ -171,7 +171,7 @@ public class SearchPanel extends AbstractPanel{
         results.setLayout(new FillLayout());
         GridData gd2=new GridData(SWT.FILL, SWT.FILL, true,true, 1,2);
         results.setLayoutData(gd2);
-        TabFolder folder=new TabFolder(results, SWT.BORDER);
+        folder=new TabFolder(results, SWT.BORDER);
         
           
          //Search Buttons
@@ -190,15 +190,11 @@ public class SearchPanel extends AbstractPanel{
                        if(!advanced){
                             advanced = true;
                             btnAdvanced.setText(ClientConfigurationController.getInstance().getString("basic"));
-                            //gd.heightHint=200;
-                            //cmpSearch.setLayoutData(gd);
                             layout.topControl = drawAdvancedSearch(cmpSearch);
                         }
                         else{
                             advanced = false;
                             btnAdvanced.setText(ClientConfigurationController.getInstance().getString("advanced"));
-                            //gd.heightHint=75;
-                            //cmpSearch.setLayoutData(gd);
                             layout.topControl = drawBasicSearch(cmpSearch);
                         }
                         cmpSearch.layout();
@@ -208,8 +204,6 @@ public class SearchPanel extends AbstractPanel{
         
                 });
                 
-
-
         btnAdvanced.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false,false, 1,1));
         Button btnSearch = new Button(cmpButtons,SWT.BORDER);
         btnSearch.setText(ClientConfigurationController.getInstance().getString("search"));
@@ -220,25 +214,20 @@ public class SearchPanel extends AbstractPanel{
                 if(!advanced){
                     String searchId = String.valueOf(new Date().getTime());
                     
-                    ClientController.getInstance().findBasic(searchId, txtKeyword.getText());
-                    //TableItem item= new TableItem(tblResults, SWT.NONE);
-                    //item.setData("searchid", searchId);
-		
-		
-		
-                    
+                    ClientController.getInstance().findBasic(searchId, txtKeyword.getText());                
                 }
                 
             }
         });
     }
     
-    private TabItem createTabItem(String searchId){
-        /*TabItem tab = new TabItem(folder,SWT.BORDER);
+    private TabItem createTabItem(FoundResultCommando c){
+        TabItem result = new TabItem(folder,SWT.BORDER);
+        
         if(new File(ICON_SEARCH).exists()){
-            result1.setImage(new Image(Display.getCurrent(), ICON_SEARCH));
+            result.setImage(new Image(Display.getCurrent(), ICON_SEARCH));
         }
-        result1.setText(ClientConfigurationController.getInstance().getString("result")+" 1");
+        result.setText(c.getCommandoString());
         
         Composite cmpResult1 = new Composite(folder, SWT.NONE);
         cmpResult1.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,3,1));
@@ -267,11 +256,10 @@ public class SearchPanel extends AbstractPanel{
                         }
                     });
 
-        result1.setControl(cmpResult1);
+        result.setControl(cmpResult1);
         addTableColumn(tblResults,ClientConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
 	addTableColumn(tblResults,ClientConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
         addTableColumn(tblResults,ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
-         * */
         return null;
     }
         
@@ -282,5 +270,11 @@ public class SearchPanel extends AbstractPanel{
 	column.setWidth(width);
 	column.setAlignment(align);
 	}
+
+    public void receivedCommando(Commando c) {
+        if(c instanceof FoundResultCommando) {
+            createTabItem((FoundResultCommando)c);
+        }
+    }
 
 }
