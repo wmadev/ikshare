@@ -220,6 +220,13 @@ public class PeerFacade {
 		peerFileDownloadThread.start();
 	}
 	
+	public void startResumeThread(Transfer transfer) {
+		PeerFileDownloadThread peerFileDownloadThread;
+		peerFileDownloadThread = new PeerFileDownloadThread(otherPeer.getInternetAddress(), transfer);
+		downloadThreads.add(peerFileDownloadThread);
+		peerFileDownloadThread.start();
+	}
+	
 	public void cancelDownloadThread(Transfer selected) {
 		getPeerFileDownloadThreadForTransfer(selected).stop();
 		selected.setState(TransferState.CANCELLEDDOWNLOAD);

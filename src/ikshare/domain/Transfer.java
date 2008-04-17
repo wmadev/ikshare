@@ -18,6 +18,7 @@ public class Transfer {
     private TransferState state;
     private long numberOfBytesFinished, speed, remainingTime, fileSize, blockSize;
     private Peer peer;
+    private String downloadLocation = "";
     
     
     public int getProgress() {
@@ -111,6 +112,14 @@ public class Transfer {
 
 	public void setStartTransfer(Date startTransfer) {
 		this.startTransfer = startTransfer;
+	}
+
+	public String getDownloadLocation() {
+		return downloadLocation;
+	}
+
+	public void setDownloadLocation(String downloadLocation) {
+		this.downloadLocation = downloadLocation;
 	}
     
     

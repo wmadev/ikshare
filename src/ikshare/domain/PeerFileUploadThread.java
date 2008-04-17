@@ -53,11 +53,12 @@ public class PeerFileUploadThread implements Runnable {
 			System.out.println(sendFile.getAbsolutePath());
 
 			transfer.setFileSize(sendFile.length());
-
+			
 			EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
 
 			fileInput = new FileInputStream(sendFile.getAbsolutePath());
-
+			fileInput.skip(transfer.getNumberOfBytesFinished());
+			
 			Date startUpload = new Date();
 			Date now = null;
 			int sentBytes = 0;
