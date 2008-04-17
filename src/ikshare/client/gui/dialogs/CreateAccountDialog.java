@@ -112,6 +112,7 @@ public class CreateAccountDialog extends Dialog implements ServerConversationLis
         btnCancel.addListener(SWT.Selection, new Listener(){
 
             public void handleEvent(Event event) {
+                data = null;
                 shell.close();
                 
             }
