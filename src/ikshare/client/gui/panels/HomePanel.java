@@ -90,7 +90,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                 	try {
                         ClientController.getInstance().startServerConversation();
                         ClientController.getInstance().logon(txtAccountName.getText(), txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
-                        
+                        ClientController.getInstance().share(txtAccountName.getText(), ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
                     } catch (IOException ex) {
                         new ExceptionWindow(ex,MainScreen.getInstance(),false);
                     }
@@ -130,7 +130,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
         grpShared.setText(ClientConfigurationController.getInstance().getString("sharedfiles"));
         UIFileBrowser browser = new UIFileBrowser(grpShared, ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
         
-        Button btnTest = new Button(this,SWT.NONE);
+        /*Button btnTest = new Button(this,SWT.NONE);
         btnTest.setText("TEST");
         btnTest.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
         btnTest.addListener(SWT.Selection, new Listener() {
@@ -141,7 +141,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                     new ExceptionWindow(ex,MainScreen.getInstance(),false);
                 }
             }
-        });
+        });*/
         
         
     }

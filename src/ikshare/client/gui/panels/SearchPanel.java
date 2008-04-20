@@ -10,6 +10,7 @@ import ikshare.domain.SearchResult;
 import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;
 import ikshare.domain.event.EventController;
+import ikshare.client.gui.MainScreen;
 
 import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.protocol.command.Commando;
@@ -20,7 +21,11 @@ import java.util.Date;
 
 import java.util.HashMap;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.events.DisposeEvent;
+import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
@@ -31,14 +36,14 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
 
     private static String ICON_SEARCH = "resources/icons/sp_found.png";
     private boolean advanced = false;
-    private HashMap<String, TabItem> searches;
+    private HashMap<String, CTabItem> searches;
     private Text txtKeyword;
-    private TabFolder folder;
+    private CTabFolder folder;
 
     public SearchPanel(String text, String icon) {
         super(text, icon);
         EventController.getInstance().addServerConversationListener(this);
-        searches = new HashMap<String, TabItem>();
+        searches = new HashMap<String, CTabItem>();
         this.setLayout(new GridLayout(2, false));
         this.init();
         this.load();
@@ -52,7 +57,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         grpAdvanced.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
         Label lblSearchName = new Label(grpAdvanced, SWT.NONE);
         lblSearchName.setText(ClientConfigurationController.getInstance().getString("name"));
-        GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        GridData gd = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
         //gd.widthHint = 100;
         lblSearchName.setLayoutData(gd);
         txtKeyword = new Text(grpAdvanced, SWT.BORDER);
@@ -84,7 +89,8 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
 
         Label lblSearchSize = new Label(grpAdvanced, SWT.NONE);
         lblSearchSize.setText(ClientConfigurationController.getInstance().getString("size"));
-        lblSearchSize.setLayoutData(gd);
+        GridData gdsize = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+        lblSearchSize.setLayoutData(gdsize);
 
         Composite cmpSize = new Composite(grpAdvanced, SWT.NONE);
         cmpSize.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
@@ -99,15 +105,12 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         cbSize1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
         cbSize1.select(0);
 
-        Composite cmpSize2 = new Composite(grpAdvanced, SWT.NONE);
-        cmpSize2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        cmpSize2.setLayout(new GridLayout(3, false));
-        Label lblMax = new Label(cmpSize2, SWT.NONE);
+        Label lblMax = new Label(cmpSize, SWT.NONE);
         lblMax.setText(ClientConfigurationController.getInstance().getString("and"));
         lblMax.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
-        Text txtMax = new Text(cmpSize2, SWT.BORDER);
+        Text txtMax = new Text(cmpSize, SWT.BORDER);
         txtMax.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        Combo cbSize2 = new Combo(cmpSize2, SWT.DROP_DOWN | SWT.READ_ONLY);
+        Combo cbSize2 = new Combo(cmpSize, SWT.DROP_DOWN | SWT.READ_ONLY);
         cbSize2.setItems(new String[]{"-----", "byte", "Kbyte", "Mbyte", "Gbyte"});
         cbSize2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
         cbSize2.select(0);
@@ -177,7 +180,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         results.setLayout(new FillLayout());
         GridData gd2 = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2);
         results.setLayoutData(gd2);
-        folder = new TabFolder(results, SWT.BORDER);
+        folder = new CTabFolder(results, SWT.BORDER);
 
 
         //Search Buttons
@@ -227,13 +230,22 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     }
 
     private void createTabItem(SearchResult sr) {
-        TabItem result = new TabItem(folder, SWT.BORDER);
+        final CTabItem result = new CTabItem(folder, SWT.BORDER);
         
         searches.put(sr.getId(), result);
         if (new File(ICON_SEARCH).exists()) {
             result.setImage(new Image(Display.getCurrent(), ICON_SEARCH));
         }
         result.setText(sr.getId());
+        result.addDisposeListener(new DisposeListener() {
+
+            public void widgetDisposed(DisposeEvent e) {
+                result.dispose();
+            }
+            
+        });
+        
+        folder.showItem(result);
 
         Composite cmpResult1 = new Composite(folder, SWT.NONE);
         cmpResult1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
@@ -255,6 +267,8 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                 SearchResult selected = (SearchResult) tblResults.getItem(selectedRow).getData("result");
                 if (selected != null) {
                     System.out.println("DOWNLOAD NOG NIET GEKOPPELD");
+                    int aantaldownloads=Integer.parseInt(MainScreen.getInstance().getInfoBar().getLblNrDownload().getText());
+                    MainScreen.getInstance().getInfoBar().getLblNrDownload().setText(""+aantaldownloads+1);
                     //Transfer t = ClientController.getInstance().getTransferForResult(selected);
                     /*Transfer newTransfer = new Transfer();
                     newTransfer.setId(new Date().getTime() + "");
@@ -307,7 +321,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         });
     }
 
-    private void updateTabItem(TabItem tab, SearchResult sr) {
+    private void updateTabItem(CTabItem tab, SearchResult sr) {
         Table tblResults = (Table) tab.getData("table");
         addTableRow(sr, tblResults);
     }

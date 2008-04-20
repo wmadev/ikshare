@@ -82,6 +82,15 @@ public class MainScreen {
         display.dispose();
         System.exit(0);
     }
+        
+    public InfoBar getInfoBar() {
+        return infoBar;
+    }
+
+    public void setInfoBar(InfoBar infoBar) {
+        this.infoBar = infoBar;
+    }
+    
     /*
      * returns the status of the mainscreen: open or not?
      */

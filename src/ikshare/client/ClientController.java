@@ -88,10 +88,6 @@ public class ClientController {
         return true;
     }
     
-    private SharedItem generateShareTree(File root){
-        return null;
-    }
-    
     public boolean share(String accountName,File root) throws IOException{
         executorService.execute(new ShareSynchronisationThread(accountName,root));
         return true;
