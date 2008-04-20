@@ -16,6 +16,14 @@ public class SearchResult {
         this.folder=folder;
     }
 
+    public SearchResult(String searchID, String name, long size, String accountName, boolean folder) {
+        this.id = searchID;
+        this.name= name;
+        this.size = size;
+        this.owner = accountName;
+        this.folder = folder;
+    }
+
     public boolean isFolder() {
         return folder;
     }
