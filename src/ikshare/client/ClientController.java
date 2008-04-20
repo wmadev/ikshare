@@ -7,7 +7,9 @@ package ikshare.client;
 
 import ikshare.client.threads.ServerConversationThread;
 import ikshare.client.threads.ShareSynchronisationThread;
+import ikshare.domain.SearchResult;
 import ikshare.domain.SharedItem;
+import ikshare.domain.Transfer;
 import ikshare.protocol.command.CreateAccountCommando;
 import ikshare.protocol.command.FindBasicCommando;
 import ikshare.protocol.command.LogOffCommando;
@@ -15,6 +17,7 @@ import ikshare.protocol.command.LogOnCommando;
 import ikshare.protocol.command.StartShareSynchronisationCommando;
 import java.io.File;
 import java.io.IOException;
+import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -45,6 +48,15 @@ public class ClientController {
         cac.setEmail(accountEmail);
         startServerConversation();
         serverConversation.sendCommand(cac);
+    }
+
+    public Transfer getTransferForResult(SearchResult rs) {
+        Transfer t = new Transfer();
+        t.setId(rs.getId()+new Date().getTime());
+        /*t.setFile(selected.getFile());
+        t.setPeer(selected.getPeer());
+        t.setState(TransferState.DOWNLOADING);*/
+        return t;
     }
 
     public void logoff(String accountName, String password, int port) {

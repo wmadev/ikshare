@@ -24,14 +24,16 @@ public class AddShareCommando extends Commando {
         super(commandoString);
         if(commandoLine.get(1).equals("D")){
             setDirectory(true);
-            setPath(commandoLine.get(4));
+            setPath(commandoLine.get(3));
+            setName(commandoLine.get(4));
         }
         else{
             setDirectory(false);
             setSize(Long.parseLong(commandoLine.get(4)));
+            setName(commandoLine.get(3));
         }
         setParentFolderID(Integer.parseInt(commandoLine.get(2)));
-        setName(commandoLine.get(3));
+        
     }
 
     public boolean isDirectory() {
@@ -43,6 +45,9 @@ public class AddShareCommando extends Commando {
     }
 
     public String getName() {
+        if(name.equals("")){
+            return System.getProperty("file.separator");
+        }
         return name;
     }
 
@@ -59,6 +64,9 @@ public class AddShareCommando extends Commando {
     }
 
     public String getPath() {
+        if(path.equals("")){
+            return System.getProperty("file.separator");
+        }
         return path;
     }
 
