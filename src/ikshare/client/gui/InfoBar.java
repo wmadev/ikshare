@@ -7,6 +7,10 @@ import org.eclipse.swt.widgets.*;
 
 
 public class InfoBar extends Composite {
+    
+    Label lblNrUpload;
+    Label lblNrDownload;
+    Label lblNrShared;
     /*
      * Sets the layout of the infobar in the shell right (1 vertical grid and 1 horizontal grid)
      * The labels gonna be committed by the method init.
@@ -20,6 +24,31 @@ public class InfoBar extends Composite {
         this.setLayout(gl);
         this.init();
     }
+    
+    public Label getLblNrDownload() {
+        return lblNrDownload;
+    }
+
+    public void setLblNrDownload(Label lblNrDownload) {
+        this.lblNrDownload = lblNrDownload;
+    }
+
+    public Label getLblNrShared() {
+        return lblNrShared;
+    }
+
+    public void setLblNrShared(Label lblNrShared) {
+        this.lblNrShared = lblNrShared;
+    }
+
+    public Label getLblNrUpload() {
+        return lblNrUpload;
+    }
+
+    public void setLblNrUpload(Label lblNrUpload) {
+        this.lblNrUpload = lblNrUpload;
+    }
+    
     /*
      * Initializes the infobar with 3 labels and their specific numbers
      */    
@@ -29,7 +58,7 @@ public class InfoBar extends Composite {
         GridData data=new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
         lblDownload.setLayoutData(data);
         
-        Label lblNrDownload = new Label(this,SWT.NONE);
+        lblNrDownload = new Label(this,SWT.NONE);
         lblNrDownload.setText("0");
         GridData data2=new GridData(SWT.END, SWT.CENTER, true, true, 1,1);
         data2.widthHint=80;
@@ -40,8 +69,8 @@ public class InfoBar extends Composite {
         data=new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
         lblUpload.setLayoutData(data);
         
-        Label lblNrUpload = new Label(this,SWT.NONE);
-        lblNrUpload.setText("1");
+        lblNrUpload = new Label(this,SWT.NONE);
+        lblNrUpload.setText("0");
         lblNrUpload.setLayoutData(data2);
         
         Label lblShared = new Label(this,SWT.NONE);
@@ -49,8 +78,8 @@ public class InfoBar extends Composite {
         data=new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
         lblShared.setLayoutData(data);
         
-        Label lblNrShared = new Label(this,SWT.NONE);
-        lblNrShared.setText("2");
+        lblNrShared = new Label(this,SWT.NONE);
+        lblNrShared.setText("0");
         lblNrShared.setLayoutData(data2);
     }
 }
