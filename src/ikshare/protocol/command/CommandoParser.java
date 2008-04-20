@@ -107,6 +107,9 @@ public class CommandoParser {
         else if (commandoString.startsWith(bundle.getString("addshare"))){
             return new AddShareCommando(commandoString);
         }
+        else if(commandoString.startsWith(bundle.getString("deleteshare"))){
+            return new DeleteShareCommando(commandoString);
+        }
         else if (commandoString.startsWith(bundle.getString("receivefolderid"))){
             return new ReceiveFolderIdCommando(commandoString);
         }
