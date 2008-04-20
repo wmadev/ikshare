@@ -19,4 +19,7 @@ public interface FileStorage {
 
     public int addSharedFolder(String path, String accountName, String name, int parentFolderId) throws DatabaseException;
     public List<SearchResult> basicSearch(String name) throws DatabaseException;
+    public boolean deleteSharedFile(int parentFolderID, String name, long size) throws DatabaseException;
+
+    public boolean deleteSharedFolder(int folderId) throws DatabaseException;
 }

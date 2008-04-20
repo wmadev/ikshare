@@ -41,7 +41,7 @@ public class SharedFolder extends SharedItem {
     }
     
     public String getName(){
-        return path.substring(path.lastIndexOf(System.getProperty("file.separator"))+1);
+        return path;//.substring(path.lastIndexOf(System.getProperty("file.separator"))+1);
     }
     
     public String getAccountName() {

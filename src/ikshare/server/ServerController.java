@@ -56,6 +56,14 @@ public class ServerController {
         return databaseFactory.getAccountStorage().checkAccountName(newUser);
     }
 
+    public boolean deleteSharedFile(int parentFolderID, String name, long size) throws DatabaseException{
+        return databaseFactory.getFileStorage().deleteSharedFile(parentFolderID,name,size);
+    }
+
+    public boolean deleteSharedFolder(int folderId) throws DatabaseException{
+        return databaseFactory.getFileStorage().deleteSharedFolder(folderId);
+    }
+
     public List<SearchResult> findBasic(String keyword) throws DatabaseException {
         return databaseFactory.getFileStorage().basicSearch(keyword);
     }
