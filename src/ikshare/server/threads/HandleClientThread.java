@@ -65,6 +65,9 @@ public class HandleClientThread implements Runnable{
                     else if(c instanceof AddShareCommando){
                         handleAddShareCommando(c);
                     }
+                    else if(c instanceof DeleteShareCommando){
+                        handleDeleteShareCommando(c);
+                    }
                     else if( c instanceof EndShareSynchronisationCommando){
                         handleEndShareSynchronisation(c);
                     }
@@ -113,6 +116,28 @@ public class HandleClientThread implements Runnable{
             ServerErrorCommando sec = new ServerErrorCommando();
             sec.setMessage(ex.getMessage());
             outputWriter.println(sec.toString());
+        }
+    }
+
+    private void handleDeleteShareCommando(Commando c) {
+        DeleteShareCommando dsc = (DeleteShareCommando)c;
+        if(dsc.isDirectory()){
+            try {
+                ServerController.getInstance().deleteSharedFolder(dsc.getFolderId());
+            } catch (DatabaseException ex) {
+                ServerErrorCommando sec = new ServerErrorCommando();
+                sec.setMessage(ex.getMessage());
+                outputWriter.println(sec.toString());
+            }
+        }
+        else{
+             try {
+                ServerController.getInstance().deleteSharedFile(dsc.getParentFolderID(),dsc.getName(), dsc.getSize());
+            } catch (DatabaseException ex) {
+                ServerErrorCommando sec = new ServerErrorCommando();
+                sec.setMessage(ex.getMessage());
+                outputWriter.println(sec.toString());
+            }
         }
     }
 

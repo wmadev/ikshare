@@ -38,6 +38,14 @@ public class SharedFile extends SharedItem {
     public void setSize(long size) {
         this.size = size;
     }
+    @Override
+    public boolean equals(Object o){
+        SharedFile f = (SharedFile)o;
+        if(f.getFolderID() == this.getFolderID() && f.getName().equals(this.getName()) && f.getSize() == this.getSize()){
+            return true;
+        }
+        return false;
+    }
     
     
     

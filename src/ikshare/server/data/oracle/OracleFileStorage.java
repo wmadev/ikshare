@@ -107,4 +107,43 @@ public class OracleFileStorage implements FileStorage {
         }
        return  results;
     }
+
+    public boolean deleteSharedFile(int parentFolderID, String name, long size) throws DatabaseException {
+        boolean success =false;
+        Connection conn = OracleDatabaseFactory.getConnection();
+        try {
+            PreparedStatement stmtDeleteFile = conn.prepareStatement(bundle.getString("deletefile"));
+            stmtDeleteFile.setInt(1, parentFolderID);
+            stmtDeleteFile.setString(2, name);
+            stmtDeleteFile.setLong(3, size);
+            stmtDeleteFile.close();
+            success = true;
+        } catch (SQLException e) {
+            success = false;
+            e.printStackTrace();
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
+        } finally {
+            OracleDatabaseFactory.freeConnection(conn);
+        }
+       return  success;
+    }
+
+    public boolean deleteSharedFolder(int folderId) throws DatabaseException {
+        boolean success =false;
+        Connection conn = OracleDatabaseFactory.getConnection();
+        try {
+            PreparedStatement stmtDeleteFolder = conn.prepareStatement(bundle.getString("deletefolder"));
+            stmtDeleteFolder.setInt(1, folderId);
+            stmtDeleteFolder.setInt(2, folderId);
+            stmtDeleteFolder.close();
+            success = true;
+        } catch (SQLException e) {
+            success = false;
+            e.printStackTrace();
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
+        } finally {
+            OracleDatabaseFactory.freeConnection(conn);
+        }
+       return  success;
+    }
 }
