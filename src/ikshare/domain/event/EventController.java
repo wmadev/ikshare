@@ -10,6 +10,7 @@ import ikshare.domain.Transfer;
 import ikshare.domain.event.listener.ClientConfigurationListener;
 import ikshare.domain.event.listener.FileTransferListener;
 import ikshare.domain.event.listener.ServerConversationListener;
+import ikshare.domain.event.listener.TransferQueueListener;
 import ikshare.protocol.command.Commando;
 import java.util.ArrayList;
 
@@ -25,6 +26,8 @@ public class EventController {
 	private ArrayList<ServerConversationListener> serverConversationListeners;
 
 	private ArrayList<ClientConfigurationListener> clientConfigurationListeners;
+	
+	private ArrayList<TransferQueueListener> transferQueueListeners;
 
 	private EventController() {
 		fileTransferListeners = new ArrayList<FileTransferListener>();
@@ -106,6 +109,18 @@ public class EventController {
 	public void triggerDownloadResumedEvent(Transfer transfer) {
 		for (FileTransferListener listener : fileTransferListeners) {
 			listener.transferResumed(transfer);
+		}
+	}
+	
+	public void triggerActiveDownloadsChanged() {
+		for (TransferQueueListener listener : transferQueueListeners) {
+			listener.activeDownloadsChanged();
+		}
+	}
+	
+	public void triggerActiveUploadsChanged() {
+		for (TransferQueueListener listener : transferQueueListeners) {
+			listener.activeUploadsChanged();
 		}
 	}
 
