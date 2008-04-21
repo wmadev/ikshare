@@ -55,6 +55,8 @@ public class PeerFileDownloadThread implements Runnable {
 	public void run() {
         try {
         	PeerFacade.getInstance().increaseActiveDownload();
+			EventController.getInstance().triggerActiveDownloadsChanged();
+			
         	transfer.setState(TransferState.DOWNLOADING);
 
         	boolean resumingDownload = (transfer.getDownloadLocation()!="");
@@ -121,6 +123,7 @@ public class PeerFileDownloadThread implements Runnable {
         } finally {
             stop();
             PeerFacade.getInstance().decreaseActiveDownload();
+			EventController.getInstance().triggerActiveDownloadsChanged();
         }
     }
     

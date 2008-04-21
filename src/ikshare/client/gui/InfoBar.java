@@ -1,12 +1,16 @@
 package ikshare.client.gui;
 
 import ikshare.client.configuration.ClientConfigurationController;
+import ikshare.domain.PeerFacade;
+import ikshare.domain.event.EventController;
+import ikshare.domain.event.listener.TransferQueueListener;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 
-public class InfoBar extends Composite {
+public class InfoBar extends Composite implements TransferQueueListener{
     
     Label lblNrUpload;
     Label lblNrDownload;
@@ -23,6 +27,7 @@ public class InfoBar extends Composite {
         GridLayout gl = new GridLayout(6,false);
         this.setLayout(gl);
         this.init();
+        EventController.getInstance().addTransferQueueListener(this);
     }
     
     public Label getLblNrDownload() {
@@ -82,4 +87,22 @@ public class InfoBar extends Composite {
         lblNrShared.setText("0");
         lblNrShared.setLayoutData(data2);
     }
+
+	public void activeDownloadsChanged() {
+		this.getDisplay().asyncExec(
+				new Runnable() {
+					public void run() {
+						lblNrDownload.setText(String.valueOf(PeerFacade.getInstance().getActiveDownloads()));
+					}
+				});
+	}
+
+	public void activeUploadsChanged() {
+		this.getDisplay().asyncExec(
+				new Runnable() {
+					public void run() {
+						lblNrUpload.setText(String.valueOf(PeerFacade.getInstance().getActiveUploads()));
+					}
+				});
+	}
 }
