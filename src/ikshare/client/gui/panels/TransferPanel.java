@@ -15,6 +15,8 @@ import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.Transfer;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.FileTransferListener;
+import ikshare.protocol.command.CancelTransferCommando;
+
 import java.io.File;
 import java.util.Date;
 
@@ -59,6 +61,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 	private static int fileNamePos = 0, sizePos = 1, progressPos = 2, statusPos = 3, speedPos = 4, remainingPos = 5, userPos=6;
 
 	private Table tblUploadTransfer, tblDownloadTransfer;
+	private Menu rightClickMenu;
 
 	private Transfer f;
 
@@ -95,38 +98,21 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 					final int selectedRow = tblDownloadTransfer.getSelectionIndex();
 					if (selectedRow == -1) 
 						return;
-					Menu rightClickMenu = new Menu (tblDownloadTransfer.getShell(), SWT.POP_UP);
-					MenuItem cancelMenuItem = new MenuItem(rightClickMenu, SWT.PUSH);
-					cancelMenuItem.setText(ClientConfigurationController.getInstance().getString("canceldownload"));
-					cancelMenuItem.addListener (SWT.Selection, new Listener () {
-						public void handleEvent(Event event) {
-							Transfer selected = (Transfer)tblDownloadTransfer.getItem(selectedRow).getData("transfer");
-							if (selected != null) {
-								PeerFacade.getInstance().cancelDownloadThread(selected);
-							}
+					
+					final Transfer selected = (Transfer)tblDownloadTransfer.getItem(selectedRow).getData("transfer");
+					if (selected != null) {
+						rightClickMenu = new Menu (tblDownloadTransfer.getShell(), SWT.POP_UP);
+						if (selected.getState() == TransferState.DOWNLOADING) {
+							cancelMenu(selected, true);
+							pauseMenu(selected, true);
+							resumeMenu(selected, false);
+						} else if (selected.getState() == TransferState.PAUSEDDOWNLOAD) {
+							cancelMenu(selected, true);
+							pauseMenu(selected, false);
+							resumeMenu(selected, true);
 						}
-					});
-					MenuItem pauseMenuItem = new MenuItem(rightClickMenu, SWT.PUSH);
-					pauseMenuItem.setText(ClientConfigurationController.getInstance().getString("pausedownload"));
-					pauseMenuItem.addListener (SWT.Selection, new Listener () {
-						public void handleEvent(Event event) {
-							Transfer selected = (Transfer)tblDownloadTransfer.getItem(selectedRow).getData("transfer");
-							if (selected != null) {
-								PeerFacade.getInstance().pauseDownloadThread(selected);
-							}
-						}
-					});
-					MenuItem resumeMenuItem = new MenuItem(rightClickMenu, SWT.PUSH);
-					resumeMenuItem.setText(ClientConfigurationController.getInstance().getString("resumedownload"));
-					resumeMenuItem.addListener (SWT.Selection, new Listener () {
-						public void handleEvent(Event event) {
-							Transfer selected = (Transfer)tblDownloadTransfer.getItem(selectedRow).getData("transfer");
-							if (selected != null) {
-								PeerFacade.getInstance().resumeDownloadThread(selected);
-							}
-						}
-					});
-					rightClickMenu.setVisible (true);
+						rightClickMenu.setVisible (true);
+					}
 				}
 			}
 		});
@@ -164,30 +150,41 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
 		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
 		uploadTab.setControl(cmpUpload); 
-
-		/*
-        Button btnDownload = new Button(cmpDownload, SWT.PUSH);
-        btnDownload.addListener(SWT.Selection, new Listener() {
-            public void handleEvent(Event arg0) {
-
-				// TODO Auto-generated method stub
-
-				Transfer transfer = new Transfer();
-				transfer.setFileName("/kopie");
-				transfer.setState(TransferState.DOWNLOADING);
-				transfer.setId(new Date().toString());
-				transfer.setFileSize(2000);
-				transfer.setNumberOfBlocks(4000);
-				transfer.setNumberOfBlocksFinished(0);
-
-				EventController.getInstance().triggerDownloadStartedEvent(transfer);
-
-				PeerFacade.getInstance().startDownloadThread(transfer);
-                                }
-			});
-		 */
-
 	}
+	
+	private void resumeMenu(final Transfer selected, boolean enabled) {
+		MenuItem resumeMenuItem = new MenuItem(rightClickMenu, SWT.PUSH);
+		resumeMenuItem.setText(ClientConfigurationController.getInstance().getString("resumedownload"));
+		resumeMenuItem.setEnabled(enabled);
+		resumeMenuItem.addListener (SWT.Selection, new Listener () {
+			public void handleEvent(Event event) {
+					PeerFacade.getInstance().resumeDownloadThread(selected);
+			}
+		});
+	}
+	
+	private void pauseMenu(final Transfer selected, boolean enabled) {
+		MenuItem pauseMenuItem = new MenuItem(rightClickMenu, SWT.PUSH);
+		pauseMenuItem.setText(ClientConfigurationController.getInstance().getString("pausedownload"));
+		pauseMenuItem.setEnabled(enabled);
+		pauseMenuItem.addListener (SWT.Selection, new Listener () {
+			public void handleEvent(Event event) {
+					PeerFacade.getInstance().pauseDownloadThread(selected);
+			}
+		});
+	}
+	
+	private void cancelMenu(final Transfer selected, boolean enabled) {
+		MenuItem cancelMenuItem = new MenuItem(rightClickMenu, SWT.PUSH);
+		cancelMenuItem.setText(ClientConfigurationController.getInstance().getString("canceldownload"));
+		cancelMenuItem.setEnabled(enabled);
+		cancelMenuItem.addListener (SWT.Selection, new Listener () {
+			public void handleEvent(Event event) {
+					PeerFacade.getInstance().cancelDownloadThread(selected);
+			}
+		});
+	}
+	
 
 	private void addTableColumn(Table table, String text, int width, int align) {
 		TableColumn column = new TableColumn(table, SWT.NONE);
@@ -284,6 +281,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 								{
 									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
 									item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
+									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("downloading"));
 									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
 									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
 									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
@@ -298,6 +296,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 								{
 									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
 									item.setText(TransferPanel.speedPos, UtilityClass.formatFileSize(transfer.getSpeed()));
+									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("uploading"));
 									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
 									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
 									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
@@ -359,6 +358,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
                             {
                                 item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("finished"));
                                 item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
+                                ((ProgressBar)item.getData("progressbar")).setSelection(100);
                             }
                         }
                         for(TableItem item : tblUploadTransfer.getItems())
@@ -368,6 +368,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
                             {
                                 item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("finished"));
                                 item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
+                                ((ProgressBar)item.getData("progressbar")).setSelection(100);
                             }
                         }
                     }
@@ -414,27 +415,36 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		this.getDisplay().asyncExec(
 				new Runnable() {
 					public void run(){
-						TableItem item = null;
 						if(transfer.getState() == TransferState.RESUMEDDOWNLOAD){
-							item = new TableItem(tblDownloadTransfer,SWT.NONE);
-							item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("downloading"));
+							for(TableItem item : tblDownloadTransfer.getItems())
+							{
+								Transfer t = (Transfer) item.getData("transfer");
+								if(t.getId().equals(transfer.getId()))
+								{
+									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
+									item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
+									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("downloading"));
+									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
+									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
+									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
+								}
+							}
 						}
 						else if(transfer.getState() == TransferState.RESUMEDUPLOAD){
-							item = new TableItem(tblUploadTransfer,SWT.NONE);
-							item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("uploading"));
+							for(TableItem item : tblUploadTransfer.getItems())
+							{
+								Transfer t = (Transfer) item.getData("transfer");
+								if(t.getId().equals(transfer.getId()))
+								{
+									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
+									item.setText(TransferPanel.speedPos, UtilityClass.formatFileSize(transfer.getSpeed()));
+									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("uploading"));
+									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
+									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
+									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
+								}
+							}
 						}
-
-						if (item != null) {
-							//System.out.println(transfer.getFile().getName()==null);
-							item.setText(TransferPanel.fileNamePos,transfer.getFile().getName());
-							item.setText(TransferPanel.sizePos,UtilityClass.formatFileSize(transfer.getFileSize()));
-
-							item.setText(TransferPanel.speedPos,"0");
-							item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
-							item.setText(TransferPanel.userPos, transfer.getPeer().getAccountName());
-							item.setData("transfer",transfer);
-						}
-
 					}
 				});
 	}

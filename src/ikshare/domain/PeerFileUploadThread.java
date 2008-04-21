@@ -45,6 +45,9 @@ public class PeerFileUploadThread implements Runnable {
 	public void run() {
 		try {
 			// timeout zetten en streams aanmaken
+			transfer.setState(TransferState.UPLOADING);
+			
+			PeerFacade.getInstance().increaseActiveUpload();
 
 			sendSocket.setSoTimeout(10000);
 			outStream = new BufferedOutputStream(sendSocket.getOutputStream());
@@ -80,6 +83,7 @@ public class PeerFileUploadThread implements Runnable {
 			transfer.setState(TransferState.FINISHED);
 			EventController.getInstance()
 					.triggerDownloadFinishedEvent(transfer);
+			
 		} catch (Exception e) {
 			if (transfer.getState() == TransferState.CANCELLEDUPLOAD)
 				EventController.getInstance().triggerDownloadCanceledEvent(transfer);
@@ -92,6 +96,7 @@ public class PeerFileUploadThread implements Runnable {
 			}
 		} finally {
 			stop();
+			PeerFacade.getInstance().decreaseActiveUpload();
 		}
 	}
 

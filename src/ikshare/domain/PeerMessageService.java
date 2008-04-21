@@ -2,6 +2,7 @@ package ikshare.domain;
 
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
+import ikshare.domain.event.listener.TransferQueueListener;
 import ikshare.protocol.command.CancelTransferCommando;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CommandoParser;
@@ -29,7 +30,7 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class PeerMessageService extends Thread implements Runnable{
+public class PeerMessageService extends Thread implements Runnable, TransferQueueListener{
     private Socket sendSocket;
     private ServerSocket messageServer;
     private PrintWriter printWriter;
@@ -199,23 +200,20 @@ public class PeerMessageService extends Thread implements Runnable{
 	}
 
 	private void handleGiveConnCommando(GiveConnCommando givecc) {
-		// TODO Auto-generated method stub
+		// TODO handleGiveConnCommando
 		
 	}
 
 	private void handleGetConnCommando(GetConnCommando getcc) {
-		GiveConnCommando gcc = new GiveConnCommando();
-		gcc.setPort(6002);
-		sendMessage(gcc);
+		// TODO handleGetConnCommando
 	}
 
 	private void handlePassTurnCommando(PassTurnCommando ptc) {
-		// TODO Auto-generated method stub
+		// TODO handlePassTurnCommando
 		
 	}
 
 	private void handleMyTurnCommando(MyTurnCommando mtc) {
-		System.out.println("kom ik hier wel?");
 		GoForItCommando gfic = new GoForItCommando();
 		gfic.setAccountName(PeerFacade.getInstance().getPeer().getAccountName());
 		gfic.setTransferId(mtc.getTransferId());
@@ -223,12 +221,12 @@ public class PeerMessageService extends Thread implements Runnable{
 	}
 
 	private void handleGivePeerCommando(GivePeerCommando gpc) {
-		// TODO Auto-generated method stub
+		// TODO handleGivePeerCommando
 		
 	}
 
 	private void handleFoundItAllCommando(FoundItAllCommando fiac) {
-		// TODO Auto-generated method stub
+		// TODO handleFoundItallCommando
 		
 	}
 
@@ -249,18 +247,29 @@ public class PeerMessageService extends Thread implements Runnable{
 	    	t.setId(fcc.getTransferId());
 	    	t.setPeer(new Peer(frc.getAccountName()));
 	    	t.setBlockSize(2048);
-	    	t.setState(TransferState.UPLOADING);
-	    	PeerFacade.getInstance().addToUploads(t);
-	    	EventController.getInstance().triggerDownloadStartedEvent(t);
+	    	t.setNumberOfBytesFinished(frc.getSentBytes());
+	    	if (t.getNumberOfBytesFinished()>0)
+	    		t.setState(TransferState.RESUMEDUPLOAD);
+	    	else
+	    		t.setState(TransferState.UPLOADING);
 	    	
-	    	YourTurnCommando ytc = new YourTurnCommando();
-	    	ytc.setAccountName(PeerFacade.getInstance().getPeer().getAccountName());
-	    	ytc.setSize(f.length());
-	    	ytc.setBlockSize(t.getBlockSize());
-	    	ytc.setFileName(frc.getFileName());
-	    	ytc.setPath(frc.getPath());
-	    	ytc.setTransferId(frc.getTransferId());
-	    	sendMessage(ytc);
+	    	if (PeerFacade.getInstance().getActiveUploads()<ClientConfigurationController.getInstance().getConfiguration().getMaximumUploads()) {
+		    	PeerFacade.getInstance().addToUploads(t);
+		    	if (t.getState()==TransferState.UPLOADING)
+		    		EventController.getInstance().triggerDownloadStartedEvent(t);
+		    	
+		    	YourTurnCommando ytc = new YourTurnCommando();
+		    	ytc.setAccountName(PeerFacade.getInstance().getPeer().getAccountName());
+		    	ytc.setSize(f.length());
+		    	ytc.setBlockSize(t.getBlockSize());
+		    	ytc.setFileName(frc.getFileName());
+		    	ytc.setPath(frc.getPath());
+		    	ytc.setTransferId(frc.getTransferId());
+		    	sendMessage(ytc);
+	    	}
+
+	    	
+
 		} else {
 			FileNotFoundCommando fnfc = new FileNotFoundCommando();
 			fnfc.setAccountName(PeerFacade.getInstance().getPeer().getAccountName());
@@ -313,5 +322,14 @@ public class PeerMessageService extends Thread implements Runnable{
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+	}
+
+	public void activeDownloadsChanged() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void activeUploadsChanged() {
+		
 	}
 }
