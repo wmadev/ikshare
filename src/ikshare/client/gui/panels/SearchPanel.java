@@ -22,6 +22,9 @@ import java.util.Date;
 import java.util.HashMap;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderAdapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
@@ -129,10 +132,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         return grpAdvanced;
     }
 
-    
-    
-
-       ; 
+   
              
          private Group drawBasicSearch(Composite parent) {
         //((GridData)(parent.getLayoutData())).heightHint=75;
@@ -181,7 +181,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         GridData gd2 = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 2);
         results.setLayoutData(gd2);
         folder = new CTabFolder(results, SWT.BORDER);
-
+        
 
         //Search Buttons
         Composite cmpButtons = new Composite(this, SWT.NONE);
@@ -230,7 +230,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     }
 
     private void createTabItem(SearchResult sr) {
-        final CTabItem result = new CTabItem(folder, SWT.BORDER);
+        final CTabItem result = new CTabItem(folder, SWT.CLOSE);
         
         searches.put(sr.getId(), result);
         if (new File(ICON_SEARCH).exists()) {
@@ -244,16 +244,15 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
             }
             
         });
+        folder.setSelection(result);
         
-        folder.showItem(result);
-
         Composite cmpResult1 = new Composite(folder, SWT.NONE);
         cmpResult1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
         cmpResult1.setLayout(new GridLayout(1, false));
-
+        
         final Table tblResults = new Table(cmpResult1, SWT.FULL_SELECTION | SWT.BORDER);
         result.setData("table", tblResults);
-        tblResults.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 2, 1));
+        tblResults.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
         tblResults.setLinesVisible(true);
         tblResults.setHeaderVisible(true);
         tblResults.addMouseListener(new MouseAdapter() {
