@@ -58,7 +58,8 @@ public class PeerFileUploadThread implements Runnable {
 			transfer.setFileSize(sendFile.length());
 			
 			EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
-
+			EventController.getInstance().triggerActiveUploadsChanged();
+			
 			fileInput = new FileInputStream(sendFile.getAbsolutePath());
 			fileInput.skip(transfer.getNumberOfBytesFinished());
 			
@@ -97,6 +98,7 @@ public class PeerFileUploadThread implements Runnable {
 		} finally {
 			stop();
 			PeerFacade.getInstance().decreaseActiveUpload();
+			EventController.getInstance().triggerActiveUploadsChanged();
 		}
 	}
 

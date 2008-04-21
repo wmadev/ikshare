@@ -6,6 +6,7 @@
 package ikshare.domain.event;
 
 import ikshare.client.configuration.ClientConfiguration;
+import ikshare.client.gui.InfoBar;
 import ikshare.domain.Transfer;
 import ikshare.domain.event.listener.ClientConfigurationListener;
 import ikshare.domain.event.listener.FileTransferListener;
@@ -33,6 +34,7 @@ public class EventController {
 		fileTransferListeners = new ArrayList<FileTransferListener>();
 		serverConversationListeners = new ArrayList<ServerConversationListener>();
 		clientConfigurationListeners = new ArrayList<ClientConfigurationListener>();
+		transferQueueListeners = new ArrayList<TransferQueueListener>();
 	}
 
 	public static EventController getInstance() {
@@ -51,6 +53,10 @@ public class EventController {
 
 	public void addClientConfigurationListener(ClientConfigurationListener l) {
 		clientConfigurationListeners.add(l);
+	}
+	
+	public void addTransferQueueListener(TransferQueueListener l) {
+		transferQueueListeners.add(l);
 	}
 
 	public void triggerConfigurationUpdatedEvent(ClientConfiguration config) {
@@ -123,5 +129,7 @@ public class EventController {
 			listener.activeUploadsChanged();
 		}
 	}
+
+
 
 }
