@@ -26,7 +26,8 @@ public class SettingsPanel extends AbstractPanel{
     private ClientConfiguration config;
     
     
-    private Text txtnick,txtSharedFolder,txtServerAddress,txtServerPort,txtFileTransferPort;
+    private Text txtnick,txtSharedFolder,txtServerAddress,txtServerPort,txtFileTransferPort,txtMessagePort;
+    private Spinner spinMaxUpload;
     private Combo cblanguages;
     private DateTime dt;
     
@@ -57,6 +58,8 @@ public class SettingsPanel extends AbstractPanel{
                 config.setNickname(txtnick.getText());
                 config.setSharedFolder(new File(txtSharedFolder.getText()));
                 config.setIkshareServerAddress(txtServerAddress.getText());
+                config.setMaximumUploads(spinMaxUpload.getSelection());
+                config.setMessagePort(Integer.parseInt(txtMessagePort.getText()));
                 try{
                     config.setIkshareServerPort(Integer.parseInt(txtServerPort.getText()));
                 }catch(NumberFormatException e){
@@ -80,7 +83,7 @@ public class SettingsPanel extends AbstractPanel{
             generalTab.setImage(new Image(Display.getCurrent(), ICON_GENERAL));
         }
         GridData firstColum = new GridData(SWT.LEFT, SWT.CENTER, false, true, 1, 1);
-        firstColum.widthHint = 100;
+        firstColum.widthHint = 150;
         firstColum.heightHint = 25;
         final Composite general=new Composite(folder,SWT.NONE);
         generalTab.setControl(general);
@@ -127,22 +130,34 @@ public class SettingsPanel extends AbstractPanel{
         txtSharedFolder = new Text(general,SWT.MULTI);
         txtSharedFolder.setText(config.getSharedFolder().getPath());
         txtSharedFolder.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false,1,1));
-
+        
         Button btnAddFile = new Button(general,SWT.NONE);
-	btnAddFile.setLayoutData(new GridData(SWT.RIGHT,SWT.TOP,false,false,1,1));
-	btnAddFile.setText(ClientConfigurationController.getInstance().getString("change"));
-	btnAddFile.addListener(SWT.Selection,new Listener(){
-            public void handleEvent(Event event) {
-		DirectoryDialog dialog = new DirectoryDialog(general.getShell(),SWT.OPEN);
-                String selectedDir = dialog.open();
-                         
-		if(selectedDir != null && !selectedDir.equalsIgnoreCase("") && new File(selectedDir).exists()&& new File(selectedDir).isDirectory())
-                    {
-                        txtSharedFolder.setText(selectedDir);
-                    }
-		
-            }
-	});
+    	btnAddFile.setLayoutData(new GridData(SWT.RIGHT,SWT.CENTER,false,false,1,1));
+    	btnAddFile.setText(ClientConfigurationController.getInstance().getString("change"));
+    	btnAddFile.addListener(SWT.Selection,new Listener(){
+                public void handleEvent(Event event) {
+    		DirectoryDialog dialog = new DirectoryDialog(general.getShell(),SWT.OPEN);
+                    String selectedDir = dialog.open();
+                             
+    		if(selectedDir != null && !selectedDir.equalsIgnoreCase("") && new File(selectedDir).exists()&& new File(selectedDir).isDirectory())
+                        {
+                            txtSharedFolder.setText(selectedDir);
+                        }
+    		
+                }
+    	});
+        
+        Label lblMaxUpload = new Label(general, SWT.FILL);
+        lblMaxUpload.setText(ClientConfigurationController.getInstance().getString("maxupload"));
+        lblMaxUpload.setLayoutData(firstColum);
+        
+        spinMaxUpload = new Spinner(general, SWT.FILL);
+        spinMaxUpload.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, true, 2, 1));
+        spinMaxUpload.setMinimum(0);
+        spinMaxUpload.setMaximum(100);
+        spinMaxUpload.setSelection(ClientConfigurationController.getInstance().getConfiguration().getMaximumUploads());
+
+
     }
     private void makeNetworkFolder(TabFolder folder) {
         TabItem networkTab = new TabItem(folder,SWT.BORDER);
@@ -177,6 +192,12 @@ public class SettingsPanel extends AbstractPanel{
         txtFileTransferPort=new Text(network, SWT.BORDER);
         txtFileTransferPort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtFileTransferPort.setText(String.valueOf(config.getFileTransferPort()));
-        
+
+        Label lblMessagePort=new Label(network, SWT.FILL);
+        lblMessagePort.setText(ClientConfigurationController.getInstance().getString("messageport"));
+        lblMessagePort.setLayoutData(firstColum);
+        txtMessagePort=new Text(network, SWT.BORDER);
+        txtMessagePort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtMessagePort.setText(String.valueOf(config.getMessagePort()));
      }
 }
