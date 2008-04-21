@@ -9,13 +9,24 @@ public class ClientConfiguration {
     private Calendar birthday;
     private File sharedFolder;
     private String ikshareServerAddress;
-    private int ikshareServerPort, messagePort, fileTransferPort;
+    private int ikshareServerPort, messagePort, fileTransferPort, maximumUploads;
     
     public ClientConfiguration(){
         
     }
+    
 
-    public int getFileTransferPort() {
+    public int getMaximumUploads() {
+		return maximumUploads;
+	}
+
+
+	public void setMaximumUploads(int maximumUploads) {
+		this.maximumUploads = maximumUploads;
+	}
+
+
+	public int getFileTransferPort() {
         return fileTransferPort;
     }
 
