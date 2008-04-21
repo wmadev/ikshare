@@ -4,6 +4,7 @@ import ikshare.client.ClientController;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.UtilityClass;
 import ikshare.client.configuration.ClientConfigurationController;
+import ikshare.client.gui.ExceptionWindow;
 import ikshare.domain.Peer;
 import ikshare.domain.PeerFacade;
 import ikshare.domain.SearchResult;
@@ -12,14 +13,19 @@ import ikshare.domain.TransferState;
 import ikshare.domain.event.EventController;
 import ikshare.client.gui.MainScreen;
 
+import ikshare.domain.IKShareFile;
 import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.protocol.command.Commando;
+import ikshare.protocol.command.DownloadInformationResponseCommand;
 import ikshare.protocol.command.FoundResultCommando;
 import java.io.File;
+import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.Date;
 
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -265,17 +271,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
 
                 SearchResult selected = (SearchResult) tblResults.getItem(selectedRow).getData("result");
                 if (selected != null) {
-                    System.out.println("DOWNLOAD NOG NIET GEKOPPELD");
-                    int aantaldownloads=Integer.parseInt(MainScreen.getInstance().getInfoBar().getLblNrDownload().getText());
-                    MainScreen.getInstance().getInfoBar().getLblNrDownload().setText(""+aantaldownloads+1);
-                    //Transfer t = ClientController.getInstance().getTransferForResult(selected);
-                    /*Transfer newTransfer = new Transfer();
-                    newTransfer.setId(new Date().getTime() + "");
-                    newTransfer.setFile(selected.getFile());
-                    newTransfer.setPeer(selected.getPeer());
-                    newTransfer.setState(TransferState.DOWNLOADING);
-                    PeerFacade.getInstance().addToDownloads(newTransfer);
-                    EventController.getInstance().triggerDownloadStartedEvent(newTransfer);*/
+                    ClientController.getInstance().getDownloadInformationForResult(selected);
                 }
             }
         });
@@ -309,11 +305,22 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
             public void run() {
                 if (c instanceof FoundResultCommando) {
                     FoundResultCommando frc = (FoundResultCommando) c;
-                    SearchResult sr  = new SearchResult(frc.getSearchID(), frc.getName(), frc.getSize(),frc.getAccountName(),frc.isFolder());
+                    SearchResult sr  = new SearchResult(frc.getSearchID(), frc.getName(), frc.getSize(),frc.getAccountName(),frc.isFolder(),frc.getParentId());
                     if (searches.containsKey(sr.getId())) {
                         updateTabItem(searches.get(sr.getId()), sr);
                     } else {
                         createTabItem(sr);
+                    }
+                }
+                else if(c instanceof DownloadInformationResponseCommand){
+                    try {
+                        int aantaldownloads = Integer.parseInt(MainScreen.getInstance().getInfoBar().getLblNrDownload().getText());
+                        MainScreen.getInstance().getInfoBar().getLblNrDownload().setText("" + aantaldownloads + 1);
+                        Transfer t = ClientController.getInstance().getTransferForDownload((DownloadInformationResponseCommand) c);
+                        PeerFacade.getInstance().addToDownloads(t);
+                        EventController.getInstance().triggerDownloadStartedEvent(t);
+                    } catch (UnknownHostException ex) {
+                        new ExceptionWindow(ex,MainScreen.getInstance(),false);
                     }
                 }
             }

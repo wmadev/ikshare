@@ -7,19 +7,28 @@ package ikshare.client;
 
 import ikshare.client.threads.ServerConversationThread;
 import ikshare.client.threads.ShareSynchronisationThread;
+import ikshare.domain.IKShareFile;
+import ikshare.domain.Peer;
 import ikshare.domain.SearchResult;
 import ikshare.domain.SharedItem;
 import ikshare.domain.Transfer;
+import ikshare.domain.TransferState;
 import ikshare.protocol.command.CreateAccountCommando;
+import ikshare.protocol.command.DownloadInformationRequestCommand;
+import ikshare.protocol.command.DownloadInformationResponseCommand;
 import ikshare.protocol.command.FindBasicCommando;
 import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
 import ikshare.protocol.command.StartShareSynchronisationCommando;
 import java.io.File;
 import java.io.IOException;
+import java.net.InetAddress;
+import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -50,12 +59,21 @@ public class ClientController {
         serverConversation.sendCommand(cac);
     }
 
-    public Transfer getTransferForResult(SearchResult rs) {
+    public void getDownloadInformationForResult(SearchResult rs) {
+        DownloadInformationRequestCommand dirc = new DownloadInformationRequestCommand();
+        dirc.setAccountName(rs.getOwner());
+        dirc.setFileName(rs.getName());
+        dirc.setFileSize(rs.getSize());
+        dirc.setFolderId(rs.getParentId());
+        serverConversation.sendCommand(dirc);
+    }
+
+    public Transfer getTransferForDownload(DownloadInformationResponseCommand dirc) throws UnknownHostException {
         Transfer t = new Transfer();
-        t.setId(rs.getId()+new Date().getTime());
-        /*t.setFile(selected.getFile());
-        t.setPeer(selected.getPeer());
-        t.setState(TransferState.DOWNLOADING);*/
+        t.setId(String.valueOf(new Date().getTime()));
+        t.setFile(new IKShareFile(dirc.getPath(), dirc.getName()));
+        t.setPeer(new Peer(dirc.getAccountName(), InetAddress.getByName(dirc.getIp()), dirc.getPort()));
+        t.setState(TransferState.DOWNLOADING);
         return t;
     }
 
@@ -93,20 +111,6 @@ public class ClientController {
         return true;
     }
     
-    private String voegtoe(File file){
-        String line = "";
-        if(file.isDirectory()){
-            File[] files = file.listFiles(); 
-            line+=file.getPath()+":DIR:"+files.length+";";
-            for(int i = 0;i<files.length;i++){
-                line+=voegtoe(files[i]);
-            }
-        }else{
-           line+=file.getName()+":FILE:"+file.length()+";";
-        }
-        return line;
-    }
-
     public void stopServerConversation() {
         serverConversation.stop();
     }
