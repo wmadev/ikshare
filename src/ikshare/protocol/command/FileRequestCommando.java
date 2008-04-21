@@ -3,6 +3,7 @@ package ikshare.protocol.command;
 public class FileRequestCommando extends Commando {
 
     private String accountName,  fileName,  path, transferId;
+    private long sentBytes;
     
     public FileRequestCommando() {
         super();
@@ -14,10 +15,21 @@ public class FileRequestCommando extends Commando {
         setFileName(commandoLine.get(2));
         setPath(commandoLine.get(3));
         setTransferId(commandoLine.get(4));
+        if (commandoLine.size()==6)
+        	setSentBytes(Long.parseLong(commandoLine.get(5)));
     }
 
     
-    public String getTransferId() {
+    
+    public long getSentBytes() {
+		return sentBytes;
+	}
+
+	public void setSentBytes(long sentBytes) {
+		this.sentBytes = sentBytes;
+	}
+
+	public String getTransferId() {
 		return transferId;
 	}
 
@@ -52,6 +64,6 @@ public class FileRequestCommando extends Commando {
     @Override
     public String toString() {
         String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("filerequest")+del+getAccountName()+del+getFileName()+del+getPath()+del+getTransferId();
+        return commandoBundle.getString("filerequest")+del+getAccountName()+del+getFileName()+del+getPath()+del+getTransferId()+del+getSentBytes();
     }
 }
