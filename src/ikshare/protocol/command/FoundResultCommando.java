@@ -6,6 +6,7 @@ import java.util.Map;
 public class FoundResultCommando extends Commando {
 
     private String searchID;
+    private int parentid;
     private String name;
     private String accountName;
     private boolean folder;
@@ -26,8 +27,19 @@ public class FoundResultCommando extends Commando {
         setName(commandoLine.get(3));
         setAccountName(commandoLine.get(4));
         setSize(Long.parseLong(commandoLine.get(5)));
+        setParentId(Integer.parseInt(commandoLine.get(6)));
     }
 
+    public int getParentId() {
+        return parentid;
+    }
+
+    public void setParentId(int parentid) {
+        this.parentid = parentid;
+    }
+
+    
+    
     public String getAccountName() {
         return accountName;
     }
@@ -75,7 +87,7 @@ public class FoundResultCommando extends Commando {
         String del=commandoBundle.getString("commandoDelimiter");
         return commandoBundle.getString("foundresult")+del+getSearchID()+del+(isFolder()?"D":"F")+
                 del+getName()+
-                del+getAccountName()+del+getSize();
+                del+getAccountName()+del+getSize()+del+getParentId();
     }
     
 }

@@ -164,6 +164,7 @@ public class HandleClientThread implements Runnable{
                 frc.setAccountName(result.getOwner());
                 frc.setName(result.getName());
                 frc.setSize(result.getSize());
+                frc.setParentId(result.getParentId());
                 outputWriter.println(frc.toString());
             }
         }else{

@@ -122,7 +122,16 @@ public class CommandoParser {
         else if (commandoString.startsWith(bundle.getString("resumetransfer"))){
             return new ResumeTransferCommando(commandoString);
         }
-        else
+        else if (commandoString.startsWith(bundle.getString("downloadinformationresponse"))){
+            return new DownloadInformationResponseCommand(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("requestdownloadinformation"))){
+            return new DownloadInformationRequestCommand(commandoString);
+        }
+        
+
+        else{
         	throw new CommandNotFoundException(commandoString);
+        }
     }
 }

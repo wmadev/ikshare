@@ -34,6 +34,12 @@ public class Peer {
         this.password = password;
     }
 
+    public Peer(String accountName, InetAddress ip, int port) {
+        setAccountName(accountName);
+        setInternetAddress(ip);
+        setPort(port);
+    }
+
     public Peer(String accountName, String password, String email) {
         this.accountName = accountName;
         this.password = password;

@@ -93,7 +93,7 @@ public class OracleFileStorage implements FileStorage {
             results =new ArrayList<SearchResult>();
             while(result.next()){
                 SearchResult sr=new SearchResult(result.getString(bundle.getString("filename"))
-                        ,result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("filesize")),false);
+                        ,result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("filesize")),false,result.getInt(bundle.getString("parentid")));
                 results.add(sr);
             }
             result.close();
