@@ -92,9 +92,9 @@ public class ShareSynchronisationThread implements Runnable {
                 // If not, check for additions
                 checkForAdditions(newShareTree,oldShareTree);
                 // Check for deletions and add them to the newShareTree
-                //checkForDeletions(newShareTree,oldShareTree);
+                checkForDeletions(oldShareTree,newShareTree);
                 // Send the old tree to the server to for deletions
-                //sendCompleteTree(oldShareTree);
+                sendCompleteTree(oldShareTree);
                 // Send the new tree to the server for additions
                 //printTree(newShareTree);
                 sendCompleteTree(newShareTree);
@@ -148,24 +148,53 @@ public class ShareSynchronisationThread implements Runnable {
         }
     }
 
-    private void checkForDeletions(SharedItem newShareTree, SharedItem oldShareTree) {
-       //WERKT, maar enkel bestanden en directories uit de root dir worden aangetekend als verwijderd.
-       //Bestanden worden effectief verwijderd uit server, mappen niet. (fout in query ? niet duidelijk)
+    private void checkForDeletions(SharedItem oldShareTree, SharedItem newShareTree) {
+        // When the new item is a folder
+        if(oldShareTree.isFolder()){
+            // Check if it's content is equal to the old
+            // For all items in the new tree, check if the item is in the old tree
+            // When not, set state in new tree as added
+            for(Map.Entry item: ((SharedFolder)oldShareTree).getContent().entrySet()){
+                if(((SharedFolder)newShareTree).getContent().containsKey(item.getKey())){
+                    ((SharedItem)item.getValue()).setState(SharedItemState.UNCHANGED);
+                    if(((SharedItem)item.getValue()).isFolder()){
+                        checkForDeletions((SharedFolder)item.getValue(),((SharedFolder)newShareTree).getContent().get(item.getKey()));
+                    }
+                }
+                // The item was added, maybe it's a folder, maybe a file, does not mather
+                else{
+                    ((SharedItem)item.getValue()).setState(SharedItemState.DELETED);
+                    
+                }
+            }
+        }
+        else{
+            if(!((SharedFile)oldShareTree).equals((SharedFile)newShareTree)){
+                oldShareTree.setState(SharedItemState.DELETED);
+            }
+            else{
+                oldShareTree.setState(SharedItemState.UNCHANGED);
+            }
+        }
+        
+        /*
        if(oldShareTree.isFolder()){
            // Voor ieder element uit de oude structuur 
            for(Map.Entry item: ((SharedFolder)oldShareTree).getContent().entrySet()){
                 // Kijk of de nieuwe structuur het bevat
-                if(((SharedFolder)newShareTree).getContent().containsKey(item.getKey())){
-                    // Zoja, state = unchanged
+                if(!((SharedFolder)newShareTree).getContent().containsKey(item.getKey())){
+                    // Zo nee: verwijderd
+                    ((SharedItem)item.getValue()).setState(SharedItemState.DELETED);
+                    
+                    
+                }
+                else{
+                    // Anders controleer sub
                     ((SharedItem)item.getValue()).setState(SharedItemState.UNCHANGED);
                     // Indien element een map is, kijk verder op verwijderingen in die map.
                     if(((SharedItem)item.getValue()).isFolder()){
                         checkForDeletions((SharedFolder)item.getValue(), ((SharedFolder)newShareTree).getContent().get(item.getKey()));
                     }
-                }
-                else{
-                    // Zonee, state = deleted
-                    ((SharedItem)item.getValue()).setState(SharedItemState.DELETED);
                     
                 }
             }
@@ -174,15 +203,12 @@ public class ShareSynchronisationThread implements Runnable {
             if(!((SharedFile)oldShareTree).equals((SharedFile)newShareTree)){
                oldShareTree.setState(SharedItemState.DELETED);
             }
+            else{
+                oldShareTree.setState(SharedItemState.UNCHANGED);
+            }
         }
+        */
         
-        
-        
-        
-        
-        
-       
-       
     }
 
     private void endSynchronisation() {
