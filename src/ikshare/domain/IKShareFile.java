@@ -1,5 +1,7 @@
 package ikshare.domain;
 
+import ikshare.client.configuration.ClientConfigurationController;
+
 import java.io.File;
 
 public class IKShareFile extends File {
@@ -11,7 +13,7 @@ public class IKShareFile extends File {
 	private String folder, fileName;
 	
 	public IKShareFile(String folder, String fileName) {
-		super(folder + fileName);
+		super(ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+ folder + fileName);
 		setFolder(folder);
 		setFileName(fileName);
 	}
