@@ -84,6 +84,12 @@ public class ClientConfigurationController {
                 config.setNickname(((Element) child).getTextContent());
             }else if(child.getNodeName().equals("shared-folder")){
                 config.setSharedFolder(new File(((Element)child).getTextContent()));
+            }else if(child.getNodeName().equals("maximum-uploads")){
+            	try {
+            		config.setMaximumUploads(Integer.parseInt(((Element)child).getTextContent()));
+            	} catch (Exception e) {
+            		config.setMaximumUploads(10);
+            	}
             }
         }
     }
@@ -164,11 +170,15 @@ public class ClientConfigurationController {
         // shared folder
         Element sharedFolder = doc.createElement("shared-folder");
         sharedFolder.appendChild(doc.createTextNode(config.getSharedFolder().getAbsolutePath()));
+        // max upload
+        Element maximumUploads = doc.createElement("maximum-uploads");
+        maximumUploads.appendChild(doc.createTextNode(String.valueOf(config.getMaximumUploads())));
         // add to usersettings
         userSettings.appendChild(nickname);
         userSettings.appendChild(language);
         userSettings.appendChild(birthday);
         userSettings.appendChild(sharedFolder);
+        userSettings.appendChild(maximumUploads);
         return userSettings;
     }
     private Element buildNetworkSettingsNode(Document doc){
