@@ -126,7 +126,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
         });
         
         Group grpShared = new Group(this,SWT.NONE);
-        grpShared.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,false,2,1));
+        grpShared.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
         grpShared.setText(ClientConfigurationController.getInstance().getString("sharedfiles"));
         UIFileBrowser browser = new UIFileBrowser(grpShared, ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
         

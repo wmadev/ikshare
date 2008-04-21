@@ -93,7 +93,7 @@ public class OracleFileStorage implements FileStorage {
             results =new ArrayList<SearchResult>();
             while(result.next()){
                 SearchResult sr=new SearchResult(result.getString(bundle.getString("filename"))
-                        ,result.getString(bundle.getString("accountname")),Long.parseLong(result.getString(bundle.getString("filesize"))),false);
+                        ,result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("filesize")),false);
                 results.add(sr);
             }
             result.close();
@@ -116,6 +116,7 @@ public class OracleFileStorage implements FileStorage {
             stmtDeleteFile.setInt(1, parentFolderID);
             stmtDeleteFile.setString(2, name);
             stmtDeleteFile.setLong(3, size);
+            stmtDeleteFile.executeUpdate();
             stmtDeleteFile.close();
             success = true;
         } catch (SQLException e) {
@@ -135,6 +136,7 @@ public class OracleFileStorage implements FileStorage {
             PreparedStatement stmtDeleteFolder = conn.prepareStatement(bundle.getString("deletefolder"));
             stmtDeleteFolder.setInt(1, folderId);
             stmtDeleteFolder.setInt(2, folderId);
+            stmtDeleteFolder.executeUpdate();
             stmtDeleteFolder.close();
             success = true;
         } catch (SQLException e) {
