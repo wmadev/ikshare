@@ -54,7 +54,9 @@ public class PeerFileDownloadThread implements Runnable {
 
 	public void run() {
         try {
-        	
+        	PeerFacade.getInstance().increaseActiveDownload();
+        	transfer.setState(TransferState.DOWNLOADING);
+
         	boolean resumingDownload = (transfer.getDownloadLocation()!="");
         	
         	if(!resumingDownload)
@@ -71,6 +73,7 @@ public class PeerFileDownloadThread implements Runnable {
 	            	 outputFile = new File(fileNamePrefix + "[" + fileNumber + "]" + extension);
 	            	 fileNumber++;
 	            }
+	            transfer.setDownloadLocation(outputFile.getAbsolutePath());
         	}
         	else
         	{
@@ -88,16 +91,17 @@ public class PeerFileDownloadThread implements Runnable {
             Date startDownload = new Date();
             Date now = null;
             while (!receiveSocket.isClosed() && inStream != null && (n = inStream.read(buffer)) > 0) {
+                
+                fileOutput.write(buffer, 0, n);
                 transfer.setNumberOfBytesFinished(transfer.getNumberOfBytesFinished()+n);
-
+                
                 now = new Date();
                 
                 transfer.setSpeed(transfer.getNumberOfBytesFinished()*1000/(Math.max(now.getTime()-startDownload.getTime(), 1)));
                 transfer.setRemainingTime((now.getTime()-startDownload.getTime())/(transfer.getNumberOfBytesFinished())*(transfer.getFileSize()-transfer.getNumberOfBytesFinished())/1000);
 
                 EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
-                
-                fileOutput.write(buffer, 0, n);
+
                 //System.out.println("aantal bytes="+ n +" aantal pakketjes:" +tellerpakketjes);
             }
             transfer.setState(TransferState.FINISHED);
@@ -116,6 +120,7 @@ public class PeerFileDownloadThread implements Runnable {
 			}
         } finally {
             stop();
+            PeerFacade.getInstance().decreaseActiveDownload();
         }
     }
     
@@ -136,6 +141,11 @@ public class PeerFileDownloadThread implements Runnable {
     		fileOutput = null;
     		receiveSocket = null;
     		inStream = null;
+    		/*
+    		if (transfer.getState()!=TransferState.FINISHED && transfer.getState()!=TransferState.PAUSEDDOWNLOAD)
+    			outputFile.delete();
+    			*/
+    		
     		System.gc();
 		} catch (IOException e) {
 			transfer.setState(TransferState.FAILED);
