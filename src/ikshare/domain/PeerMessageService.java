@@ -31,7 +31,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class PeerMessageService extends Thread implements Runnable, TransferQueueListener{
-    private Socket sendSocket;
     private ServerSocket messageServer;
     private PrintWriter printWriter;
     private boolean running;
@@ -54,14 +53,6 @@ public class PeerMessageService extends Thread implements Runnable, TransferQueu
     	es.execute(this);
     }
 
-	public Socket getSendSocket() {
-		return sendSocket;
-	}
-
-	public void setSendSocket(Socket sendSocket) {
-		this.sendSocket = sendSocket;
-	}
-
 	public void run() {
 		while (running) {
 	        Socket link = null;
@@ -71,10 +62,13 @@ public class PeerMessageService extends Thread implements Runnable, TransferQueu
 	        {
 	        	// Step 1. Establish server connection
 	            link = messageServer.accept();
-	            link.setSoTimeout(2000);
+	            link.setSoTimeout(10000);
 	            //System.out.println("verbonden");
+	            /*
 	            sendSocket = new Socket(link.getInetAddress(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
 	            sendSocket.setSoTimeout(10000);
+	             */
+	            
 	             
 	            // Step 2. Set up input stream
 	            in = new BufferedReader(new
@@ -92,7 +86,7 @@ public class PeerMessageService extends Thread implements Runnable, TransferQueu
 		                } catch (CommandNotFoundException cnfe) {
 		                	cnfe.printStackTrace();
 		                }
-		                handleCommando(c);
+		                handleCommando(link, c);
 		                input = in.readLine();
 	            }
 	            //link.close();
@@ -104,69 +98,69 @@ public class PeerMessageService extends Thread implements Runnable, TransferQueu
 		
 	}
 
-	private void handleCommando(Commando c) {
+	private void handleCommando(Socket sendSocket, Commando c) {
 		System.out.println("Ontvangen Commando");
 		System.out.println("------------------");
 		System.out.println(c);
 		System.out.println("");
 		
 		if (c instanceof FoundItAllCommando) {
-			handleFoundItAllCommando((FoundItAllCommando) c);
+			handleFoundItAllCommando(sendSocket, (FoundItAllCommando) c);
 		}
 		else if (c instanceof GivePeerCommando) {
-			handleGivePeerCommando((GivePeerCommando) c);
+			handleGivePeerCommando(sendSocket, (GivePeerCommando) c);
 		}
 		else if (c instanceof FileRequestCommando) {
-			handleFileRequestCommando((FileRequestCommando) c);
+			handleFileRequestCommando(sendSocket, (FileRequestCommando) c);
 		}
 		else if (c instanceof FileConfirmCommando) {
-			handleFileConfirmCommando((FileConfirmCommando) c);
+			handleFileConfirmCommando(sendSocket, (FileConfirmCommando) c);
 		}
 		else if (c instanceof FileNotFoundCommando) {
-			handleFileNotFoundCommando((FileNotFoundCommando) c);
+			handleFileNotFoundCommando(sendSocket, (FileNotFoundCommando) c);
 		}
 		else if (c instanceof YourTurnCommando) {
-			handleYourTurnCommando((YourTurnCommando) c);
+			handleYourTurnCommando(sendSocket, (YourTurnCommando) c);
 		}
 		else if (c instanceof MyTurnCommando) {
-			handleMyTurnCommando((MyTurnCommando) c);
+			handleMyTurnCommando(sendSocket, (MyTurnCommando) c);
 		}
 		else if (c instanceof PassTurnCommando) {
-			handlePassTurnCommando((PassTurnCommando) c);
+			handlePassTurnCommando(sendSocket, (PassTurnCommando) c);
 		}
 		else if (c instanceof GoForItCommando) {
-			handleGoForItCommando((GoForItCommando) c);
+			handleGoForItCommando(sendSocket, (GoForItCommando) c);
 		}
 		else if (c instanceof GetConnCommando) {
-			handleGetConnCommando((GetConnCommando) c);
+			handleGetConnCommando(sendSocket, (GetConnCommando) c);
 		}
 		else if (c instanceof GiveConnCommando) {
-			handleGiveConnCommando((GiveConnCommando) c);
+			handleGiveConnCommando(sendSocket, (GiveConnCommando) c);
 		}
 		else if (c instanceof CancelTransferCommando) {
-			handleCancelTransferCommando((CancelTransferCommando) c);
+			handleCancelTransferCommando(sendSocket, (CancelTransferCommando) c);
 		}
 		else if (c instanceof PauseTransferCommando) {
-			handlePauseTransferCommando((PauseTransferCommando) c);
+			handlePauseTransferCommando(sendSocket, (PauseTransferCommando) c);
 		}
 		else if (c instanceof ResumeTransferCommando) {
-			handleResumeTransferCommando((ResumeTransferCommando) c);
+			handleResumeTransferCommando(sendSocket, (ResumeTransferCommando) c);
 		}
 		else if(c instanceof Commando) {
-			handleOtherCommandos(c);
+			handleOtherCommandos(sendSocket, c);
 		}
 
 	}
 
 
 
-	private void handleGoForItCommando(GoForItCommando gfic) {
+	private void handleGoForItCommando(Socket sendSocket, GoForItCommando gfic) {
 		Transfer t = PeerFacade.getInstance().getDownloadTransferForId(gfic.getTransferId());
 		PeerFacade.getInstance().startDownloadThread(PeerFacade.getInstance().getDownloadTransferForId(gfic.getTransferId()));	
 
 	}
 
-	private void handleOtherCommandos(Commando c) {
+	private void handleOtherCommandos(Socket sendSocket, Commando c) {
 		try {
 			sendSocket.close();
 		} catch (IOException e) {
@@ -175,7 +169,7 @@ public class PeerMessageService extends Thread implements Runnable, TransferQueu
 		}
 	}
 
-	private void handleCancelTransferCommando(CancelTransferCommando ctc) {
+	private void handleCancelTransferCommando(Socket sendSocket, CancelTransferCommando ctc) {
 		Transfer canceledTransfer = PeerFacade.getInstance().getUploadTransferForId(ctc.getTransferId());
 		canceledTransfer.setState(TransferState.CANCELLEDUPLOAD);
 		EventController.getInstance().triggerDownloadCanceledEvent(canceledTransfer);
@@ -183,7 +177,7 @@ public class PeerMessageService extends Thread implements Runnable, TransferQueu
 		PeerFacade.getInstance().getPeerFileUploadThreadForTransfer(canceledTransfer).stop();
 	}
 
-	private void handlePauseTransferCommando(PauseTransferCommando ptc) {
+	private void handlePauseTransferCommando(Socket sendSocket, PauseTransferCommando ptc) {
 		Transfer pausedTransfer = PeerFacade.getInstance().getUploadTransferForId(ptc.getTransferId());
 		pausedTransfer.setState(TransferState.PAUSEDUPLOAD);
 		EventController.getInstance().triggerDownloadPausedEvent(pausedTransfer);
@@ -191,7 +185,7 @@ public class PeerMessageService extends Thread implements Runnable, TransferQueu
 		PeerFacade.getInstance().getPeerFileUploadThreadForTransfer(pausedTransfer).stop();
 	}
 	
-	private void handleResumeTransferCommando(ResumeTransferCommando rtc) {
+	private void handleResumeTransferCommando(Socket sendSocket, ResumeTransferCommando rtc) {
 		Transfer resumedTransfer = PeerFacade.getInstance().getUploadTransferForId(rtc.getTransferId());
 		resumedTransfer.setState(TransferState.RESUMEDUPLOAD);
 		EventController.getInstance().triggerDownloadResumedEvent(resumedTransfer);
@@ -199,38 +193,38 @@ public class PeerMessageService extends Thread implements Runnable, TransferQueu
 		PeerFacade.getInstance().startResumeThread(PeerFacade.getInstance().getDownloadTransferForId(rtc.getTransferId()));	
 	}
 
-	private void handleGiveConnCommando(GiveConnCommando givecc) {
+	private void handleGiveConnCommando(Socket sendSocket, GiveConnCommando givecc) {
 		// TODO handleGiveConnCommando
 		
 	}
 
-	private void handleGetConnCommando(GetConnCommando getcc) {
+	private void handleGetConnCommando(Socket sendSocket, GetConnCommando getcc) {
 		// TODO handleGetConnCommando
 	}
 
-	private void handlePassTurnCommando(PassTurnCommando ptc) {
+	private void handlePassTurnCommando(Socket sendSocket, PassTurnCommando ptc) {
 		// TODO handlePassTurnCommando
 		
 	}
 
-	private void handleMyTurnCommando(MyTurnCommando mtc) {
+	private void handleMyTurnCommando(Socket sendSocket, MyTurnCommando mtc) {
 		GoForItCommando gfic = new GoForItCommando();
 		gfic.setAccountName(PeerFacade.getInstance().getPeer().getAccountName());
 		gfic.setTransferId(mtc.getTransferId());
-		sendMessage(gfic);		
+		sendMessage(sendSocket, gfic);		
 	}
 
-	private void handleGivePeerCommando(GivePeerCommando gpc) {
+	private void handleGivePeerCommando(Socket sendSocket, GivePeerCommando gpc) {
 		// TODO handleGivePeerCommando
 		
 	}
 
-	private void handleFoundItAllCommando(FoundItAllCommando fiac) {
+	private void handleFoundItAllCommando(Socket sendSocket, FoundItAllCommando fiac) {
 		// TODO handleFoundItallCommando
 		
 	}
 
-	private void handleFileRequestCommando(FileRequestCommando frc) {
+	private void handleFileRequestCommando(Socket sendSocket, FileRequestCommando frc) {
 		//File f = new File(frc.getPath().replace('\\', '/')+frc.getFileName());
 		IKShareFile f = new IKShareFile(frc.getPath(),frc.getFileName());
 		
@@ -240,7 +234,7 @@ public class PeerMessageService extends Thread implements Runnable, TransferQueu
 	    	fcc.setFileName(frc.getFileName());
 	    	fcc.setPath(frc.getPath());
 	    	fcc.setTransferId(frc.getTransferId());
-	    	sendMessage(fcc);
+	    	sendMessage(sendSocket, fcc);
 	    	
 	    	Transfer t = new Transfer();
 	    	t.setFile(f);
@@ -265,7 +259,7 @@ public class PeerMessageService extends Thread implements Runnable, TransferQueu
 		    	ytc.setFileName(frc.getFileName());
 		    	ytc.setPath(frc.getPath());
 		    	ytc.setTransferId(frc.getTransferId());
-		    	sendMessage(ytc);
+		    	sendMessage(sendSocket, ytc);
 	    	}
 
 	    	
@@ -276,17 +270,17 @@ public class PeerMessageService extends Thread implements Runnable, TransferQueu
 	    	fnfc.setFileName(frc.getFileName());
 	    	fnfc.setPath(frc.getPath());
 	    	fnfc.setTransferId(frc.getTransferId());
-	    	sendMessage(fnfc);
+	    	sendMessage(sendSocket, fnfc);
 		}
 	}
 
-	private void handleYourTurnCommando(YourTurnCommando ytc) {			
+	private void handleYourTurnCommando(Socket sendSocket, YourTurnCommando ytc) {			
 		MyTurnCommando mtc = new MyTurnCommando();
 		mtc.setAccountName(PeerFacade.getInstance().getDownloadTransferForId(ytc.getTransferId()).getPeer().getAccountName());
 		mtc.setFileName(ytc.getFileName());
 		mtc.setPath(ytc.getPath());
 		mtc.setTransferId(ytc.getTransferId());
-		sendMessage(mtc);
+		sendMessage(sendSocket, mtc);
 		
 		Transfer t = PeerFacade.getInstance().getDownloadTransferForId(ytc.getTransferId());
 		t.setFileSize(ytc.getSize());
@@ -294,18 +288,18 @@ public class PeerMessageService extends Thread implements Runnable, TransferQueu
 		
 	}
 
-	private void handleFileConfirmCommando(FileConfirmCommando fcc) {
+	private void handleFileConfirmCommando(Socket sendSocket, FileConfirmCommando fcc) {
 		// TODO Auto-generated method stub
 		
 	}
 
-	private void handleFileNotFoundCommando(FileNotFoundCommando fnfc) {
+	private void handleFileNotFoundCommando(Socket sendSocket, FileNotFoundCommando fnfc) {
 		Transfer current = PeerFacade.getInstance().getDownloadTransferForId(fnfc.getTransferId());
 		current.setState(TransferState.FAILED);
 		EventController.getInstance().triggerDownloadFailedEvent(current);
 	}
 	
-	public void sendMessage(Commando commando) {
+	public void sendMessage(Socket sendSocket, Commando commando) {
 		System.out.println("Verstuurd Commando");
 		System.out.println("------------------");
 		System.out.println(commando);
