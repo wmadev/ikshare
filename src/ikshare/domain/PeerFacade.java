@@ -13,9 +13,12 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.ListIterator;
 import java.util.Queue;
 import java.util.Vector;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.LinkedBlockingQueue;
 
 public class PeerFacade {
@@ -29,11 +32,16 @@ public class PeerFacade {
 	private ArrayList<PeerFileDownloadThread> downloadThreads;
 	private ArrayList<PeerFileUploadThread> uploadThreads;
 	
+	private HashMap<String, PeerMessageThread> messageThreads;
+	
 	private int activeDownloads=0, activeUploads=0;
 	
 	private Queue<Transfer> transfersToStart;
 
 	private PeerMessageService peerMessageService;
+	
+	
+	private ExecutorService executorService;
 	
 	public Vector<Transfer> getUploadTransfers() {
 		return uploadTransfers;
@@ -72,7 +80,12 @@ public class PeerFacade {
 		
 		transfersToStart = new LinkedBlockingQueue<Transfer>();
 
+		messageThreads = new HashMap<String, PeerMessageThread>();
+		
+		executorService = Executors.newCachedThreadPool();
+		
 		peerMessageService = new PeerMessageService();
+		executorService.execute(peerMessageService);
 	}
 
 
@@ -88,8 +101,13 @@ public class PeerFacade {
 		frc.setTransferId(transfer.getId());
 		frc.setSentBytes(0);
 		try {
-			Socket sendSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort(), peer.getInternetAddress(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
-			peerMessageService.sendMessage(sendSocket, frc);
+			Socket sendSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort());
+			PeerMessageThread peerMessageThread = new PeerMessageThread(sendSocket);
+			executorService.execute(peerMessageThread);
+			peerMessageThread.sendMessage(frc);
+			
+			messageThreads.put(transfer.getId(), peerMessageThread);
+			
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -213,13 +231,9 @@ public class PeerFacade {
 		CancelTransferCommando ctc = new CancelTransferCommando();
 		ctc.setAccountName(getPeer().getAccountName());
 		ctc.setTransferId(selected.getId());
-		try {
-			Socket sendSocket = new Socket(selected.getPeer().getInternetAddress(), selected.getPeer().getPort(), peer.getInternetAddress(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
-			peerMessageService.sendMessage(sendSocket, ctc);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		messageThreads.get(selected.getId()).sendMessage(ctc);
+
 	}
 	
 	public void pauseDownloadThread(Transfer selected) {
@@ -231,13 +245,10 @@ public class PeerFacade {
 		ptc.setAccountName(peer.getAccountName());
 		ptc.setSentBlocks(selected.getNumberOfBytesFinished());
 		ptc.setTransferId(selected.getId());
-		try {
-			Socket sendSocket = new Socket(selected.getPeer().getInternetAddress(), selected.getPeer().getPort(), peer.getInternetAddress(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
-			peerMessageService.sendMessage(sendSocket, ptc);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+
+		
+		messageThreads.get(selected.getId()).sendMessage(ptc);
+
 	}
 
 	public void resumeDownloadThread(Transfer selected) {
@@ -256,13 +267,7 @@ public class PeerFacade {
 		frc.setTransferId(selected.getId());
 		frc.setSentBytes(selected.getNumberOfBytesFinished());
 		
-		try {
-			Socket sendSocket = new Socket(selected.getPeer().getInternetAddress(), selected.getPeer().getPort(), peer.getInternetAddress(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
-			peerMessageService.sendMessage(sendSocket, frc);
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		messageThreads.get(selected.getId()).sendMessage(frc);
 	}
 
 	public int getActiveDownloads() {
