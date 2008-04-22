@@ -74,6 +74,9 @@ public class HandleClientThread implements Runnable{
                     else if( c instanceof FindBasicCommando){
                         handleFindBasicCommando(c);
                     }
+                    else if( c instanceof DownloadInformationRequestCommand){
+                        handleDownloadInformationRequest((DownloadInformationRequestCommand)c);
+                    }
                         
                     
                 }
@@ -138,6 +141,25 @@ public class HandleClientThread implements Runnable{
                 sec.setMessage(ex.getMessage());
                 outputWriter.println(sec.toString());
             }
+        }
+    }
+
+    private void handleDownloadInformationRequest(DownloadInformationRequestCommand c) {
+        try {
+            DownloadInformation di = ServerController.getInstance().getDownloadInformation(c.getAccountName(), c.getFileName(), c.getFileSize(), c.getFolderId());
+            if (di != null) {
+                DownloadInformationResponseCommand dirc = new DownloadInformationResponseCommand();
+                dirc.setAccountName(di.getAccountName());
+                dirc.setIp(di.getIp());
+                dirc.setName(di.getName());
+                dirc.setPath(di.getPath());
+                dirc.setPort(di.getPort());
+                outputWriter.println(dirc.toString());
+            }
+        } catch (DatabaseException ex) {
+            ServerErrorCommando sec = new ServerErrorCommando();
+            sec.setMessage(ex.getMessage());
+            outputWriter.println(sec.toString());
         }
     }
 

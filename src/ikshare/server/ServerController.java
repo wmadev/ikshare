@@ -5,6 +5,7 @@
 
 package ikshare.server;
 
+import ikshare.domain.DownloadInformation;
 import ikshare.domain.Peer;
 import ikshare.domain.SearchResult;
 import ikshare.domain.SharedFolder;
@@ -66,6 +67,10 @@ public class ServerController {
 
     public List<SearchResult> findBasic(String keyword) throws DatabaseException {
         return databaseFactory.getFileStorage().basicSearch(keyword);
+    }
+
+    public DownloadInformation getDownloadInformation(String accountName, String fileName, long fileSize, int folderId) throws DatabaseException {
+        return databaseFactory.getFileStorage().getDownloadInformation(accountName,fileName,fileSize,folderId);
     }
 
     public boolean logoff(Peer user) throws DatabaseException {
