@@ -5,6 +5,7 @@
 
 package ikshare.server.data.oracle;
 
+import ikshare.domain.DownloadInformation;
 import ikshare.domain.SearchResult;
 import ikshare.domain.SharedFile;
 import ikshare.domain.SharedFolder;
@@ -147,5 +148,36 @@ public class OracleFileStorage implements FileStorage {
             OracleDatabaseFactory.freeConnection(conn);
         }
        return  success;
+    }
+
+    public DownloadInformation getDownloadInformation(String accountName, String fileName, long fileSize, int folderId) throws DatabaseException {
+        DownloadInformation di = new DownloadInformation();
+        di.setAccountName(accountName);
+        di.setName(fileName);
+        Connection conn = OracleDatabaseFactory.getConnection();
+        try {
+            PreparedStatement stmtDownloadInformation = conn.prepareStatement(bundle.getString("getdownloadinformation"));
+            stmtDownloadInformation.setString(1, fileName);
+            stmtDownloadInformation.setString(2, accountName);
+            stmtDownloadInformation.setLong(3, fileSize);
+            stmtDownloadInformation.setInt(4, folderId);
+            ResultSet result = stmtDownloadInformation.executeQuery();
+            result.next();
+            di.setPath(result.getString(bundle.getString("path")));
+            stmtDownloadInformation = conn.prepareStatement(bundle.getString("getPortAndAddress"));
+            stmtDownloadInformation.setString(1, accountName);
+            result = stmtDownloadInformation.executeQuery();
+            result.next();
+            di.setIp(result.getString(bundle.getString("ip")));
+            di.setPort(result.getInt(bundle.getString("port")));
+            result.close();
+            stmtDownloadInformation.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
+        } finally {
+            OracleDatabaseFactory.freeConnection(conn);
+        }
+       return di;
     }
 }
