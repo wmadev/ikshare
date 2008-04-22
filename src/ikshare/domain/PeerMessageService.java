@@ -52,7 +52,7 @@ public class PeerMessageService implements Runnable, TransferQueueListener{
 			e.printStackTrace();
 		}
     	
-    	ExecutorService es = Executors.newCachedThreadPool();
+    	executorService = Executors.newCachedThreadPool();
     }
 
 	public void run() {
