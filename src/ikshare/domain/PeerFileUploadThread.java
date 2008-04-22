@@ -66,6 +66,8 @@ public class PeerFileUploadThread implements Runnable {
 			Date startUpload = new Date();
 			Date now = null;
 			int sentBytes = 0;
+			long previousTotal=0;
+			
 			while (!sendSocket.isClosed() && outStream != null
 					&& (sentBytes = fileInput.read(buffer)) > 0) {
 				outStream.write(buffer, 0, sentBytes);
@@ -73,15 +75,16 @@ public class PeerFileUploadThread implements Runnable {
 				transfer.setNumberOfBytesFinished(transfer.getNumberOfBytesFinished() + sentBytes);
 				now = new Date();
 
-				if ((now.getTime() - startUpload.getTime()) >= 2000) {
+				if ((now.getTime() - startUpload.getTime()) >= 1000) {
 				
-					transfer.setSpeed(transfer.getNumberOfBytesFinished() * 1000
+					transfer.setSpeed((transfer.getNumberOfBytesFinished()-previousTotal) * 1000
 							/ (Math.max(now.getTime() - startUpload.getTime(), 1)));
 					transfer.setRemainingTime((now.getTime() - startUpload.getTime())/(transfer.getNumberOfBytesFinished())	* (transfer.getFileSize() - transfer.getNumberOfBytesFinished()) / 1000);
 	
 					
 
 					startUpload = now;
+					previousTotal = transfer.getNumberOfBytesFinished();
 					EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
 				}
 			}
