@@ -98,8 +98,8 @@ public class PeerFacade {
 		frc.setTransferId(transfer.getId());
 		frc.setSentBytes(0);
 		try {
-			peerMessageService.setSendSocket(new Socket(otherPeer.getInternetAddress(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort()));
-			peerMessageService.sendMessage(frc);
+			Socket sendSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort());
+			peerMessageService.sendMessage(sendSocket, frc);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -223,7 +223,13 @@ public class PeerFacade {
 		CancelTransferCommando ctc = new CancelTransferCommando();
 		ctc.setAccountName(getPeer().getAccountName());
 		ctc.setTransferId(selected.getId());
-		peerMessageService.sendMessage(ctc);
+		try {
+			Socket sendSocket = new Socket(selected.getPeer().getInternetAddress(), selected.getPeer().getPort());
+			peerMessageService.sendMessage(sendSocket, ctc);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 	public void pauseDownloadThread(Transfer selected) {
@@ -235,7 +241,13 @@ public class PeerFacade {
 		ptc.setAccountName(peer.getAccountName());
 		ptc.setSentBlocks(selected.getNumberOfBytesFinished());
 		ptc.setTransferId(selected.getId());
-		peerMessageService.sendMessage(ptc);
+		try {
+			Socket sendSocket = new Socket(selected.getPeer().getInternetAddress(), selected.getPeer().getPort());
+			peerMessageService.sendMessage(sendSocket, ptc);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public void resumeDownloadThread(Transfer selected) {
@@ -254,7 +266,13 @@ public class PeerFacade {
 		frc.setTransferId(selected.getId());
 		frc.setSentBytes(selected.getNumberOfBytesFinished());
 		
-		peerMessageService.sendMessage(frc);
+		try {
+			Socket sendSocket = new Socket(selected.getPeer().getInternetAddress(), selected.getPeer().getPort());
+			peerMessageService.sendMessage(sendSocket, fr c);
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 
 	public int getActiveDownloads() {
