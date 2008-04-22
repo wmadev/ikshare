@@ -47,11 +47,10 @@ public class PeerMessageThread implements Runnable{
         try {
             while(running){
                 String inputLine = incomingReader.readLine();
-                if (inputLine != null) {
-                    System.out.println(inputLine);
+                while (inputLine != null) {
                     Commando c = CommandoParser.getInstance().parse(inputLine);
                     handleCommando(c);
-                    
+                    inputLine = incomingReader.readLine();
                 }
             }
             clientSocket.close();

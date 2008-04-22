@@ -66,7 +66,7 @@ public class PeerMessageService implements Runnable, TransferQueueListener{
 	                while (running) {
 	                    Socket clientSocket  = messageServer.accept();
 	                    System.out.println("Received connection with client, starting seperate thread...");
-	                    executorService.execute(new HandleClientThread(clientSocket));
+	                    executorService.execute(new PeerMessageThread(clientSocket));
 	                }
 	                messageServer.close();
 	            } catch (IOException ex) {
