@@ -13,7 +13,7 @@ public class IKShareFile extends File {
 	private String folder, fileName;
 	
 	public IKShareFile(String folder, String fileName) {
-		super(ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+ folder + fileName);
+		super(ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+ folder + System.getProperty("file.separator") + fileName);
 		setFolder(folder);
 		setFileName(fileName);
 	}
