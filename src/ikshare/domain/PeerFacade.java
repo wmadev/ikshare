@@ -51,7 +51,7 @@ public class PeerFacade {
 		
 		//test
 		try {
-			peer = new Peer("jonas", InetAddress.getLocalHost());
+			peer = new Peer("jonas", InetAddress.getByName("192.168.16.237"));
 			/*
 			peer = new Peer("Pizarro", InetAddress.getLocalHost());
 			otherPeer = new Peer("Monet", InetAddress.getByName("192.168.1.3"));
@@ -88,7 +88,7 @@ public class PeerFacade {
 		frc.setTransferId(transfer.getId());
 		frc.setSentBytes(0);
 		try {
-			Socket sendSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort());
+			Socket sendSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort(), peer.getInternetAddress(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
 			peerMessageService.sendMessage(sendSocket, frc);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -214,7 +214,7 @@ public class PeerFacade {
 		ctc.setAccountName(getPeer().getAccountName());
 		ctc.setTransferId(selected.getId());
 		try {
-			Socket sendSocket = new Socket(selected.getPeer().getInternetAddress(), selected.getPeer().getPort());
+			Socket sendSocket = new Socket(selected.getPeer().getInternetAddress(), selected.getPeer().getPort(), peer.getInternetAddress(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
 			peerMessageService.sendMessage(sendSocket, ctc);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -232,7 +232,7 @@ public class PeerFacade {
 		ptc.setSentBlocks(selected.getNumberOfBytesFinished());
 		ptc.setTransferId(selected.getId());
 		try {
-			Socket sendSocket = new Socket(selected.getPeer().getInternetAddress(), selected.getPeer().getPort());
+			Socket sendSocket = new Socket(selected.getPeer().getInternetAddress(), selected.getPeer().getPort(), peer.getInternetAddress(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
 			peerMessageService.sendMessage(sendSocket, ptc);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
@@ -257,7 +257,7 @@ public class PeerFacade {
 		frc.setSentBytes(selected.getNumberOfBytesFinished());
 		
 		try {
-			Socket sendSocket = new Socket(selected.getPeer().getInternetAddress(), selected.getPeer().getPort());
+			Socket sendSocket = new Socket(selected.getPeer().getInternetAddress(), selected.getPeer().getPort(), peer.getInternetAddress(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
 			peerMessageService.sendMessage(sendSocket, frc);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
