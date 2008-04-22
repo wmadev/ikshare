@@ -73,12 +73,17 @@ public class PeerFileUploadThread implements Runnable {
 				transfer.setNumberOfBytesFinished(transfer.getNumberOfBytesFinished() + sentBytes);
 				now = new Date();
 
-				transfer.setSpeed(transfer.getNumberOfBytesFinished() * 1000
-						/ (Math.max(now.getTime() - startUpload.getTime(), 1)));
-				transfer.setRemainingTime((now.getTime() - startUpload.getTime())/(transfer.getNumberOfBytesFinished())	* (transfer.getFileSize() - transfer.getNumberOfBytesFinished()) / 1000);
+				if ((now.getTime() - startUpload.getTime()) >= 2000) {
+				
+					transfer.setSpeed(transfer.getNumberOfBytesFinished() * 1000
+							/ (Math.max(now.getTime() - startUpload.getTime(), 1)));
+					transfer.setRemainingTime((now.getTime() - startUpload.getTime())/(transfer.getNumberOfBytesFinished())	* (transfer.getFileSize() - transfer.getNumberOfBytesFinished()) / 1000);
+	
+					
 
-				EventController.getInstance().triggerDownloadStateChangedEvent(
-						transfer);
+					startUpload = now;
+					EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
+				}
 			}
 
 			transfer.setState(TransferState.FINISHED);

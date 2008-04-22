@@ -99,11 +99,16 @@ public class PeerFileDownloadThread implements Runnable {
                 
                 now = new Date();
                 
-                transfer.setSpeed(transfer.getNumberOfBytesFinished()*1000/(Math.max(now.getTime()-startDownload.getTime(), 1)));
-                transfer.setRemainingTime((now.getTime()-startDownload.getTime())/(transfer.getNumberOfBytesFinished())*(transfer.getFileSize()-transfer.getNumberOfBytesFinished())/1000);
+                
+            	
+				if ((now.getTime() - startDownload.getTime()) >= 2000) {
+					transfer.setSpeed(transfer.getNumberOfBytesFinished()*1000/(Math.max(now.getTime()-startDownload.getTime(), 1)));
+	                transfer.setRemainingTime((now.getTime()-startDownload.getTime())/(transfer.getNumberOfBytesFinished())*(transfer.getFileSize()-transfer.getNumberOfBytesFinished())/1000);
 
-                EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
 
+					startDownload = now;
+					EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
+				}
                 //System.out.println("aantal bytes="+ n +" aantal pakketjes:" +tellerpakketjes);
             }
             transfer.setState(TransferState.FINISHED);
