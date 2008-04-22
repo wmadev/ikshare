@@ -21,7 +21,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class PeerFacade {
 	private static PeerFacade instance;
 
-	private Peer peer, otherPeer;
+	private Peer peer;
 
 	private PeerFileServer peerFileServer;
 
@@ -34,15 +34,7 @@ public class PeerFacade {
 	private Queue<Transfer> transfersToStart;
 
 	private PeerMessageService peerMessageService;
-
-	public Peer getOtherPeer() {
-		return otherPeer;
-	}
-
-	public void setOtherPeer(Peer otherPeer) {
-		this.otherPeer = otherPeer;
-	}
-
+	
 	public Vector<Transfer> getUploadTransfers() {
 		return uploadTransfers;
 	}
@@ -59,9 +51,7 @@ public class PeerFacade {
 		
 		//test
 		try {
-			peer = new Peer("Monet", InetAddress.getLocalHost());
-			otherPeer = new Peer("Pizarro", InetAddress.getLocalHost());
-			
+			peer = new Peer("jonas", InetAddress.getLocalHost());
 			/*
 			peer = new Peer("Pizarro", InetAddress.getLocalHost());
 			otherPeer = new Peer("Monet", InetAddress.getByName("192.168.1.3"));
@@ -203,14 +193,14 @@ public class PeerFacade {
 
 	public void startDownloadThread(Transfer transfer) {
 		PeerFileDownloadThread peerFileDownloadThread;
-		peerFileDownloadThread = new PeerFileDownloadThread(otherPeer.getInternetAddress(), transfer);
+		peerFileDownloadThread = new PeerFileDownloadThread(transfer.getPeer().getInternetAddress(), transfer);
 		downloadThreads.add(peerFileDownloadThread);
 		peerFileDownloadThread.start();
 	}
 	
 	public void startResumeThread(Transfer transfer) {
 		PeerFileDownloadThread peerFileDownloadThread;
-		peerFileDownloadThread = new PeerFileDownloadThread(otherPeer.getInternetAddress(), transfer);
+		peerFileDownloadThread = new PeerFileDownloadThread(transfer.getPeer().getInternetAddress(), transfer);
 		downloadThreads.add(peerFileDownloadThread);
 		peerFileDownloadThread.start();
 	}
