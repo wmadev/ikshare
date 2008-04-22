@@ -268,7 +268,7 @@ public class PeerFacade {
 		
 		try {
 			Socket sendSocket = new Socket(selected.getPeer().getInternetAddress(), selected.getPeer().getPort());
-			peerMessageService.sendMessage(sendSocket, fr c);
+			peerMessageService.sendMessage(sendSocket, frc);
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
