@@ -89,7 +89,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                     
                 	try {
                         ClientController.getInstance().startServerConversation();
-                        ClientController.getInstance().logon(txtAccountName.getText(), txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
+                        ClientController.getInstance().logon(txtAccountName.getText(), txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
                         ClientController.getInstance().share(txtAccountName.getText(), ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
                     } catch (IOException ex) {
                         new ExceptionWindow(ex,MainScreen.getInstance(),false);
