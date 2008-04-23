@@ -1,4 +1,4 @@
-package ikshare.server;
+package ikshare.chatserver;
 
 import ikshare.chatserver.datatypes.ChatClient;
 import ikshare.chatserver.datatypes.ChatRoom;
