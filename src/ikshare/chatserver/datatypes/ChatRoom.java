@@ -1,5 +1,8 @@
 package ikshare.chatserver.datatypes;
 
+import ikshare.protocol.command.*;
+import ikshare.protocol.command.chat.*;
+
 import java.util.ArrayList;
 
 /**
@@ -9,12 +12,23 @@ import java.util.ArrayList;
 public class ChatRoom 
 {
     private ArrayList<ChatClient> clients = new ArrayList<ChatClient>();
-    private boolean visible = true;
-    private String password;
+    private String roomName;
+    //private boolean visible = true;
+    //private String password;
     
     public ChatRoom() 
     {
     }
+    
+	public String getRoomName() 
+	{
+		return roomName;
+	}
+
+	public void setRoomName(String roomName) 
+	{
+		this.roomName = roomName;
+	}
     
     public int getNumberOfClients()
     {
@@ -23,19 +37,41 @@ public class ChatRoom
     
     public boolean AddClientToRoom(ChatClient client)
     {
+    	ChatHasEnteredRoomCommando command = new ChatHasEnteredRoomCommando();
+    	command.setNickName(client.getNickName());
+    	command.setRoomName(roomName);
+    	BroadCast(command);
+    	
         return clients.add(client);
     }
     
     public boolean RemoveClientFromRoom(ChatClient client)
     {
-        return clients.remove(client);
+    	boolean worked = clients.remove(client);
+    	
+    	if (worked)
+    	{
+	    	ChatHasLeftRoomCommando command = new ChatHasLeftRoomCommando();
+	    	command.setNickName(client.getNickName());
+	    	command.setRoomName(roomName);
+	    	BroadCast(command);
+    	}
+    	
+        return worked;
     }
     
-    public void BroadCast(ChatMessage message)
+    public boolean HasClient(ChatClient client)
+    {
+    	return (clients.contains(client));
+    }
+    
+    public void BroadCast(Commando command)
     {
         for(ChatClient client : clients)
         {
-            client.SendMessage(message);
+        	if(command instanceof ChatMessageCommando && 
+        			!client.getNickName().equals(((ChatMessageCommando)command).getSender()))
+        		client.SendMessage(command);
         }
     }
 }

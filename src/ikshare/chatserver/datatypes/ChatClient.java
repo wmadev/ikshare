@@ -1,5 +1,8 @@
 package ikshare.chatserver.datatypes;
 
+import ikshare.chatserver.HandleClientThread;
+import ikshare.protocol.command.*;
+
 import java.net.InetAddress;
 
 /**
@@ -10,10 +13,15 @@ public class ChatClient
 {
     private String nickName;
     private InetAddress IP;
-    private int port;
+    private HandleClientThread thread;
     
     public ChatClient() 
     {
+    }
+    
+    public ChatClient(HandleClientThread thread) 
+    {
+    	this.thread = thread;
     }
     
     public void setNickName(String nickName)
@@ -36,16 +44,12 @@ public class ChatClient
         return IP;
     }
     
-    public void setPort(int port)
+    public void SendMessage(Commando command)
     {
-        this.port = port;
+        thread.SendMessage(command);
     }
     
-    public void SendMessage(ChatMessage message)
-    {
-        
-    }
-    
+
     //@override
     public boolean equals(Object ob)
     {
