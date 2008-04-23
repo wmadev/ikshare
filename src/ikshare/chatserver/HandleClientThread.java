@@ -1,12 +1,10 @@
 package ikshare.chatserver;
 
 import ikshare.chatserver.datatypes.ChatClient;
-import ikshare.protocol.command.Commando;
-import ikshare.protocol.command.CommandoParser;
-import ikshare.protocol.command.chat.ChatLogNiLukNiCommando;
-import ikshare.protocol.command.chat.ChatLogOffCommando;
-import ikshare.protocol.command.chat.ChatLogOnCommando;
-import ikshare.protocol.command.chat.ChatWelcomeCommando;
+import ikshare.protocol.command.*;
+import ikshare.protocol.command.chat.*;
+import ikshare.protocol.exception.CommandNotFoundException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -23,6 +21,7 @@ public class HandleClientThread implements Runnable
     private boolean running = false;
     private PrintWriter outputWriter;
     private BufferedReader inputReader;
+    private ChatClient client;
     
     public HandleClientThread(Socket socket) 
     {
@@ -48,20 +47,45 @@ public class HandleClientThread implements Runnable
                 String input = inputReader.readLine();
                 if(input!=null)
                 {
-                    Commando command = CommandoParser.getInstance().parse(input);
-                    if(command instanceof ChatLogOnCommando)
-                    {
-                        handleLogOn((ChatLogOnCommando)command);
-                    }
-                    else if (command instanceof ChatLogOffCommando)
-                    {
-                        handleLogOff((ChatLogOffCommando)command);
-                    }
-                    else 
-                    {
-                        handleInvalidCommand();
-                    }
+                	try
+                	{
+	                    Commando command = CommandoParser.getInstance().parse(input);
+	                    if (command instanceof ChatMessageCommando)
+	                    {
+	                    	handleIncomingMessage((ChatMessageCommando)command);
+	                    }
+	                    else if(command instanceof ChatEnterRoomCommando)
+	                    {
+	                    	handleEnterRoom((ChatEnterRoomCommando)command);
+	                    }
+	                    else if(command instanceof ChatLeaveRoomCommando)
+	                    {
+	                    	handleLeaveRoom((ChatLeaveRoomCommando)command);
+	                    }
+	                    else if(command instanceof ChatLogOnCommando)
+	                    {
+	                        handleLogOn((ChatLogOnCommando)command);
+	                    }
+	                    else if (command instanceof ChatLogOffCommando)
+	                    {
+	                        handleLogOff((ChatLogOffCommando)command);
+	                    }
+	                    else if (command instanceof ChatMessageCommando)
+	                    {
+	                    	handleIncomingMessage((ChatMessageCommando)command);
+	                    }
+	                    else
+	                    {
+	                        handleInvalidCommand();
+	                    }
+                	}
+                	catch(CommandNotFoundException excep)
+                	{
+                		System.out.println("Invalid command: " + excep.getMessage());
+                	}
                 }
+                else
+                	wait(1); //wait 1 millisecond
             }
         }
         catch(Exception e)
@@ -70,27 +94,47 @@ public class HandleClientThread implements Runnable
         }
     }
     
+    private void handleIncomingMessage(ChatMessageCommando command)
+    {
+    	command.setSender(client.getNickName());
+    	
+    	ChatServerController.getInstance().ProcessMessage(command);
+    }
+    
+    private void handleEnterRoom(ChatEnterRoomCommando command)
+    {
+    	ChatServerController.getInstance().ClientEntersRoom(command.getRoomName(), client);
+    }
+    
+    private void handleLeaveRoom(ChatLeaveRoomCommando command)
+    {
+    	ChatServerController.getInstance().ClientLeavesRoom(command.getRoomName(), client);
+    }
+    
     private void handleLogOn(ChatLogOnCommando command)
     {
-        if(ChatServerController.getInstance().GetClientByName(command.getNickName())!=null)
+    	if(!checkNickName(command.getNickName()))
+    	{
+    		//TODO send message stating invalid nickname
+    	}
+    	else if(ChatServerController.getInstance().GetClientByName(command.getNickName())!=null)
         {
             ChatLogNiLukNiCommando LNLNCommand = new ChatLogNiLukNiCommando();
             LNLNCommand.setNickName(command.getNickName());
             LNLNCommand.setMessage("nicknametaken");
-            outputWriter.println(LNLNCommand.toString());
+            SendMessage(LNLNCommand);
         }
         else
         {
             ChatWelcomeCommando WelcomeCommand = new ChatWelcomeCommando();
             WelcomeCommand.setNickName(command.getNickName());
-            ChatClient client = new ChatClient();
+            client = new ChatClient(this);
             client.setNickName(command.getNickName());
-            client.setPort(command.getPort());
             client.setIP(clientSocket.getInetAddress());
             ChatServerController.getInstance().ClientLogsIn(client);
         }
     }
-    
+
     private void handleLogOff(ChatLogOffCommando command)
     {
         ChatClient toFind = ChatServerController.getInstance().GetClientByName(command.getNickName());
@@ -100,12 +144,41 @@ public class HandleClientThread implements Runnable
             if(toFind.getIP()==clientSocket.getInetAddress())
             {
                 ChatServerController.getInstance().ClientLogsOff(toFind);
+                Stop();
             }
         }
     }
+   
     
     private void handleInvalidCommand()
     {
-        
+        ChatInvalidCommando invalid = new ChatInvalidCommando();
+        invalid.setMessage("invalidcommando");
+        SendMessage(invalid);
+    }
+    
+    private boolean checkNickName(String nickname)
+    { //TODO check for invalid characters
+    	return (nickname!= null && !nickname.equals("") && nickname.length()>0);
+    }
+    
+    public void SendMessage(Commando command)
+    {
+    	outputWriter.println(command.toString());
+    }
+    
+    private void Stop()
+    {
+    	try
+    	{
+    		running = false;
+    		inputReader.close();
+    		outputWriter.close();
+    		clientSocket.close();
+    	}
+    	catch(Exception e)
+    	{
+    	}
+    
     }
 }

@@ -6,8 +6,7 @@ package ikshare.chatserver;
  */
 public class Startup {
     
-    /** Creates a new instance of Startup */
-    public static void Main(String args[])
+    public static void main(String args[])
     {
         ChatServerController.getInstance().start();
     }

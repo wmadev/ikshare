@@ -1,11 +1,8 @@
 package ikshare.chatserver;
 
-import ikshare.chatserver.datatypes.ChatClient;
-import ikshare.chatserver.datatypes.ChatRoom;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import ikshare.server.threads.HandleClientThread;
@@ -26,7 +23,6 @@ public class ChatServer implements Runnable
             serverSocket = new ServerSocket(6005);
             serverSocket.setReuseAddress(true);
             serverSocket.setSoTimeout(0);
-            //readBuffer = new byte[512];
             executorService = Executors.newCachedThreadPool();
             running = true;
         } 

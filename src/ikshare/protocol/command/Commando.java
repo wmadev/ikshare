@@ -6,8 +6,7 @@ import java.util.ResourceBundle;
 import java.util.StringTokenizer;
 
 public class Commando {
-
-    private String commandoString;
+	private String commandoString;
     protected ArrayList<String> commandoLine;
     protected static ResourceBundle commandoBundle;
     private String commandoName;
