@@ -84,7 +84,7 @@ public class InfoBar extends Composite implements TransferQueueListener{
         lblShared.setLayoutData(data);
         
         lblNrShared = new Label(this,SWT.NONE);
-        lblNrShared.setText("0");
+        lblNrShared.setText(ClientConfigurationController.getInstance().getSharedInformation());
         lblNrShared.setLayoutData(data2);
     }
 
