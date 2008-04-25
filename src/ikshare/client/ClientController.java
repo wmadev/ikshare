@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client;
 
 import ikshare.client.threads.ServerConversationThread;
@@ -10,16 +5,16 @@ import ikshare.client.threads.ShareSynchronisationThread;
 import ikshare.domain.IKShareFile;
 import ikshare.domain.Peer;
 import ikshare.domain.SearchResult;
-import ikshare.domain.SharedItem;
 import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;
 import ikshare.protocol.command.CreateAccountCommando;
 import ikshare.protocol.command.DownloadInformationRequestCommand;
 import ikshare.protocol.command.DownloadInformationResponseCommand;
+import ikshare.protocol.command.FindAdvancedFileCommando;
+import ikshare.protocol.command.FindAdvancedFolderCommando;
 import ikshare.protocol.command.FindBasicCommando;
 import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
-import ikshare.protocol.command.StartShareSynchronisationCommando;
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -27,13 +22,8 @@ import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- *
- * @author awosy
- */
+
 public class ClientController {
     private static ClientController instance;
     private ExecutorService executorService;
@@ -59,6 +49,7 @@ public class ClientController {
         serverConversation.sendCommand(cac);
     }
 
+   
     public void getDownloadInformationForResult(SearchResult rs) {
         DownloadInformationRequestCommand dirc = new DownloadInformationRequestCommand();
         dirc.setAccountName(rs.getOwner());
@@ -106,6 +97,28 @@ public class ClientController {
         return true;
     }
     
+    public void findAdvancedFile(String searchId, String text, boolean keywordAnd, int typeID, long minBytes, long maxBytes) {
+        FindAdvancedFileCommando fafc = new FindAdvancedFileCommando();
+        fafc.setSearchID(searchId);
+        fafc.setKeyword(text);
+        fafc.setTextAnd(keywordAnd);
+        fafc.setTypeID(typeID);
+        fafc.setMinSize(minBytes);
+        fafc.setMaxSize(maxBytes);
+        serverConversation.sendCommand(fafc);
+        
+    }
+
+    public void findAdvancedFolder(String searchId, String text, boolean keywordAnd, long minBytes, long maxBytes) {
+        FindAdvancedFolderCommando fafc = new FindAdvancedFolderCommando();
+        fafc.setSearchID(searchId);
+        fafc.setKeyword(text);
+        fafc.setTextAnd(keywordAnd);
+        fafc.setMinSize(minBytes);
+        fafc.setMaxSize(maxBytes);
+        serverConversation.sendCommand(fafc);
+    }
+
     public boolean share(String accountName,File root) throws IOException{
         executorService.execute(new ShareSynchronisationThread(accountName,root));
         return true;
