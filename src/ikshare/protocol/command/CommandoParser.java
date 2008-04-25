@@ -128,6 +128,12 @@ public class CommandoParser {
         else if (commandoString.startsWith(bundle.getString("requestdownloadinformation"))){
             return new DownloadInformationRequestCommand(commandoString);
         }
+        else if (commandoString.startsWith(bundle.getString("findadvancedfile"))){
+            return new FindAdvancedFileCommando(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("findadvancedfolder"))){
+            return new FindAdvancedFolderCommando(commandoString);
+        }
         
 
         else{
