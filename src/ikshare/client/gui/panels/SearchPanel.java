@@ -44,10 +44,12 @@ import org.eclipse.swt.widgets.*;
 public class SearchPanel extends AbstractPanel implements ServerConversationListener {
 
     private static String ICON_SEARCH = "resources/icons/sp_found.png";
-    private boolean advanced = false;
+    private boolean advanced = false, keywordAnd = true;
     private HashMap<String, CTabItem> searches;
-    private Text txtKeyword;
+    private Text txtKeywordBasic, txtKeywordAdvanced, txtMax, txtMin;
     private CTabFolder folder;
+    private Button btnSearch, rbFile, rbFolder;
+    private Combo cbSizeMax, cbSizeMin, cbTypes;
 
     public SearchPanel(String text, String icon) {
         super(text, icon);
@@ -56,106 +58,6 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         this.setLayout(new GridLayout(2, false));
         this.init();
         this.load();
-    }
-
-    private Group drawAdvancedSearch(Composite parent) {
-        //((GridData)(parent.getLayoutData())).heightHint=200;
-        Group grpAdvanced = new Group(parent, SWT.BORDER);
-        grpAdvanced.setLayout(new GridLayout(1, false));
-        grpAdvanced.setText(ClientConfigurationController.getInstance().getString("advanced"));
-        grpAdvanced.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
-        Label lblSearchName = new Label(grpAdvanced, SWT.NONE);
-        lblSearchName.setText(ClientConfigurationController.getInstance().getString("name"));
-        GridData gd = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-        //gd.widthHint = 100;
-        lblSearchName.setLayoutData(gd);
-        txtKeyword = new Text(grpAdvanced, SWT.BORDER);
-        txtKeyword.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        final Button btnAndOr = new Button(grpAdvanced, SWT.BORDER);
-        btnAndOr.setText(ClientConfigurationController.getInstance().getString("and"));
-        btnAndOr.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false, 2, 1));
-        btnAndOr.addListener(SWT.Selection, new Listener() {
-
-            public void handleEvent(Event e) {
-                if (btnAndOr.getText().equalsIgnoreCase(ClientConfigurationController.getInstance().getString("and"))) {
-                    btnAndOr.setText(ClientConfigurationController.getInstance().getString("or"));
-                } else {
-                    btnAndOr.setText(ClientConfigurationController.getInstance().getString("and"));
-                }
-            }
-        });
-        Label lblSearchType = new Label(grpAdvanced, SWT.NONE);
-        lblSearchType.setText(ClientConfigurationController.getInstance().getString("type"));
-        lblSearchType.setLayoutData(gd);
-        Combo cbTypes = new Combo(grpAdvanced, SWT.DROP_DOWN | SWT.READ_ONLY);
-        cbTypes.setItems(new String[]{"----", ClientConfigurationController.getInstance().getString("audio"),
-            ClientConfigurationController.getInstance().getString("video"),
-            ClientConfigurationController.getInstance().getString("text"),
-            ClientConfigurationController.getInstance().getString("other")
-        });
-        cbTypes.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        cbTypes.select(0);
-
-        Label lblSearchSize = new Label(grpAdvanced, SWT.NONE);
-        lblSearchSize.setText(ClientConfigurationController.getInstance().getString("size"));
-        GridData gdsize = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
-        lblSearchSize.setLayoutData(gdsize);
-
-        Composite cmpSize = new Composite(grpAdvanced, SWT.NONE);
-        cmpSize.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        cmpSize.setLayout(new GridLayout(3, false));
-        Label lblMin = new Label(cmpSize, SWT.NONE);
-        lblMin.setText(ClientConfigurationController.getInstance().getString("between"));
-        lblMin.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
-        Text txtMin = new Text(cmpSize, SWT.BORDER);
-        txtMin.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        Combo cbSize1 = new Combo(cmpSize, SWT.DROP_DOWN | SWT.READ_ONLY);
-        cbSize1.setItems(new String[]{"-----", "byte", "Kbyte", "Mbyte", "Gbyte"});
-        cbSize1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        cbSize1.select(0);
-
-        Label lblMax = new Label(cmpSize, SWT.NONE);
-        lblMax.setText(ClientConfigurationController.getInstance().getString("and"));
-        lblMax.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
-        Text txtMax = new Text(cmpSize, SWT.BORDER);
-        txtMax.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        Combo cbSize2 = new Combo(cmpSize, SWT.DROP_DOWN | SWT.READ_ONLY);
-        cbSize2.setItems(new String[]{"-----", "byte", "Kbyte", "Mbyte", "Gbyte"});
-        cbSize2.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        cbSize2.select(0);
-
-        Label lblSearchFolder = new Label(grpAdvanced, SWT.NONE);
-        lblSearchFolder.setText(ClientConfigurationController.getInstance().getString("folder"));
-        lblSearchFolder.setLayoutData(gd);
-        Composite radioButtons = new Composite(grpAdvanced, SWT.NONE);
-        radioButtons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        radioButtons.setLayout(new FillLayout());
-        Button rbFile = new Button(radioButtons, SWT.RADIO);
-        rbFile.setText(ClientConfigurationController.getInstance().getString("file"));
-        rbFile.setSelection(true);
-        Button rbFolder = new Button(radioButtons, SWT.RADIO);
-        rbFolder.setText(ClientConfigurationController.getInstance().getString("folder"));
-        return grpAdvanced;
-    }
-
-   
-             
-         private Group drawBasicSearch(Composite parent) {
-        //((GridData)(parent.getLayoutData())).heightHint=75;
-        Group grpBasic = new Group(parent, SWT.BORDER);
-        grpBasic.setLayout(new GridLayout(1, false));
-        grpBasic.setText(ClientConfigurationController.getInstance().getString("basic"));
-        GridData gdbasic = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
-        gdbasic.widthHint = 250;
-        grpBasic.setLayoutData(gdbasic);
-        Label lblSearchBasic = new Label(grpBasic, SWT.NONE);
-        lblSearchBasic.setText("Keyword");
-        GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
-        gd.widthHint = 100;
-        lblSearchBasic.setLayoutData(gd);
-        txtKeyword = new Text(grpBasic, SWT.BORDER);
-        txtKeyword.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        return grpBasic;
     }
 
     private void load() {
@@ -188,7 +90,6 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         results.setLayoutData(gd2);
         folder = new CTabFolder(results, SWT.BORDER);
         
-
         //Search Buttons
         Composite cmpButtons = new Composite(this, SWT.NONE);
         cmpButtons.setLayoutData(new GridData(SWT.RIGHT, SWT.END, false, false, 1, 1));
@@ -207,10 +108,12 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                                     advanced = true;
                                     btnAdvanced.setText(ClientConfigurationController.getInstance().getString("basic"));
                                     layout.topControl = drawAdvancedSearch(cmpSearch);
+                                    txtKeywordAdvanced.setText(txtKeywordBasic.getText());
                                 } else {
                                     advanced = false;
                                     btnAdvanced.setText(ClientConfigurationController.getInstance().getString("advanced"));
                                     layout.topControl = drawBasicSearch(cmpSearch);
+                                    txtKeywordBasic.setText(txtKeywordAdvanced.getText());
                                 }
                                 cmpSearch.layout();
                             }
@@ -219,20 +122,153 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         });
 
         btnAdvanced.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false, 1, 1));
-        Button btnSearch = new Button(cmpButtons, SWT.BORDER);
+        btnSearch = new Button(cmpButtons, SWT.BORDER);
         btnSearch.setText(ClientConfigurationController.getInstance().getString("search"));
         btnSearch.setLayoutData(new GridData(SWT.RIGHT, SWT.FILL, false, false, 1, 1));
+        btnSearch.setEnabled(false);
         btnSearch.addListener(SWT.Selection, new Listener() {
 
             public void handleEvent(Event event) {
-                if (!advanced) {
-                    String searchId = String.valueOf(new Date().getTime());
-
-                    ClientController.getInstance().findBasic(searchId, txtKeyword.getText());
+                search();
                 }
+                });
+    }
+    
+     private Group drawBasicSearch(Composite parent) {
+        //((GridData)(parent.getLayoutData())).heightHint=75;
+        Group grpBasic = new Group(parent, SWT.BORDER);
+        grpBasic.setLayout(new GridLayout(1, false));
+        grpBasic.setText(ClientConfigurationController.getInstance().getString("basic"));
+        GridData gdbasic = new GridData(SWT.FILL, SWT.FILL, false, false, 1, 1);
+        gdbasic.widthHint = 250;
+        grpBasic.setLayoutData(gdbasic);
+        Label lblSearchBasic = new Label(grpBasic, SWT.NONE);
+        lblSearchBasic.setText("Keyword");
+        GridData gd = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
+        gd.widthHint = 100;
+        lblSearchBasic.setLayoutData(gd);
+        txtKeywordBasic = new Text(grpBasic, SWT.BORDER);
+        txtKeywordBasic.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        txtKeywordBasic.addListener(SWT.Modify, new Listener() {
 
+            public void handleEvent(Event event) {
+                if(!advanced){
+                    
+                    if(txtKeywordBasic.getText().equalsIgnoreCase("")){
+                    btnSearch.setEnabled(false);
+                    }
+                    else{
+                        btnSearch.setEnabled(true);
+                    }
+                }
+            }
+            
+        });
+        return grpBasic;
+    }
+     
+     private Group drawAdvancedSearch(Composite parent) {
+        Group grpAdvanced = new Group(parent, SWT.BORDER);
+        grpAdvanced.setLayout(new GridLayout(1, false));
+        grpAdvanced.setText(ClientConfigurationController.getInstance().getString("advanced"));
+        grpAdvanced.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, true, 1, 1));
+        Label lblSearchName = new Label(grpAdvanced, SWT.NONE);
+        lblSearchName.setText(ClientConfigurationController.getInstance().getString("name"));
+        GridData gd = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+        lblSearchName.setLayoutData(gd);
+        txtKeywordAdvanced = new Text(grpAdvanced, SWT.BORDER);
+        txtKeywordAdvanced.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        txtKeywordAdvanced.addListener(SWT.Modify, new Listener() {
+
+            public void handleEvent(Event event) {
+                if(txtKeywordAdvanced.getText().equalsIgnoreCase("")){
+                    btnSearch.setEnabled(false);
+                }
+                else{
+                    btnSearch.setEnabled(true);
+                }
+            }
+            
+        });
+        final Button btnAndOr = new Button(grpAdvanced, SWT.BORDER);
+        btnAndOr.setText(ClientConfigurationController.getInstance().getString("and"));
+        btnAndOr.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false, 2, 1));
+        btnAndOr.addListener(SWT.Selection, new Listener() {
+
+            public void handleEvent(Event e) {
+                if (btnAndOr.getText().equalsIgnoreCase(ClientConfigurationController.getInstance().getString("and"))) {
+                    btnAndOr.setText(ClientConfigurationController.getInstance().getString("or"));
+                    keywordAnd=false;
+                } else {
+                    btnAndOr.setText(ClientConfigurationController.getInstance().getString("and"));
+                    keywordAnd=true;
+                }
             }
         });
+        Label lblSearchType = new Label(grpAdvanced, SWT.NONE);
+        lblSearchType.setText(ClientConfigurationController.getInstance().getString("type"));
+        lblSearchType.setLayoutData(gd);
+        cbTypes = new Combo(grpAdvanced, SWT.DROP_DOWN | SWT.READ_ONLY);
+        cbTypes.setItems(new String[]{"----", ClientConfigurationController.getInstance().getString("audio"),
+            ClientConfigurationController.getInstance().getString("video"),
+            ClientConfigurationController.getInstance().getString("text"),
+            ClientConfigurationController.getInstance().getString("other")
+        });
+        cbTypes.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        cbTypes.select(0);
+
+        Label lblSearchSize = new Label(grpAdvanced, SWT.NONE);
+        lblSearchSize.setText(ClientConfigurationController.getInstance().getString("size"));
+        GridData gdsize = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+        lblSearchSize.setLayoutData(gdsize);
+
+        Composite cmpSize = new Composite(grpAdvanced, SWT.NONE);
+        cmpSize.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        cmpSize.setLayout(new GridLayout(3, false));
+        Label lblMin = new Label(cmpSize, SWT.NONE);
+        lblMin.setText(ClientConfigurationController.getInstance().getString("between"));
+        lblMin.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
+        txtMin = new Text(cmpSize, SWT.BORDER);
+        txtMin.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        cbSizeMin = new Combo(cmpSize, SWT.DROP_DOWN | SWT.READ_ONLY);
+        cbSizeMin.setItems(new String[]{"byte", "Kbyte", "Mbyte", "Gbyte"});
+        cbSizeMin.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        cbSizeMin.select(0);
+
+        Label lblMax = new Label(cmpSize, SWT.NONE);
+        lblMax.setText(ClientConfigurationController.getInstance().getString("and"));
+        lblMax.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
+        txtMax = new Text(cmpSize, SWT.BORDER);
+        txtMax.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        cbSizeMax = new Combo(cmpSize, SWT.DROP_DOWN | SWT.READ_ONLY);
+        cbSizeMax.setItems(new String[]{"byte", "Kbyte", "Mbyte", "Gbyte"});
+        cbSizeMax.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        cbSizeMax.select(0);
+
+        Label lblSearchFolder = new Label(grpAdvanced, SWT.NONE);
+        lblSearchFolder.setText(ClientConfigurationController.getInstance().getString("folder"));
+        lblSearchFolder.setLayoutData(gd);
+        Composite radioButtons = new Composite(grpAdvanced, SWT.NONE);
+        radioButtons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        radioButtons.setLayout(new FillLayout());
+        rbFile = new Button(radioButtons, SWT.RADIO);
+        rbFile.setText(ClientConfigurationController.getInstance().getString("file"));
+        rbFile.setSelection(true);
+        rbFolder = new Button(radioButtons, SWT.RADIO);
+        rbFolder.setText(ClientConfigurationController.getInstance().getString("folder"));
+        rbFolder.addListener(SWT.Selection, new Listener(){
+
+            public void handleEvent(Event event) {
+                if(rbFolder.getSelection()){
+                    cbTypes.setEnabled(false);
+                }
+                else {
+                    cbTypes.setEnabled(true);
+                }
+            }
+            
+        });
+        return grpAdvanced;
     }
 
     private void createTabItem(SearchResult sr) {
@@ -330,5 +366,39 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     private void updateTabItem(CTabItem tab, SearchResult sr) {
         Table tblResults = (Table) tab.getData("table");
         addTableRow(sr, tblResults);
+    }
+    
+    private void search() {
+                String searchId = String.valueOf(new Date().getTime());
+                if (!advanced) {
+                    ClientController.getInstance().findBasic(searchId, txtKeywordBasic.getText());
+                }
+                else {
+                    long minBytes=0;
+                    long maxBytes=0;
+                    if(!txtMin.getText().equalsIgnoreCase("")){
+                        minBytes=Long.parseLong(txtMin.getText());
+                        for (int i =1; i<=cbSizeMin.getSelectionIndex();i++){
+                            minBytes*=1024;
+                        }
+                    }
+                    if(!txtMax.getText().equalsIgnoreCase("")){
+                        maxBytes=Long.parseLong(txtMax.getText());
+                        for (int i =1; i<=cbSizeMax.getSelectionIndex();i++){
+                            maxBytes*=1024;
+                        }
+                    }   
+                    if(rbFile.getSelection()){          //search for a file
+                        ClientController.getInstance().findAdvancedFile(searchId, txtKeywordAdvanced.getText(),
+                                keywordAnd, cbTypes.getSelectionIndex(),minBytes , maxBytes );
+                    }
+                    else{                               //search for a folder
+                        ClientController.getInstance().findAdvancedFolder(searchId, txtKeywordAdvanced.getText(),
+                                keywordAnd, minBytes , maxBytes);
+                        
+                    }
+                }
+
+                
     }
 }
