@@ -6,6 +6,7 @@
 package ikshare.client.gui.custom;
 
 import eu.medsea.util.MimeUtil;
+import ikshare.client.PlayerController;
 import ikshare.client.configuration.ClientConfiguration;
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.client.gui.UtilityClass;
@@ -113,6 +114,17 @@ public class UIFileBrowser implements ClientConfigurationListener{
                                 fillTable(current);
                             }
                     });
+                    String filename = file.toString();
+                    String ext = filename.substring(filename.lastIndexOf('.')+1, filename.length());
+                    if (ext.toLowerCase().equals("mp3")) {
+                        MenuItem openInternalMenuItem = new MenuItem(rightClickMenu, SWT.PUSH);
+                        openInternalMenuItem.setText(ClientConfigurationController.getInstance().getString("loadinternal"));
+                        openInternalMenuItem.addListener (SWT.Selection, new Listener () {
+                                public void handleEvent(Event event) {
+                                	PlayerController.getInstance().setSelectedFile(file);
+                                }
+                        });
+                    }
                     
                     rightClickMenu.setVisible (true);
                 }
