@@ -1,8 +1,8 @@
 package ikshare.client.gui.panels;
 
 import ikshare.client.ClientController;
+import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.client.gui.AbstractPanel;
-import ikshare.client.configuration.*;
 import ikshare.client.gui.ExceptionWindow;
 import ikshare.client.gui.MainScreen;
 import ikshare.client.gui.custom.UIFileBrowser;
@@ -14,14 +14,21 @@ import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.LogNiLukNiCommando;
 import ikshare.protocol.command.WelcomeCommando;
+
 import java.io.File;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.graphics.*;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.graphics.Image;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
 
 
 public class HomePanel extends AbstractPanel implements ServerConversationListener{
@@ -91,11 +98,12 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                         ClientController.getInstance().startServerConversation();
                         ClientController.getInstance().logon(txtAccountName.getText(), txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
                         ClientController.getInstance().share(txtAccountName.getText(), ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
-                    } catch (IOException ex) {
+                    	PeerFacade.getInstance();
+                	} catch (IOException ex) {
                         new ExceptionWindow(ex,MainScreen.getInstance(),false);
                     }
-                    
-                        //            PeerFacade.getInstance().getPeerFileServer().startServer();
+                   
+
                 }
                 else if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logoff"))){
                     ClientController.getInstance().logoff(
