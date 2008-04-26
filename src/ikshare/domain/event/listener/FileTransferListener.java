@@ -20,4 +20,5 @@ public interface FileTransferListener {
     public void transferFinished(Transfer transfer);
 	public void transferPaused(Transfer transfer);
 	public void transferResumed(Transfer transfer);
+	public void transfersCleared();
 }
