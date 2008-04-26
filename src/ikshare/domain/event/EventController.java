@@ -118,6 +118,12 @@ public class EventController {
 		}
 	}
 	
+	public void triggerClearTransfers() {
+		for (FileTransferListener listener : fileTransferListeners) {
+			listener.transfersCleared();
+		}
+	}
+	
 	public void triggerActiveDownloadsChanged() {
 		for (TransferQueueListener listener : transferQueueListeners) {
 			listener.activeDownloadsChanged();
@@ -129,6 +135,8 @@ public class EventController {
 			listener.activeUploadsChanged();
 		}
 	}
+
+
 
 
 
