@@ -38,19 +38,28 @@ public class UtilityClass {
      * @return the formatted representation
      */
     public static String formatTime(Long seconds) {
-	String timeInSeconds;
-	if(seconds.toString().length()>2)
-            timeInSeconds= seconds.toString().substring(0, 2);
-        else
-            timeInSeconds= seconds.toString();
+    	String returnVal="";
+    	long timeInDays, timeInSeconds = 0, timeInMinutes = 0, timeInHours = 0, restingSeconds=0;
+        restingSeconds = seconds;
         
-        long timeInMinutes = 0;
-        long timeInHours = 0;
-
-        if(seconds>59)
-            timeInMinutes = seconds/60;
-        if(timeInMinutes>59)
-            timeInHours = seconds/360;
-        return timeInHours+":"+timeInMinutes+":"+timeInSeconds;
+    	timeInDays = restingSeconds / (long)(86400);
+    	restingSeconds = restingSeconds%(long)(86400);
+        timeInHours = restingSeconds / (long)(3600);
+        restingSeconds = restingSeconds%(long)(3600);
+        timeInMinutes = restingSeconds / (long)(60);
+        timeInSeconds = restingSeconds%(long)(60);
+        
+        if(timeInDays != 0)
+        	returnVal += timeInDays + ":";
+        if (timeInHours < 10)
+        	returnVal += "0";
+        returnVal += timeInHours + ":";
+        if (timeInMinutes < 10)
+        	returnVal += "0";
+        returnVal += timeInMinutes + ":";
+        if (timeInSeconds < 10)
+        	returnVal += "0";
+        returnVal += timeInSeconds;
+        return returnVal;
     }
 }
