@@ -29,6 +29,9 @@ class DefaultClientConfiguration extends ClientConfiguration {
         super.setIkshareServerAddress("127.0.0.1");
         super.setIkshareServerPort(6000);
         super.setFileTransferPort(6666);
+        
+        super.setChatServerAddress("127.0.0.1");
+        super.setChatServerPort(6005);
     }
 
 }
