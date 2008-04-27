@@ -6,13 +6,18 @@
 package ikshare.domain.event;
 
 import ikshare.client.configuration.ClientConfiguration;
-import ikshare.client.gui.InfoBar;
 import ikshare.domain.Transfer;
+import ikshare.domain.event.listener.ChatServerConversationListener;
 import ikshare.domain.event.listener.ClientConfigurationListener;
 import ikshare.domain.event.listener.FileTransferListener;
 import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.domain.event.listener.TransferQueueListener;
 import ikshare.protocol.command.Commando;
+import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
+import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
+import ikshare.protocol.command.chat.ChatMessageCommando;
+import ikshare.protocol.command.chat.ChatYouEnterRoomCommando;
+
 import java.util.ArrayList;
 
 /**
@@ -29,12 +34,15 @@ public class EventController {
 	private ArrayList<ClientConfigurationListener> clientConfigurationListeners;
 	
 	private ArrayList<TransferQueueListener> transferQueueListeners;
+	
+	private ArrayList<ChatServerConversationListener> chatServerConversationListeners;
 
 	private EventController() {
 		fileTransferListeners = new ArrayList<FileTransferListener>();
 		serverConversationListeners = new ArrayList<ServerConversationListener>();
 		clientConfigurationListeners = new ArrayList<ClientConfigurationListener>();
 		transferQueueListeners = new ArrayList<TransferQueueListener>();
+		chatServerConversationListeners = new ArrayList<ChatServerConversationListener>();
 	}
 
 	public static EventController getInstance() {
@@ -57,6 +65,10 @@ public class EventController {
 	
 	public void addTransferQueueListener(TransferQueueListener l) {
 		transferQueueListeners.add(l);
+	}
+	
+	public void addChatServerConversationListener(ChatServerConversationListener l) {
+        chatServerConversationListeners.add(l);
 	}
 
 	public void triggerConfigurationUpdatedEvent(ClientConfiguration config) {
@@ -136,8 +148,31 @@ public class EventController {
 		}
 	}
 
+    public void triggerUserLeavingRoom(ChatHasLeftRoomCommando c) {
+        for (ChatServerConversationListener listener : chatServerConversationListeners)
+        {
+            listener.userLeftRoom(c);
+        }
+    }
 
+    public void triggerUserEnteringRoom(ChatHasEnteredRoomCommando c) {
+        for (ChatServerConversationListener listener : chatServerConversationListeners)
+        {
+            listener.userEntersRoom(c);
+        }
+    }
 
-
-
+    public void triggerReceivingMessage(ChatMessageCommando c) {
+        for (ChatServerConversationListener listener : chatServerConversationListeners)
+        {
+            listener.receivedMessage(c);
+        }
+    }
+    
+    public void triggerYouEnterRoom(ChatYouEnterRoomCommando c) {
+        for (ChatServerConversationListener listener : chatServerConversationListeners)
+        {
+            listener.youEnterRoom(c);
+        }
+    }
 }

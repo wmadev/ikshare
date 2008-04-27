@@ -8,8 +8,8 @@ public class ClientConfiguration {
     private String nickname;
     private Calendar birthday;
     private File sharedFolder;
-    private String ikshareServerAddress;
-    private int ikshareServerPort, messagePort, fileTransferPort, maximumUploads;
+    private String ikshareServerAddress, chatServerAddress;
+    private int ikshareServerPort, messagePort, fileTransferPort, maximumUploads, chatServerPort;
     
     public ClientConfiguration(){
         
@@ -91,5 +91,19 @@ public class ClientConfiguration {
         this.nickname = nickname;
     }
 
+    public int getChatServerPort() {
+        return chatServerPort;
+    }
+
+    public void setChatServerPort(int chatServerPort) {
+        this.chatServerPort = chatServerPort;
+    }
     
+    public String getChatServerAddress() {
+        return chatServerAddress;
+    }
+
+    public void setChatServerAddress(String chatServerAddress) {
+        this.chatServerAddress = chatServerAddress;
+    }
 }

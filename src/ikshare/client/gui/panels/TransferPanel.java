@@ -448,4 +448,11 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 					}
 				});
 	}
+
+
+	@Override
+	public void transfersCleared() {
+		// TODO Auto-generated method stub
+		
+	}
 }
