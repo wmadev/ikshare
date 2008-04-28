@@ -1,32 +1,25 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.server.data.oracle;
 
 import ikshare.domain.DownloadInformation;
 import ikshare.domain.SearchResult;
-import ikshare.domain.SharedFile;
-import ikshare.domain.SharedFolder;
-import ikshare.domain.SharedItem;
-import ikshare.domain.SharedItemState;
 import ikshare.server.data.DatabaseException;
 import ikshare.server.data.FileStorage;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
-/**
- *
- * @author awosy
- */
+
 public class OracleFileStorage implements FileStorage {
     private static OracleFileStorage instance;
     private ResourceBundle bundle;
+    private String audioExtensions[] = {".mp3",".wma",".ogg",".wav",".mid",".m4a"};
+    private String videoExtensions[]= {".avi", ".dvix", ".xvid", ".mpeg", ".mp4"};
+    private String textExtensions[] = {".txt", ".doc", ".pdf"};
     
     private OracleFileStorage(){
         bundle = ResourceBundle.getBundle("ikshare.server.data.oracle.DBConstants");
@@ -83,31 +76,6 @@ public class OracleFileStorage implements FileStorage {
         return success;
     }
 
-    public synchronized List<SearchResult> basicSearch(String name) throws DatabaseException {
-        ArrayList<SearchResult> results = null;
-        Connection conn = OracleDatabaseFactory.getConnection();
-        try {
-            PreparedStatement stmtBasicSearch = conn.prepareStatement(bundle.getString("basicSearch"));
-            
-            stmtBasicSearch.setString(1, "%"+name.toLowerCase()+"%");
-            ResultSet result = stmtBasicSearch.executeQuery();
-            results =new ArrayList<SearchResult>();
-            while(result.next()){
-                SearchResult sr=new SearchResult(result.getString(bundle.getString("filename"))
-                        ,result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("filesize")),false,result.getInt(bundle.getString("parentid")));
-                results.add(sr);
-            }
-            result.close();
-            stmtBasicSearch.close();
-        } catch (SQLException e) {
-            results = null;
-            e.printStackTrace();
-            throw new DatabaseException(bundle.getString("ERROR_Database"));
-        } finally {
-            OracleDatabaseFactory.freeConnection(conn);
-        }
-       return  results;
-    }
 
     public boolean deleteSharedFile(int parentFolderID, String name, long size) throws DatabaseException {
         boolean success =false;
@@ -179,5 +147,183 @@ public class OracleFileStorage implements FileStorage {
             OracleDatabaseFactory.freeConnection(conn);
         }
        return di;
+    }
+
+    public synchronized List<SearchResult> basicSearch(String name) throws DatabaseException {
+        ArrayList<SearchResult> results = null;
+        Connection conn = OracleDatabaseFactory.getConnection();
+        try {
+            PreparedStatement stmtBasicSearch = conn.prepareStatement(bundle.getString("basicSearch"));
+            
+            stmtBasicSearch.setString(1, "%"+name.toLowerCase()+"%");
+            ResultSet result = stmtBasicSearch.executeQuery();
+            results =new ArrayList<SearchResult>();
+            while(result.next()){
+                SearchResult sr=new SearchResult(result.getString(bundle.getString("filename"))
+                        ,result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("filesize")),false,result.getInt(bundle.getString("parentid")));
+                results.add(sr);
+            }
+            result.close();
+            stmtBasicSearch.close();
+        } catch (SQLException e) {
+            results = null;
+            e.printStackTrace();
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
+        } finally {
+            OracleDatabaseFactory.freeConnection(conn);
+        }
+       return  results;
+    }
+    
+    public List<SearchResult> advancedFileSearch(String keyword, boolean textAnd, int typeID, long minSize, long maxSize) throws DatabaseException {
+        ArrayList<SearchResult> results = null;
+        String searchString="SELECT fi.FOLDERID,FILENAME,ACCOUNTNAME,FILESIZE FROM SHAREDFILES fi JOIN SHAREDFOLDERS fo ON fo.FOLDERID=fi.FOLDERID WHERE lower(FILENAME) LIKE '";
+        List<String> keys= new ArrayList<String>();
+        int startIndex=0;
+        while(startIndex<keyword.length() && keyword.indexOf(" ", startIndex)!=-1){
+            keys.add(keyword.substring(startIndex, keyword.indexOf(" ", startIndex)));
+            startIndex=keyword.indexOf(" ", startIndex)+1;
+        }
+        Iterator<String> it = keys.iterator();
+        String key=it.next().toLowerCase();
+        searchString+="%"+key+"%' ";
+        if(textAnd){
+            while(it.hasNext()) {
+                key = it.next().toLowerCase();
+                searchString+= "AND lower(FILENAME) LIKE '%"+key+"%' ";
+            }               
+        }
+        else{
+            while(it.hasNext()) {
+                key = it.next().toLowerCase();
+                searchString+= "OR lower(FILENAME) LIKE '%"+key+"%' ";
+            }               
+        }
+        switch (typeID){
+            case 1:             //audio
+                searchString+="AND (lower(FILENAME) LIKE '%"+audioExtensions[0]+"' ";
+                for( int i=1;i<audioExtensions.length;i++) {
+                searchString+= "OR lower(FILENAME) LIKE '%"+audioExtensions[i]+"' ";
+                }
+                searchString+=") ";
+            case 2:             //video
+                searchString+="AND (lower(FILENAME) LIKE '%"+videoExtensions[0]+"' ";
+                for( int i=1;i<videoExtensions.length;i++) {
+                searchString+= "OR lower(FILENAME) LIKE '%"+videoExtensions[i]+"' ";
+                }
+                searchString+=") ";
+            case 3:             //text
+                searchString+="AND (lower(FILENAME) LIKE '%"+textExtensions[0]+"' ";
+                for( int i=1;i<textExtensions.length;i++) {
+                searchString+= "OR lower(FILENAME) LIKE '%"+textExtensions[i]+"' ";
+                }
+                searchString+=") ";
+            case 4:
+                searchString+="AND (lower(FILENAME) NOT LIKE '%"+audioExtensions[0]+"' ";
+                for( int i=1;i<audioExtensions.length;i++) {
+                searchString+= "AND lower(FILENAME) NOT LIKE '%"+audioExtensions[i]+"' ";
+                }
+                for( int i=0;i<videoExtensions.length;i++) {
+                searchString+= "AND lower(FILENAME) NOT LIKE '%"+videoExtensions[i]+"' ";
+                }
+                for( int i=0;i<textExtensions.length;i++) {
+                searchString+= "AND lower(FILENAME) NOT LIKE '%"+textExtensions[i]+"' ";
+                }
+                searchString+=") ";
+        }
+        if(minSize!=0 && maxSize!=0){
+            searchString+= "AND FILESIZE BETWEEN "+minSize+" AND "+maxSize+" ";
+        }
+        else if (minSize!=0){
+            searchString+= "AND FILESIZE>"+minSize+" ";
+             }
+        else if (maxSize!=0){
+            searchString+= "AND FILESIZE<"+maxSize+" ";
+        }
+              
+        Connection conn = OracleDatabaseFactory.getConnection();
+        try{
+            Statement stmt=conn.createStatement();
+            ResultSet result=stmt.executeQuery(searchString);
+            results =new ArrayList<SearchResult>();
+            while(result.next()){
+                SearchResult sr=new SearchResult(result.getString(bundle.getString("filename"))
+                        ,result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("filesize")),false,result.getInt(bundle.getString("parentid")));
+                results.add(sr);
+            }
+            result.close();
+            stmt.close();
+            
+        }
+        catch (SQLException e){
+            results=null;
+            e.printStackTrace();
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
+        }
+        finally {
+            OracleDatabaseFactory.freeConnection(conn);
+        }
+        
+        return results;
+    }
+
+    public List<SearchResult> advancedFolderSearch(String keyword, boolean textAnd, long minSize, long maxSize) throws DatabaseException {
+        ArrayList<SearchResult> results = null;
+        String searchString="SELECT fi.FOLDERID,FILENAME,ACCOUNTNAME,FILESIZE FROM SHAREDFILES fi JOIN SHAREDFOLDERS fo ON fo.FOLDERID=fi.FOLDERID WHERE lower(FILENAME) LIKE '";
+        List<String> keys= new ArrayList<String>();
+        int startIndex=0;
+        while(startIndex<keyword.length() && keyword.indexOf(" ", startIndex)!=-1){
+            keys.add(keyword.substring(startIndex, keyword.indexOf(" ", startIndex)));
+            startIndex=keyword.indexOf(" ", startIndex)+1;
+        }
+        Iterator<String> it = keys.iterator();
+        String key=it.next().toLowerCase();
+        searchString+="%"+key+"%' ";
+        if(textAnd){
+            while(it.hasNext()) {
+                key = it.next().toLowerCase();
+                searchString+= "AND lower(FILENAME) LIKE '%"+key+"%' ";
+            }               
+        }
+        else{
+            while(it.hasNext()) {
+                key = it.next().toLowerCase();
+                searchString+= "OR lower(FILENAME) LIKE '%"+key+"%' ";
+            }               
+        }
+        if(minSize!=0 && maxSize!=0){
+            searchString+= "AND FILESIZE BETWEEN "+minSize+" AND "+maxSize+" ";
+        }
+        else if (minSize!=0){
+            searchString+= "AND FILESIZE>"+minSize+" ";
+             }
+        else if (maxSize!=0){
+            searchString+= "AND FILESIZE<"+maxSize+" ";
+        }
+              
+        Connection conn = OracleDatabaseFactory.getConnection();
+        try{
+            Statement stmt=conn.createStatement();
+            ResultSet result=stmt.executeQuery(searchString);
+            results =new ArrayList<SearchResult>();
+            while(result.next()){
+                SearchResult sr=new SearchResult(result.getString(bundle.getString("filename"))
+                        ,result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("filesize")),false,result.getInt(bundle.getString("parentid")));
+                results.add(sr);
+            }
+            result.close();
+            stmt.close();
+            
+        }
+        catch (SQLException e){
+            results=null;
+            e.printStackTrace();
+            throw new DatabaseException(bundle.getString("ERROR_Database"));
+        }
+        finally {
+            OracleDatabaseFactory.freeConnection(conn);
+        }
+        
+        return results;
     }
 }
