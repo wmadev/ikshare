@@ -66,6 +66,7 @@ public class UIFileBrowser implements ClientConfigurationListener{
         lblCurrent = new Label(parent,SWT.NONE);
         lblCurrent.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false,1,1));
         lblCurrent.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_BLUE));
+        
         tblFileBrowser = new Table(parent,SWT.BORDER|SWT.FULL_SELECTION);
         tblFileBrowser.setLinesVisible (true);
         tblFileBrowser.setHeaderVisible (true);
