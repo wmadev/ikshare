@@ -19,10 +19,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-/**
- *
- * @author awosy
- */
+
 public class HandleClientThread implements Runnable{
     private Socket clientSocket;
     private boolean running = false;
@@ -74,10 +71,16 @@ public class HandleClientThread implements Runnable{
                     else if( c instanceof FindBasicCommando){
                         handleFindBasicCommando(c);
                     }
+                    else if( c instanceof FindAdvancedFileCommando){
+                        handleFindAdvancedFile(c);
+                    }
+                    else if( c instanceof FindAdvancedFolderCommando){
+                        handleFindAdvancedFolder(c);
+                    }
                     else if( c instanceof DownloadInformationRequestCommand){
                         handleDownloadInformationRequest((DownloadInformationRequestCommand)c);
                     }
-                        
+                     
                     
                 }
             }
@@ -196,6 +199,67 @@ public class HandleClientThread implements Runnable{
             outputWriter.println(nrfc.toString());
         }
     }
+    
+    private void handleFindAdvancedFile(Commando c) {
+        List<SearchResult> results = null;
+        FindAdvancedFileCommando fafc = (FindAdvancedFileCommando)c;
+        try{
+            results = ServerController.getInstance().findAdvancedFile(fafc.getKeyword(), fafc.isTextAnd(), fafc.getTypeID(), fafc.getMinSize(), fafc.getMaxSize());
+        }
+        catch (DatabaseException ex) {
+            ServerErrorCommando sec = new ServerErrorCommando();
+            sec.setMessage(ex.getMessage());
+            outputWriter.println(sec.toString());
+        }
+        if(results!= null && results.size()>=1){
+            for(SearchResult result : results){
+                FoundResultCommando frc = new FoundResultCommando();
+                frc.setSearchID(fafc.getSearchID());
+                frc.setFolder(result.isFolder());
+                frc.setAccountName(result.getOwner());
+                frc.setName(result.getName());
+                frc.setSize(result.getSize());
+                frc.setParentId(result.getParentId());
+                outputWriter.println(frc.toString());
+            }
+        }else{
+            NoResultsFoundCommando nrfc = new NoResultsFoundCommando();
+            nrfc.setSearchID(fafc.getSearchID());
+            nrfc.setKeyword(fafc.getKeyword());
+            outputWriter.println(nrfc.toString());
+        }
+    }
+
+    private void handleFindAdvancedFolder(Commando c) {
+            List<SearchResult> results = null;
+        FindAdvancedFolderCommando fafc = (FindAdvancedFolderCommando)c;
+        try{
+            results = ServerController.getInstance().findAdvancedFolder(fafc.getKeyword(), fafc.isTextAnd(), fafc.getMinSize(), fafc.getMaxSize());
+        }
+        catch (DatabaseException ex) {
+            ServerErrorCommando sec = new ServerErrorCommando();
+            sec.setMessage(ex.getMessage());
+            outputWriter.println(sec.toString());
+        }
+        if(results!= null && results.size()>=1){
+            for(SearchResult result : results){
+                FoundResultCommando frc = new FoundResultCommando();
+                frc.setSearchID(fafc.getSearchID());
+                frc.setFolder(result.isFolder());
+                frc.setAccountName(result.getOwner());
+                frc.setName(result.getName());
+                frc.setSize(result.getSize());
+                frc.setParentId(result.getParentId());
+                outputWriter.println(frc.toString());
+            }
+        }else{
+            NoResultsFoundCommando nrfc = new NoResultsFoundCommando();
+            nrfc.setSearchID(fafc.getSearchID());
+            nrfc.setKeyword(fafc.getKeyword());
+            outputWriter.println(nrfc.toString());
+        }
+    }
+
 
     private void handleLogoffCommando(Commando c) {
         LogOffCommando lo = (LogOffCommando)c;

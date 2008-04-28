@@ -1,25 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.server;
 
 import ikshare.domain.DownloadInformation;
 import ikshare.domain.Peer;
 import ikshare.domain.SearchResult;
-import ikshare.domain.SharedFolder;
-import ikshare.domain.SharedItem;
 import ikshare.server.data.DatabaseException;
 import ikshare.server.data.DatabaseFactory;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- *
- * @author awosy
- */
 public class ServerController {
     private static ServerController instance;
     private ExecutorService executorService;
@@ -63,6 +52,14 @@ public class ServerController {
 
     public boolean deleteSharedFolder(int folderId) throws DatabaseException{
         return databaseFactory.getFileStorage().deleteSharedFolder(folderId);
+    }
+
+    public List<SearchResult> findAdvancedFile(String keyword, boolean textAnd, int typeID, long minSize, long maxSize) throws DatabaseException{
+        return databaseFactory.getFileStorage().advancedFileSearch(keyword, textAnd, typeID, minSize, maxSize);
+    }
+
+    public List<SearchResult> findAdvancedFolder(String keyword, boolean textAnd, long minSize, long maxSize) throws DatabaseException {
+        return databaseFactory.getFileStorage().advancedFolderSearch(keyword, textAnd, minSize, maxSize);
     }
 
     public List<SearchResult> findBasic(String keyword) throws DatabaseException {

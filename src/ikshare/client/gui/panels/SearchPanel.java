@@ -53,6 +53,9 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     private CTabFolder folder;
     private Button btnSearch, rbFile, rbFolder;
     private Combo cbSizeMax, cbSizeMin, cbTypes;
+    private String keyword="", minSize="", maxSize="";
+    private int typeID=0, minID=0, maxID=0;
+    private boolean file=true; 
 
     public SearchPanel(String text, String icon) {
         super(text, icon);
@@ -126,13 +129,50 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                                     advanced = true;
                                     btnAdvanced.setText(ClientConfigurationController.getInstance().getString("basic"));
                                     layout.topControl = drawAdvancedSearch(cmpSearch);
-                                    txtKeywordAdvanced.setText(txtKeywordBasic.getText());
-                                } else {
+                                    if(keyword.startsWith(txtKeywordBasic.getText())){
+                                        txtKeywordAdvanced.setText(keyword);
+                                    }
+                                    else{
+                                        txtKeywordAdvanced.setText(txtKeywordBasic.getText());
+                                    }
+                                    cbTypes.select(typeID);
+                                    cbSizeMax.select(maxID);
+                                    cbSizeMin.select(minID);
+                                    txtMax.setText(maxSize);
+                                    txtMin.setText(minSize);
+                                    if(file){
+                                        rbFile.setSelection(true);
+                                    }
+                                    else{
+                                        rbFolder.setSelection(true);
+                                        cbTypes.setEnabled(false);
+                                    }
+                                    /*if(keywordAnd){
+                                        btnAndOr.setText(ClientConfigurationController.getInstance().getString("and"));
+                                    }
+                                    else{
+                                        btnAndOr.setText(ClientConfigurationController.getInstance().getString("or"));
+                                    }*/
+                                }
+                                else {
                                     advanced = false;
                                     btnAdvanced.setText(ClientConfigurationController.getInstance().getString("advanced"));
                                     layout.topControl = drawBasicSearch(cmpSearch);
-                                    txtKeywordBasic.setText(txtKeywordAdvanced.getText());
-                                }
+                                    typeID= cbTypes.getSelectionIndex();
+                                    maxID= cbSizeMax.getSelectionIndex();
+                                    minID=cbSizeMin.getSelectionIndex();
+                                    maxSize=txtMax.getText();
+                                    minSize=txtMin.getText();
+                                    keyword=txtKeywordAdvanced.getText();
+                                    txtKeywordBasic.setText(keyword.substring(0, keyword.indexOf(" ")==-1?keyword.length():keyword.indexOf(" ")));
+                                    if(rbFile.getSelection()){
+                                        file=true;
+                                    }
+                                    else{
+                                        file=false;
+                                    }
+                                
+                                    }
                                 cmpSearch.layout();
                             }
                         });
@@ -233,8 +273,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
             ClientConfigurationController.getInstance().getString("other")
         });
         cbTypes.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        cbTypes.select(0);
-
+        
         Label lblSearchSize = new Label(grpAdvanced, SWT.NONE);
         lblSearchSize.setText(ClientConfigurationController.getInstance().getString("size"));
         GridData gdsize = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
@@ -251,8 +290,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         cbSizeMin = new Combo(cmpSize, SWT.DROP_DOWN | SWT.READ_ONLY);
         cbSizeMin.setItems(new String[]{"byte", "Kbyte", "Mbyte", "Gbyte"});
         cbSizeMin.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        cbSizeMin.select(0);
-
+        
         Label lblMax = new Label(cmpSize, SWT.NONE);
         lblMax.setText(ClientConfigurationController.getInstance().getString("and"));
         lblMax.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
@@ -261,8 +299,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         cbSizeMax = new Combo(cmpSize, SWT.DROP_DOWN | SWT.READ_ONLY);
         cbSizeMax.setItems(new String[]{"byte", "Kbyte", "Mbyte", "Gbyte"});
         cbSizeMax.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        cbSizeMax.select(0);
-
+     
         Label lblSearchFolder = new Label(grpAdvanced, SWT.NONE);
         lblSearchFolder.setText(ClientConfigurationController.getInstance().getString("folder"));
         lblSearchFolder.setLayoutData(gd);
@@ -271,7 +308,6 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         radioButtons.setLayout(new FillLayout());
         rbFile = new Button(radioButtons, SWT.RADIO);
         rbFile.setText(ClientConfigurationController.getInstance().getString("file"));
-        rbFile.setSelection(true);
         rbFolder = new Button(radioButtons, SWT.RADIO);
         rbFolder.setText(ClientConfigurationController.getInstance().getString("folder"));
         rbFolder.addListener(SWT.Selection, new Listener(){
