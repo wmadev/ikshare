@@ -10,9 +10,14 @@ import ikshare.domain.Transfer;
 import ikshare.domain.event.listener.ChatServerConversationListener;
 import ikshare.domain.event.listener.ClientConfigurationListener;
 import ikshare.domain.event.listener.FileTransferListener;
+import ikshare.domain.event.listener.SelectedMediaFileListener;
 import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.domain.event.listener.TransferQueueListener;
 import ikshare.protocol.command.Commando;
+
+
+import java.io.File;
+
 import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
 import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
 import ikshare.protocol.command.chat.ChatMessageCommando;
@@ -34,7 +39,9 @@ public class EventController {
 	private ArrayList<ClientConfigurationListener> clientConfigurationListeners;
 	
 	private ArrayList<TransferQueueListener> transferQueueListeners;
-	
+
+	private ArrayList<SelectedMediaFileListener> selectedMediaFileListener;
+
 	private ArrayList<ChatServerConversationListener> chatServerConversationListeners;
 
 	private EventController() {
@@ -42,6 +49,7 @@ public class EventController {
 		serverConversationListeners = new ArrayList<ServerConversationListener>();
 		clientConfigurationListeners = new ArrayList<ClientConfigurationListener>();
 		transferQueueListeners = new ArrayList<TransferQueueListener>();
+		selectedMediaFileListener = new ArrayList<SelectedMediaFileListener>();
 		chatServerConversationListeners = new ArrayList<ChatServerConversationListener>();
 	}
 
@@ -66,6 +74,12 @@ public class EventController {
 	public void addTransferQueueListener(TransferQueueListener l) {
 		transferQueueListeners.add(l);
 	}
+
+	
+	public void addSelectedMediaFileListener(SelectedMediaFileListener l) {
+		selectedMediaFileListener.add(l);
+	}
+
 	
 	public void addChatServerConversationListener(ChatServerConversationListener l) {
         chatServerConversationListeners.add(l);
@@ -148,12 +162,27 @@ public class EventController {
 		}
 	}
 
+
+	public void triggerSelectedMP3FileChanged(File mp3File) {
+		for (SelectedMediaFileListener listener: selectedMediaFileListener) {
+			listener.selectedMP3FileChanged(mp3File);
+		}
+	}
+	
+	public void triggerSelectedMPEGFileChanged(File mpegFile) {
+		for (SelectedMediaFileListener listener: selectedMediaFileListener) {
+			listener.selectedMPEGFileChanged(mpegFile);
+		}
+	}
+
+	
     public void triggerUserLeavingRoom(ChatHasLeftRoomCommando c) {
         for (ChatServerConversationListener listener : chatServerConversationListeners)
         {
             listener.userLeftRoom(c);
         }
     }
+    
 
     public void triggerUserEnteringRoom(ChatHasEnteredRoomCommando c) {
         for (ChatServerConversationListener listener : chatServerConversationListeners)
@@ -161,6 +190,7 @@ public class EventController {
             listener.userEntersRoom(c);
         }
     }
+
 
     public void triggerReceivingMessage(ChatMessageCommando c) {
         for (ChatServerConversationListener listener : chatServerConversationListeners)
