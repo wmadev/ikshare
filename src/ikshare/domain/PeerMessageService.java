@@ -31,9 +31,8 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-public class PeerMessageService implements Runnable, TransferQueueListener{
+public class PeerMessageService implements Runnable{
     private ServerSocket messageServer;
-    private PrintWriter printWriter;
     private boolean running;
 	private int port;
 	private ExecutorService executorService;
@@ -57,35 +56,31 @@ public class PeerMessageService implements Runnable, TransferQueueListener{
 
 	public void run() {
 		while (running) {
-	        Socket link = null;
-	        BufferedReader in = null;
-	 
-	            try {
-	                
-	                System.out.println("Listening to incoming client connections...");
-	                while (running) {
-	                    Socket clientSocket  = messageServer.accept();
-	                    System.out.println("Received connection with client, starting seperate thread...");
-	                    executorService.execute(new PeerMessageThread(clientSocket));
-	                }
-	                messageServer.close();
-	            } catch (IOException ex) {
-	                ex.printStackTrace();
-	            }
+			Socket clientSocket = null;
+			try {
+				System.out.println("Listening to incoming client connections...");
+				while (running) {
+					clientSocket = messageServer.accept();
+					System.out.println("Received connection with client, starting seperate thread...");
+					executorService.execute(new PeerMessageThread(clientSocket));
+				}
+				messageServer.close();
+			} catch (IOException ex) {
+				ex.printStackTrace();
+			} finally {
+				if (clientSocket != null)
+					try {
+						clientSocket.close();
+					} catch (IOException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+			}
 		}
 		
 	}
 
 	public void stop() {
 		running = false;
-	}
-
-	public void activeDownloadsChanged() {
-		// TODO Auto-generated method stub
-		
-	}
-
-	public void activeUploadsChanged() {
-		
 	}
 }
