@@ -1,6 +1,15 @@
 package ikshare.protocol.command;
 
 import ikshare.domain.ResourceBundleManager;
+import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
+import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
+import ikshare.protocol.command.chat.ChatInvalidCommando;
+import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
+import ikshare.protocol.command.chat.ChatLogNiLukNiCommando;
+import ikshare.protocol.command.chat.ChatLogOffCommando;
+import ikshare.protocol.command.chat.ChatLogOnCommando;
+import ikshare.protocol.command.chat.ChatMessageCommando;
+import ikshare.protocol.command.chat.ChatWelcomeCommando;
 import ikshare.protocol.exception.*;
 import java.util.ResourceBundle;
 
@@ -134,8 +143,27 @@ public class CommandoParser {
         else if (commandoString.startsWith(bundle.getString("findadvancedfolder"))){
             return new FindAdvancedFolderCommando(commandoString);
         }
-        
-
+        else if (commandoString.startsWith(bundle.getString("chatmessage"))){
+        	return new ChatMessageCommando(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("chatwelcome"))){
+        	return new ChatWelcomeCommando(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("chatlognilukni"))){
+        	return new ChatLogNiLukNiCommando(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("chathasenteredroom"))){
+        	return new ChatHasEnteredRoomCommando(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("chathasleftroom"))){
+        	return new ChatHasLeftRoomCommando(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("chatinvalidcommand"))){
+        	return new ChatInvalidCommando(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("chatinvalidroompassword"))){
+        	return new ChatInvalidRoomPasswordCommando(commandoString);
+        }
         else{
         	throw new CommandNotFoundException(commandoString);
         }

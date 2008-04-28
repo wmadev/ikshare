@@ -5,7 +5,6 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import ikshare.server.threads.HandleClientThread;
 
 /**
  *
@@ -39,11 +38,12 @@ public class ChatServer implements Runnable
             while (running) 
             {
                 Socket clientSocket  = serverSocket.accept();
-                executorService.execute(new HandleClientThread(clientSocket));
+                executorService.execute(new HandleChatClientThread(clientSocket));
             }
-            serverSocket.close();
-        } catch (IOException ex) 
-        {
+            if(serverSocket!=null)
+            	serverSocket.close();
+        } 
+        catch (IOException ex){
             ex.printStackTrace();
         }
     }

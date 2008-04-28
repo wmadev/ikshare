@@ -1,7 +1,8 @@
 package ikshare.chatserver;
 
 import ikshare.chatserver.datatypes.ChatClient;
-import ikshare.protocol.command.*;
+import ikshare.chatserver.datatypes.ChatRoom;
+import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.chat.*;
 import ikshare.protocol.exception.CommandNotFoundException;
 
@@ -15,7 +16,7 @@ import java.net.Socket;
  *
  * @author Boris martens
  */
-public class HandleClientThread implements Runnable
+public class HandleChatClientThread implements Runnable
 {
     private Socket clientSocket;
     private boolean running = false;
@@ -23,7 +24,7 @@ public class HandleClientThread implements Runnable
     private BufferedReader inputReader;
     private ChatClient client;
     
-    public HandleClientThread(Socket socket) 
+    public HandleChatClientThread(Socket socket) 
     {
         try
         {
@@ -47,9 +48,11 @@ public class HandleClientThread implements Runnable
                 String input = inputReader.readLine();
                 if(input!=null)
                 {
+                	System.out.println("[INC] " + input);
+                	
                 	try
                 	{
-	                    Commando command = CommandoParser.getInstance().parse(input);
+	                    Commando command = ChatCommandoParser.getInstance().parse(input);
 	                    if (command instanceof ChatMessageCommando)
 	                    {
 	                    	handleIncomingMessage((ChatMessageCommando)command);
@@ -90,7 +93,7 @@ public class HandleClientThread implements Runnable
         }
         catch(Exception e)
         {
-            
+            e.printStackTrace();
         }
     }
     
@@ -115,7 +118,10 @@ public class HandleClientThread implements Runnable
     {
     	if(!checkNickName(command.getNickName()))
     	{
-    		//TODO send message stating invalid nickname
+            ChatLogNiLukNiCommando LNLNCommand = new ChatLogNiLukNiCommando();
+            LNLNCommand.setNickName(command.getNickName());
+            LNLNCommand.setMessage("invalidnickname");
+            SendMessage(LNLNCommand);
     	}
     	else if(ChatServerController.getInstance().GetClientByName(command.getNickName())!=null)
         {
@@ -126,8 +132,13 @@ public class HandleClientThread implements Runnable
         }
         else
         {
-            ChatWelcomeCommando WelcomeCommand = new ChatWelcomeCommando();
-            WelcomeCommand.setNickName(command.getNickName());
+            ChatWelcomeCommando welcomeCommand = new ChatWelcomeCommando();
+            for(ChatRoom publicRoom : ChatServerController.getInstance().getPublicRooms())
+            {
+            	welcomeCommand.addRoom(publicRoom.getRoomName());
+            }
+            welcomeCommand.setNickName(command.getNickName());
+            SendMessage(welcomeCommand);
             client = new ChatClient(this);
             client.setNickName(command.getNickName());
             client.setIP(clientSocket.getInetAddress());
@@ -164,6 +175,7 @@ public class HandleClientThread implements Runnable
     
     public void SendMessage(Commando command)
     {
+    	System.out.println("[OUT] " + command.toString());
     	outputWriter.println(command.toString());
     }
     
@@ -178,7 +190,7 @@ public class HandleClientThread implements Runnable
     	}
     	catch(Exception e)
     	{
+    		e.printStackTrace();
     	}
-    
     }
 }

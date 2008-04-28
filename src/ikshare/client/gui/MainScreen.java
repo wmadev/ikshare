@@ -189,7 +189,12 @@ public class MainScreen {
     public ToolBar getToolBar() {
             return toolBar;
     }
+    
     public Composite getParent() {
             return parent;
+    }
+    
+    public Display getDisplay() {
+    	return display;
     }
 }

@@ -13,8 +13,9 @@ public class ChatRoom
 {
     private ArrayList<ChatClient> clients = new ArrayList<ChatClient>();
     private String roomName;
-    //private boolean visible = true;
-    //private String password;
+    private boolean visible = true;
+    private String password;
+    private boolean persistant = false;
     
     public ChatRoom() 
     {
@@ -30,11 +31,35 @@ public class ChatRoom
 		this.roomName = roomName;
 	}
     
+	public boolean isVisible() {
+		return visible;
+	}
+
+	public void setVisible(boolean visible) {
+		this.visible = visible;
+	}
+
+	public String getPassword() {
+		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
+	}
+	
     public int getNumberOfClients()
     {
         return clients.size();
     }
-    
+
+	public boolean isPersistant() {
+		return persistant;
+	}
+
+	public void setPersistant(boolean persistant) {
+		this.persistant = persistant;
+	}
+	
     public boolean AddClientToRoom(ChatClient client)
     {
     	ChatHasEnteredRoomCommando command = new ChatHasEnteredRoomCommando();
@@ -62,7 +87,16 @@ public class ChatRoom
     
     public boolean HasClient(ChatClient client)
     {
-    	return (clients.contains(client));
+    	boolean contains = false;
+    	int counter = 0;
+    	
+    	while(!contains && counter < clients.size()){
+    		if(client.getNickName().equals(clients.get(counter).getNickName()))
+    			contains = true;
+    		counter++;
+    	}
+    	
+    	return contains;
     }
     
     public void BroadCast(Commando command)
@@ -74,4 +108,12 @@ public class ChatRoom
         		client.SendMessage(command);
         }
     }
+
+	public ArrayList<ChatClient> getClients() {
+		return clients;
+	}
+
+	public void setClients(ArrayList<ChatClient> clients) {
+		this.clients = clients;
+	}
 }

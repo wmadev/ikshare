@@ -14,6 +14,17 @@ public class ChatYouEnterRoomCommando extends Commando
     
     public ChatYouEnterRoomCommando() 
     {
+    	super();
+    }
+    
+    public ChatYouEnterRoomCommando(String commandoString) 
+    {
+    	super(commandoString);
+    	setRoomName(commandoLine.get(1));
+    	for(int i =2; i < commandoLine.size(); i++)
+    	{
+    		addRoomMember(commandoLine.get(i));
+    	}
     }
     
     public String getRoomName() 

@@ -8,7 +8,14 @@ public class ChatInvalidCommando extends Commando
 	
 	public ChatInvalidCommando()
 	{
-		
+		super();
+	}
+	
+	public ChatInvalidCommando(String commandoString)
+	{
+		super(commandoString);
+		if(commandoLine.size()>1)
+			setMessage(commandoLine.get(1));
 	}
 
 	public String getMessage() 

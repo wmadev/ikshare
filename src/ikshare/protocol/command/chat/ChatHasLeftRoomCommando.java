@@ -9,7 +9,14 @@ public class ChatHasLeftRoomCommando extends Commando
 	
 	public ChatHasLeftRoomCommando()
 	{
-		
+		super();
+	}
+	
+	public ChatHasLeftRoomCommando(String commandoString)
+	{
+		super(commandoString);
+		setNickName(commandoLine.get(1));
+		setRoomName(commandoLine.get(2));
 	}
 
 	public String getRoomName() 

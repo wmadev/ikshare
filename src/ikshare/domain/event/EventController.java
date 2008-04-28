@@ -20,7 +20,9 @@ import java.io.File;
 
 import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
 import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
+import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
 import ikshare.protocol.command.chat.ChatMessageCommando;
+import ikshare.protocol.command.chat.ChatWelcomeCommando;
 import ikshare.protocol.command.chat.ChatYouEnterRoomCommando;
 
 import java.util.ArrayList;
@@ -162,7 +164,6 @@ public class EventController {
 		}
 	}
 
-
 	public void triggerSelectedMP3FileChanged(File mp3File) {
 		for (SelectedMediaFileListener listener: selectedMediaFileListener) {
 			listener.selectedMP3FileChanged(mp3File);
@@ -175,6 +176,14 @@ public class EventController {
 		}
 	}
 
+
+	public void triggerYouLoggedOn(ChatWelcomeCommando c)
+	{
+		for (ChatServerConversationListener listener : chatServerConversationListeners)
+		{
+			listener.youLoggedOn(c);
+		}
+	}
 	
     public void triggerUserLeavingRoom(ChatHasLeftRoomCommando c) {
         for (ChatServerConversationListener listener : chatServerConversationListeners)
@@ -183,7 +192,6 @@ public class EventController {
         }
     }
     
-
     public void triggerUserEnteringRoom(ChatHasEnteredRoomCommando c) {
         for (ChatServerConversationListener listener : chatServerConversationListeners)
         {
@@ -205,4 +213,11 @@ public class EventController {
             listener.youEnterRoom(c);
         }
     }
+
+	public void triggerInvalidRoomPassword(ChatInvalidRoomPasswordCommando c) {
+        for (ChatServerConversationListener listener : chatServerConversationListeners)
+        {
+            listener.invalidRoomPassword(c);
+        }
+	}
 }

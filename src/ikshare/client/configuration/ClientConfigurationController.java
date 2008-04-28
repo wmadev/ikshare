@@ -139,6 +139,15 @@ public class ClientConfigurationController {
             	} catch (NumberFormatException e) {
             		config.setMessagePort(6001);
             	}
+            }else if(child.getNodeName().equals("chat-server-port")) {
+            	try {
+            		config.setChatServerPort(Integer.parseInt(((Element)child).getTextContent()));
+            	}
+            	catch (NumberFormatException e){
+            		config.setChatServerPort(6005);
+            	}
+            }else if(child.getNodeName().equals("chat-server-address")) {
+            	config.setChatServerAddress(((Element)child).getTextContent());
             }
         }
     }
@@ -217,11 +226,21 @@ public class ClientConfigurationController {
         Element messagePort = doc.createElement("message-port");
         messagePort.appendChild(doc.createTextNode(String.valueOf(config.getMessagePort())));
         
+        // chat server address
+        Element chatServerAddress = doc.createElement("chat-server-address");
+        chatServerAddress.appendChild(doc.createTextNode(config.getChatServerAddress()));
+        
+        // chat server port
+        Element chatServerPort = doc.createElement("chat-server-port");
+        chatServerPort.appendChild(doc.createTextNode(String.valueOf(config.getChatServerPort())));
+         
         // add to networksettings
         networkSettings.appendChild(serverAddress);
         networkSettings.appendChild(serverPort);
         networkSettings.appendChild(transferPort);
         networkSettings.appendChild(messagePort);
+        networkSettings.appendChild(chatServerAddress);
+        networkSettings.appendChild(chatServerPort);
         return networkSettings;
     }
     

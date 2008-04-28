@@ -7,9 +7,15 @@ public class ChatHasEnteredRoomCommando extends Commando
 	private String roomName;
 	private String nickName;
 	
-	public ChatHasEnteredRoomCommando()
+	public ChatHasEnteredRoomCommando(){
+		super();
+	}
+	
+	public ChatHasEnteredRoomCommando(String commandoString)
 	{
-		
+		super(commandoString);
+		setNickName(commandoLine.get(1));
+		setRoomName(commandoLine.get(2));
 	}
 
 	public String getRoomName() 
