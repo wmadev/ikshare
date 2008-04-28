@@ -31,7 +31,8 @@ public class StatisticsController {
 		return instance;
 	}
 	
-	public LinkedBlockingQueue<Integer> getLastSpeedUp() {
+	public LinkedBlockingQueue<Integer> getLastSpeedUp() throws InterruptedException {
+		initLastSpeedUp();
 		return lastSpeedUp;
 	}
 	
@@ -46,6 +47,15 @@ public class StatisticsController {
 		maximum = (int)Math.max(maximum, last);
 		while (!lastSpeedDown.offer(last)){
 			lastSpeedDown.take();
+		}
+	}
+	
+	private void initLastSpeedUp() throws InterruptedException {
+		int last = (int)(Math.random()*15000);
+		minimum = (int)Math.min(minimum, last);
+		maximum = (int)Math.max(maximum, last);
+		while (!lastSpeedUp.offer(last)){
+			lastSpeedUp.take();
 		}
 	}
 }
