@@ -5,40 +5,27 @@
 
 package ikshare.client.gui.panels;
 
+import ikshare.client.configuration.ClientConfigurationController;
+import ikshare.client.gui.AbstractPanel;
+import ikshare.client.gui.UtilityClass;
 import ikshare.domain.PeerFacade;
 import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;
-import ikshare.client.gui.AbstractPanel;
-import ikshare.client.configuration.ClientConfiguration;
-import ikshare.client.gui.UtilityClass;
-import ikshare.client.configuration.ClientConfigurationController;
-import ikshare.domain.Transfer;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.FileTransferListener;
-import ikshare.protocol.command.CancelTransferCommando;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.ListIterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
-import org.eclipse.swt.events.MouseListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.FillLayout;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
-import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Display;
-
-import org.eclipse.swt.widgets.Event;
-import org.eclipse.swt.widgets.Listener;
-
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Menu;
@@ -61,12 +48,10 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 
 	private static String ICON_UP = "resources/icons/tp_up.png";
 	
-	private static int fileNamePos = 0, sizePos = 1, progressPos = 2, statusPos = 3, speedPos = 4, remainingPos = 5, userPos=6;
+	private static int fileNamePos = 0, sizePos = 1, statusPos = 3, speedPos = 4, remainingPos = 5, userPos=6;
 
 	private Table tblUploadTransfer, tblDownloadTransfer;
 	private Menu rightClickMenu;
-
-	private Transfer f;
 
 	public TransferPanel(String text, String icon) {
 		super(text, icon);
