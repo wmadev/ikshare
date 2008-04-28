@@ -121,7 +121,8 @@ public class UIFileBrowser implements ClientConfigurationListener{
                         openInternalMenuItem.setText(ClientConfigurationController.getInstance().getString("loadinternal"));
                         openInternalMenuItem.addListener (SWT.Selection, new Listener () {
                                 public void handleEvent(Event event) {
-                                	PlayerController.getInstance().setSelectedFile(file);
+                                	PlayerController.getInstance();
+                                	EventController.getInstance().triggerSelectedMP3FileChanged(file);
                                 }
                         });
                     }

@@ -2,9 +2,10 @@ package ikshare.client.gui.panels;
 
 import ikshare.client.ClientController;
 import ikshare.client.gui.AbstractPanel;
+import ikshare.client.gui.ExceptionWindow;
 import ikshare.client.gui.UtilityClass;
 import ikshare.client.configuration.ClientConfigurationController;
-import ikshare.client.gui.ExceptionWindow;
+
 import ikshare.domain.Peer;
 import ikshare.domain.PeerFacade;
 import ikshare.domain.SearchResult;
@@ -19,7 +20,9 @@ import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.DownloadInformationResponseCommand;
 import ikshare.protocol.command.FoundResultCommando;
 import java.io.File;
+import java.net.InetAddress;
 import java.net.UnknownHostException;
+
 import java.util.ArrayList;
 import java.util.Date;
 
@@ -57,10 +60,25 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         searches = new HashMap<String, CTabItem>();
         this.setLayout(new GridLayout(2, false));
         this.init();
-        this.load();
+        //this.load();
     }
 
     private void load() {
+    	/*
+    	SearchResult[] searchResults = new SearchResult[3];
+    	String files[] = {"testgroot.avi","testmiddelgroot.rar","testklein.pdf"};
+    	for (int i=0; i<files.length; i++) {
+    		try {
+				searchResults[i] = new SearchResult(String.valueOf(new Date().getTime()) + i, new Peer("Monet", InetAddress.getLocalHost()), new IKShareFile("/", files[i]));
+				searchResults[i].setName(files[i]);
+				searchResults[i].setOwner("Monet");
+				createTabItem(searchResults[i]);
+    		} catch (UnknownHostException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+    	}
+    	*/
     /*TableItem ti=null;
     SearchResult searchResult=null;
     //searchResult = new SearchResult(new Date().getTime()+"",new Peer("Monet"), new File("C:\\/" + "testmiddelgroot.rar"));
@@ -350,8 +368,8 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                 }
                 else if(c instanceof DownloadInformationResponseCommand){
                     try {
-                        int aantaldownloads = Integer.parseInt(MainScreen.getInstance().getInfoBar().getLblNrDownload().getText());
-                        MainScreen.getInstance().getInfoBar().getLblNrDownload().setText("" + aantaldownloads + 1);
+                        //int aantaldownloads = Integer.parseInt(MainScreen.getInstance().getInfoBar().getLblNrDownload().getText());
+                        //MainScreen.getInstance().getInfoBar().getLblNrDownload().setText("" + aantaldownloads + 1);
                         Transfer t = ClientController.getInstance().getTransferForDownload((DownloadInformationResponseCommand) c);
                         PeerFacade.getInstance().addToDownloads(t);
                         EventController.getInstance().triggerDownloadStartedEvent(t);

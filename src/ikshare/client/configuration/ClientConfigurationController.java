@@ -38,13 +38,13 @@ public class ClientConfigurationController {
     public void changeLanguage(String language) {
         config.setLanguage(language);
     }
-    public String getSharedInformation(){
+    public int[] getSharedInformation(){
         int[] info = new int[2];
         info[0] = -1;
         info[1] = 0;
         countNumber(info, getConfiguration().getSharedFolder());
         //System.out.println(getString("shareinfofolder")+info[0]+" "+getString("shareinfofile")+" "+info[1]);
-        return getString("shareinfofolder")+info[0]+" "+getString("shareinfofile")+" "+info[1];
+        return info;
     }
     private void countNumber(int[] counter,File f){
         if(f.isDirectory()){

@@ -18,7 +18,10 @@ import ikshare.domain.event.listener.FileTransferListener;
 import ikshare.protocol.command.CancelTransferCommando;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.ListIterator;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -106,10 +109,17 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 							cancelMenu(selected, true);
 							pauseMenu(selected, true);
 							resumeMenu(selected, false);
+							clearMenu(selected, true);
 						} else if (selected.getState() == TransferState.PAUSEDDOWNLOAD) {
 							cancelMenu(selected, true);
 							pauseMenu(selected, false);
 							resumeMenu(selected, true);
+							clearMenu(selected, true);
+						} else {
+							cancelMenu(selected, false);
+							pauseMenu(selected, false);
+							resumeMenu(selected, false);
+							clearMenu(selected, true);
 						}
 						rightClickMenu.setVisible (true);
 					}
@@ -181,6 +191,17 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		cancelMenuItem.addListener (SWT.Selection, new Listener () {
 			public void handleEvent(Event event) {
 					PeerFacade.getInstance().cancelDownloadThread(selected);
+			}
+		});
+	}
+	
+	private void clearMenu(final Transfer selected, boolean enabled) {
+		MenuItem clearMenuItem = new MenuItem(rightClickMenu, SWT.PUSH);
+		clearMenuItem.setText(ClientConfigurationController.getInstance().getString("cleartransfers"));
+		clearMenuItem.setEnabled(enabled);
+		clearMenuItem.addListener (SWT.Selection, new Listener () {
+			public void handleEvent(Event event) {
+					PeerFacade.getInstance().clearTransfers();
 			}
 		});
 	}
@@ -273,7 +294,42 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		this.getDisplay().asyncExec(
 				new Runnable() {
 					public void run(){
+						TableItem item = null;
+						Transfer t = null;
+						boolean found=false;
+						int counter=0;
 						if(transfer.getState() == TransferState.DOWNLOADING){
+							while (!found && counter < tblDownloadTransfer.getItemCount()) {
+								item = tblDownloadTransfer.getItem(counter);
+								t = (Transfer) item.getData("transfer");
+								if(transfer.getId().equals(transfer.getId())) {
+									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
+									item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
+									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("downloading"));
+									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
+									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
+									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
+									found = true;
+								}
+								counter++;
+							}
+						} else if(transfer.getState() == TransferState.UPLOADING){ 
+							while (!found && counter < tblDownloadTransfer.getItemCount()) {
+								item = tblUploadTransfer.getItem(counter);
+								t = (Transfer) item.getData("transfer");
+								if(transfer.getId().equals(transfer.getId())) {
+									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
+									item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
+									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("downloading"));
+									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
+									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
+									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
+									found = true;
+								}
+								counter++;
+							}
+						}
+							/*
 							for(TableItem item : tblDownloadTransfer.getItems())
 							{
 								Transfer t = (Transfer) item.getData("transfer");
@@ -302,7 +358,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
 								}
 							}
-						}
+						}*/
 					}
 				});
 	}
@@ -449,10 +505,18 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 				});
 	}
 
-
-	@Override
 	public void transfersCleared() {
 		// TODO Auto-generated method stub
-		
+		for (int i=0; i<tblDownloadTransfer.getItemCount(); i++) {
+			if (tblDownloadTransfer.getItem(i).getData("transfer")==null)
+				tblDownloadTransfer.remove(i);
+		}
+		tblDownloadTransfer.redraw();
+		for (int i=0; i<tblUploadTransfer.getItemCount(); i++) {
+			if (tblUploadTransfer.getItem(i).getData("transfer")==null)
+				tblUploadTransfer.remove(i);
+		}
+		tblUploadTransfer.redraw();
 	}
+
 }
