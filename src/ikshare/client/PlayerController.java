@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javazoom.jl.player.Player;
+//import javazoom.jl.player.Player; //TODO
 
 public class PlayerController implements SelectedMediaFileListener{
 	private File selectedFile;
@@ -17,7 +17,7 @@ public class PlayerController implements SelectedMediaFileListener{
 	private ExecutorService executorService;
 	private Thread playerThread;
 	private boolean playing=false;
-	private Player player; 
+	//private Player player; 
 	
 	protected PlayerController() {
 		EventController.getInstance().addSelectedMediaFileListener(this);
@@ -37,13 +37,14 @@ public class PlayerController implements SelectedMediaFileListener{
 			throw new Exception("No MP3 selected");
 		FileInputStream fis     = new FileInputStream(selectedFile.toString());
         BufferedInputStream bis = new BufferedInputStream(fis);
-        player = new Player(bis);
+        //player = new Player(bis); //TODO
 		
 		playerThread = new Thread() {
             public void run() {
                 try { 
-                	while (playing)
-                		player.play(); 
+                	while (playing){
+                		//player.play(); //TODO
+                	}
                 }
                 catch (final Exception e) { 
                 	//TODO exception handling
@@ -56,8 +57,8 @@ public class PlayerController implements SelectedMediaFileListener{
 	}
 	
 	public void stop() {
-		if (player!=null)
-			player.close();
+		/*if (player!=null)
+			player.close();*/ //TODO
 		if (playerThread!=null)
 			playing = false;
 		if (executorService!=null)

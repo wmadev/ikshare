@@ -1,6 +1,6 @@
 package ikshare.chatserver.datatypes;
 
-import ikshare.chatserver.HandleClientThread;
+import ikshare.chatserver.HandleChatClientThread;
 import ikshare.protocol.command.*;
 
 import java.net.InetAddress;
@@ -13,13 +13,13 @@ public class ChatClient
 {
     private String nickName;
     private InetAddress IP;
-    private HandleClientThread thread;
+    private HandleChatClientThread thread;
     
     public ChatClient() 
     {
     }
     
-    public ChatClient(HandleClientThread thread) 
+    public ChatClient(HandleChatClientThread thread) 
     {
     	this.thread = thread;
     }
@@ -43,6 +43,10 @@ public class ChatClient
     {
         return IP;
     }
+    
+	public HandleChatClientThread getThread() {
+		return thread;
+	}
     
     public void SendMessage(Commando command)
     {

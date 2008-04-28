@@ -15,7 +15,19 @@ public class ChatMessageCommando extends Commando
     
     public ChatMessageCommando()
     {
-    	
+    	super();
+    }
+    
+    public ChatMessageCommando(String commandoString)
+    {
+    	super(commandoString);
+    	setSender(commandoLine.get(1));
+    	setRecipient(commandoLine.get(2));
+    	if(commandoLine.get(3).equals(1))
+    		setPrivateMessage(true);
+    	else
+    		setPrivateMessage(false);
+    	setText(commandoLine.get(4));
     }
 
 	public String getText() {

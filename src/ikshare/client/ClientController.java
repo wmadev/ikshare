@@ -1,5 +1,7 @@
 package ikshare.client;
 
+import ikshare.client.configuration.ClientConfigurationController;
+import ikshare.client.threads.ChatServerConversationThread;
 import ikshare.client.threads.ServerConversationThread;
 import ikshare.client.threads.ShareSynchronisationThread;
 import ikshare.domain.IKShareFile;
@@ -15,6 +17,12 @@ import ikshare.protocol.command.FindAdvancedFolderCommando;
 import ikshare.protocol.command.FindBasicCommando;
 import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
+import ikshare.protocol.command.chat.ChatEnterRoomCommando;
+import ikshare.protocol.command.chat.ChatLeaveRoomCommando;
+import ikshare.protocol.command.chat.ChatLogOffCommando;
+import ikshare.protocol.command.chat.ChatLogOnCommando;
+import ikshare.protocol.command.chat.ChatMessageCommando;
+
 import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
@@ -28,6 +36,7 @@ public class ClientController {
     private static ClientController instance;
     private ExecutorService executorService;
     private ServerConversationThread serverConversation;
+    private ChatServerConversationThread chatServerConversation;
     
     private ClientController(){
         executorService = Executors.newCachedThreadPool();
@@ -80,6 +89,14 @@ public class ClientController {
         serverConversation = new ServerConversationThread();
         executorService.execute(serverConversation);
     }
+    
+    public void startChatServerConversion() throws IOException{
+    	if(chatServerConversation==null)
+    	{
+    		chatServerConversation = new ChatServerConversationThread();
+    		executorService.execute(chatServerConversation);
+    	}
+    }
 
     public boolean logon(String accountname,String password,int port){
         LogOnCommando loc = new LogOnCommando();
@@ -124,7 +141,63 @@ public class ClientController {
         return true;
     }
     
+    public boolean chatLogon(String nickName) {
+    	try
+    	{
+    		startChatServerConversion();
+    		ChatLogOnCommando CLOCommand = new ChatLogOnCommando();
+    		CLOCommand.setNickName(nickName);
+    		CLOCommand.setPort(ClientConfigurationController.getInstance().getConfiguration().getChatServerPort());
+    		chatServerConversation.sendCommand(CLOCommand);
+    		return true;
+    	}
+    	catch(IOException e){
+    		return false;
+    	}
+    }
+    
+    public void chatLogoff(String nickName){
+    	ChatLogOffCommando CLOCommando = new ChatLogOffCommando();
+    	CLOCommando.setNickName(nickName);
+    	chatServerConversation.sendCommand(CLOCommando);
+    	stopChatServerConversation();
+    }
+    
+    public void chatEnterRoom(String roomName, String password, boolean privateRoom){
+    	ChatEnterRoomCommando CERCommando = new ChatEnterRoomCommando();
+    	CERCommando.setRoomName(roomName);
+    	if(password == null)
+    		CERCommando.setPassword("");
+    	else
+    		CERCommando.setPassword(password);
+    	CERCommando.setPrivateRoom(privateRoom);
+    	chatServerConversation.sendCommand(CERCommando);
+    }
+    
+    public void chatLeaveRoom(String roomName){
+    	ChatLeaveRoomCommando CLRCommando = new ChatLeaveRoomCommando();
+    	CLRCommando.setRoomName(roomName);
+    	chatServerConversation.sendCommand(CLRCommando);
+    }
+    
+    public void chatMessage(String message, String recipient, boolean privateMessage, String nickName){
+    	ChatMessageCommando CMCommando = new ChatMessageCommando();
+    	CMCommando.setPrivateMessage(privateMessage);
+    	CMCommando.setRecipient(recipient);
+    	CMCommando.setSender(nickName);
+    	CMCommando.setText(message);
+    	chatServerConversation.sendCommand(CMCommando);
+    }
+    
     public void stopServerConversation() {
         serverConversation.stop();
+    }
+    
+    public void stopChatServerConversation() {
+    	if(chatServerConversation!=null)
+    	{
+    		chatServerConversation.stop();
+    		chatServerConversation = null;
+    	}
     }
 }
