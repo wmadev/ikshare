@@ -17,7 +17,7 @@ public class PlayerController implements SelectedMediaFileListener{
 	private ExecutorService executorService;
 	private Thread playerThread;
 	private boolean playing=false;
-	//private Player player; 
+	private Player player; 
 	
 	protected PlayerController() {
 		EventController.getInstance().addSelectedMediaFileListener(this);
@@ -37,13 +37,13 @@ public class PlayerController implements SelectedMediaFileListener{
 			throw new Exception("No MP3 selected");
 		FileInputStream fis     = new FileInputStream(selectedFile.toString());
         BufferedInputStream bis = new BufferedInputStream(fis);
-        //player = new Player(bis); //TODO
+        player = new Player(bis);
 		
 		playerThread = new Thread() {
             public void run() {
                 try { 
                 	while (playing){
-                		//player.play(); //TODO
+                		player.play();
                 	}
                 }
                 catch (final Exception e) { 
@@ -57,8 +57,8 @@ public class PlayerController implements SelectedMediaFileListener{
 	}
 	
 	public void stop() {
-		/*if (player!=null)
-			player.close();*/ //TODO
+		if (player!=null)
+			player.close();
 		if (playerThread!=null)
 			playing = false;
 		if (executorService!=null)
