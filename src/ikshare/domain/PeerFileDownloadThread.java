@@ -91,7 +91,7 @@ public class PeerFileDownloadThread implements Runnable {
             // Zolang er input komt van de socket moet er worden weggeschreven naar het bestand.
             // Om de seconde wordt een event getriggerd met de gemiddelde snelheid en de resterende downloadtijd
             //int tellerpakketjes=0;
-            Date startDownload = new Date();
+            Date previousTime = new Date();
             Date now = null;
             while (!receiveSocket.isClosed() && inStream != null && (n = inStream.read(buffer)) > 0) {
                 
@@ -102,12 +102,12 @@ public class PeerFileDownloadThread implements Runnable {
                 
                 
             	
-				if ((now.getTime() - startDownload.getTime()) >= 1000) {
-					transfer.setSpeed((transfer.getNumberOfBytesFinished()-previousTotal)*1000/(Math.max(now.getTime()-startDownload.getTime(), 1)));
-	                transfer.setRemainingTime((now.getTime()-startDownload.getTime())/(transfer.getNumberOfBytesFinished())*(transfer.getFileSize()-transfer.getNumberOfBytesFinished())/1000);
+				if ((now.getTime() - previousTime.getTime()) >= 1000) {
+					transfer.setSpeed((transfer.getNumberOfBytesFinished()-previousTotal)*1000/(Math.max(now.getTime()-previousTime.getTime(), 1)));
+					transfer.setRemainingTime((transfer.getFileSize() - transfer.getNumberOfBytesFinished()) / transfer.getSpeed());
+					
 
-
-					startDownload = now;
+					previousTime = now;
 					previousTotal = transfer.getNumberOfBytesFinished();
 					EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
 				}

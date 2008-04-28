@@ -5,6 +5,7 @@ package ikshare.domain;
 
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
+import ikshare.domain.event.listener.TransferQueueListener;
 import ikshare.protocol.command.*;
 import ikshare.server.*;
 import ikshare.server.data.*;
@@ -24,7 +25,7 @@ import java.util.logging.Logger;
  *
  * @author awosy
  */
-public class PeerMessageThread implements Runnable{
+public class PeerMessageThread implements Runnable, TransferQueueListener{
     private Socket clientSocket;
     private boolean running = false;
     private PrintWriter outputWriter;
@@ -32,6 +33,7 @@ public class PeerMessageThread implements Runnable{
     private String accountName;
         
     public PeerMessageThread(Socket socket){
+    	EventController.getInstance().addTransferQueueListener(this);
         try {
             clientSocket = socket;
             //clientSocket.setSoTimeout(5000);
@@ -209,9 +211,11 @@ public class PeerMessageThread implements Runnable{
 	    		t.setState(TransferState.RESUMEDUPLOAD);
 	    	else
 	    		t.setState(TransferState.UPLOADING);
+	    	PeerFacade.getInstance().addToUploads(t);
+	    	
 	    	
 	    	if (PeerFacade.getInstance().getActiveUploads()<ClientConfigurationController.getInstance().getConfiguration().getMaximumUploads()) {
-		    	PeerFacade.getInstance().addToUploads(t);
+		    	
 		    	if (t.getState()==TransferState.UPLOADING)
 		    		EventController.getInstance().triggerDownloadStartedEvent(t);
 		    	
@@ -271,6 +275,16 @@ public class PeerMessageThread implements Runnable{
 		//System.out.println("[" +commando + "] wordt gezonden naar " + s.getInetAddress().getHostAddress() + " op poort " + s.getPort());
 
 		outputWriter.println(commando.toString());
+	}
+
+	public void activeDownloadsChanged() {
+		// TODO Auto-generated method stub
+		
+	}
+
+	public void activeUploadsChanged() {
+		// TODO Auto-generated method stub
+		
 	}
     
 }

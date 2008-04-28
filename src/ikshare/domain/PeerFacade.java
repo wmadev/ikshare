@@ -1,11 +1,9 @@
 package ikshare.domain;
 
-import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
 import ikshare.protocol.command.CancelTransferCommando;
 import ikshare.protocol.command.FileRequestCommando;
 import ikshare.protocol.command.PauseTransferCommando;
-import ikshare.protocol.command.ResumeTransferCommando;
 
 import java.io.File;
 import java.io.IOException;
@@ -36,7 +34,7 @@ public class PeerFacade {
 	
 	private int activeDownloads=0, activeUploads=0;
 	
-	private Queue<Transfer> transfersToStart;
+	private Queue<Transfer> uploadQueue;
 
 	private PeerMessageService peerMessageService;
 	
@@ -78,7 +76,7 @@ public class PeerFacade {
 		downloadThreads = new ArrayList<PeerFileDownloadThread>();
 		uploadThreads = new ArrayList<PeerFileUploadThread>();
 		
-		transfersToStart = new LinkedBlockingQueue<Transfer>();
+		uploadQueue = new LinkedBlockingQueue<Transfer>();
 
 		messageThreads = new HashMap<String, PeerMessageThread>();
 		
@@ -116,7 +114,7 @@ public class PeerFacade {
 	
 	public void addToUploads(Transfer transfer) {
 		uploadTransfers.add(transfer);
-		transfersToStart.offer(transfer);
+		uploadQueue.offer(transfer);
 	}
 
 	public Vector<Transfer> getDownloadTransfers() {
@@ -270,6 +268,29 @@ public class PeerFacade {
 		messageThreads.get(selected.getId()).sendMessage(frc);
 	}
 
+	public void clearTransfers() {
+		ListIterator<Transfer> iterator = downloadTransfers.listIterator();
+		Transfer transfer = null;
+		while(iterator.hasNext()) {
+			transfer = iterator.next();
+			if (transfer.getState()==TransferState.FINISHED || 
+					transfer.getState()==TransferState.FAILED || 
+					transfer.getState()==TransferState.CANCELLEDDOWNLOAD) {
+				iterator.remove();
+			}
+		}
+		iterator = uploadTransfers.listIterator();
+		while(iterator.hasNext()) {
+			transfer = iterator.next();
+			if (transfer.getState()==TransferState.FINISHED || 
+					transfer.getState()==TransferState.FAILED || 
+					transfer.getState()==TransferState.CANCELLEDUPLOAD) {
+				iterator.remove();
+			}
+		}
+		EventController.getInstance().triggerClearTransfers();
+	}
+	
 	public int getActiveDownloads() {
 		return activeDownloads;
 	}
@@ -302,9 +323,11 @@ public class PeerFacade {
 		activeDownloads--;
 	}
 
-	public Queue<Transfer> getTransfersToStart() {
-		return transfersToStart;
+	public Queue<Transfer> getUploadQueue() {
+		return uploadQueue;
 	}
+
+
 	
 	
 	
