@@ -39,6 +39,8 @@ public class StatisticPanel extends AbstractPanel{
 				int min = StatisticsController.getInstance().getMinimum();
 				int diff = max-min;
 				int part = Math.max(diff/(height-10),1);
+				long total = 0;
+				int avg=0;
 				try {
 					speeds = StatisticsController.getInstance().getLastSpeedDown();
 				} catch (InterruptedException e) {
@@ -47,19 +49,23 @@ public class StatisticPanel extends AbstractPanel{
 				Rectangle rect= new Rectangle(startPosX,startPosY, width,height);
 				event.gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
 				event.gc.fillRectangle(rect);
-				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_RED));
-				event.gc.drawLine(startPosX, startPosY + height - 5, startPosX+width, startPosY + height - 5);
-				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GREEN));
-				event.gc.drawLine(startPosX, startPosY + 5, startPosX+width, startPosY + 5);
 				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLUE));
 				int sec=0;
 				for (Integer current:speeds) {
 					event.gc.drawLine(startPosX+sec*15, startPosY + height - 6, startPosX+sec*15, startPosY + 6);
 					event.gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE));
-					Rectangle r = new Rectangle(startPosX+1+sec*15, startPosY + height - 6 - (current/part), 14, (current/part));
+					Rectangle r = new Rectangle(startPosX+1+sec*15, startPosY + height - 6, 14, Math.max(-(current/part), -199));
 					event.gc.fillRectangle(r);
+					total+=current;
 					sec++;
 				}
+				avg = (int) (total/(long)60);
+				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_RED));
+				event.gc.drawLine(startPosX, startPosY + height - 5, startPosX+width, startPosY + height - 5);
+				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GREEN));
+				event.gc.drawLine(startPosX, startPosY + 5, startPosX+width, startPosY + 5);
+				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_CYAN));
+				event.gc.drawLine(startPosX, startPosY + height - 6 + Math.max(-(avg/part), -199), startPosX+width, startPosY + height - 6 + Math.max(-(avg/part), -199));
 					
 			}
 		});
