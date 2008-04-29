@@ -88,7 +88,7 @@ public class PeerFileUploadThread implements Runnable {
 					EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
 				}
 			}
-
+			transfer.setSpeed(0);
 			transfer.setState(TransferState.FINISHED);
 			EventController.getInstance()
 					.triggerDownloadFinishedEvent(transfer);

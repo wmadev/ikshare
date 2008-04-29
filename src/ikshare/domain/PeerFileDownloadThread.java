@@ -114,6 +114,7 @@ public class PeerFileDownloadThread implements Runnable {
                 //System.out.println("aantal bytes="+ n +" aantal pakketjes:" +tellerpakketjes);
             }
             transfer.setState(TransferState.FINISHED);
+            transfer.setSpeed(0);
             EventController.getInstance().triggerDownloadFinishedEvent(transfer);
             fileOutput.flush();
 

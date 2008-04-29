@@ -11,6 +11,7 @@ import java.util.concurrent.LinkedBlockingQueue;
 
 import ikshare.client.StatisticsController;
 import ikshare.client.gui.AbstractPanel;
+import ikshare.client.gui.UtilityClass;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.PaintEvent;
@@ -58,12 +59,20 @@ public class StatisticPanel extends AbstractPanel{
 				} catch (InterruptedException e) {
 				}
 				drawBox(startPosX, startPosY, event);
-				drawAllSpeeds(startPosX, startPosY, event, speeds);
+				drawAllSpeeds(startPosX, startPosY, event, speeds, downloads);
 			}
 
-			private void drawAllSpeeds(int startPosX, int startPosY, PaintEvent event, LinkedBlockingQueue<Integer> speeds) {
-				int max = StatisticsController.getInstance().getMaximum();
-				int min = StatisticsController.getInstance().getMinimum();
+			private void drawAllSpeeds(int startPosX, int startPosY, PaintEvent event, LinkedBlockingQueue<Integer> speeds, boolean downloads) {
+				int max=0;
+				int min=0;
+				if (downloads) {
+					max = StatisticsController.getInstance().getMaximumDownloadSpeed();
+					min = StatisticsController.getInstance().getMinimumDownloadSpeed();
+				} else {
+					max = StatisticsController.getInstance().getMaximumUploadSpeed();
+					min = StatisticsController.getInstance().getMinimumUploadSpeed();
+				}
+				
 				int diff = max-min;
 				int part = Math.max(diff/(height-10),1);
 				long total = 0;
@@ -93,7 +102,7 @@ public class StatisticPanel extends AbstractPanel{
 				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GREEN));
 				event.gc.drawLine(startPosX, startPosY + 10, startPosX+width, startPosY + 10);
 				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
-				event.gc.drawText("max: " + max, startPosX + 10, startPosY + 12, true);
+				event.gc.drawText("max: " + UtilityClass.formatFileSize((long)max), startPosX + 10, startPosY + 12, true);
 			}
 
 			private void drawMinLine(int startPosX, int startPosY, PaintEvent event, int min) {
@@ -101,7 +110,7 @@ public class StatisticPanel extends AbstractPanel{
 				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_RED));
 				event.gc.drawLine(startPosX, startPosY + height - 10, startPosX+width, startPosY + height - 10);
 				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
-				event.gc.drawText("min: " + min, startPosX + 10, startPosY + height - 11, true);
+				event.gc.drawText("min: " + UtilityClass.formatFileSize((long)min), startPosX + 10, startPosY + height - 11, true);
 			}
 
 			private void drawAvgLine(int startPosX, int startPosY, PaintEvent event, int avg, int part) {
@@ -109,7 +118,7 @@ public class StatisticPanel extends AbstractPanel{
 				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_CYAN));
 				event.gc.drawLine(startPosX, startPosY + height - 11 + Math.max(-(avg/part), -199), startPosX+width, startPosY + height - 11 + Math.max(-(avg/part), -199));	
 				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
-				event.gc.drawText("avg: " + avg, startPosX + 10, startPosY + height - 11 + Math.max(-(avg/part),-199), true);
+				event.gc.drawText("avg: " + UtilityClass.formatFileSize((long)avg), startPosX + 10, startPosY + height - 11 + Math.max(-(avg/part),-199), true);
 				;
 			}
 
