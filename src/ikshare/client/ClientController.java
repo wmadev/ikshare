@@ -119,13 +119,9 @@ public class ClientController {
     
     private void sendCommand(Commando c) throws NoServerConnectionException{
         if(serverConversation == null){
-            try {
-
-                startServerConversation();
-                serverConversation.sendCommand(c);
-            } catch (IOException ex) {
+            
                 throw new NoServerConnectionException("No connection with the server");
-            }
+            
             
         }
         else{
@@ -212,6 +208,7 @@ public class ClientController {
     
     public void stopServerConversation() {
         serverConversation.stop();
+        serverConversation = null;
     }
     
     public void stopChatServerConversation() {
