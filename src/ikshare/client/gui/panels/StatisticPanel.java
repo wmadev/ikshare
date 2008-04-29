@@ -30,7 +30,7 @@ public class StatisticPanel extends AbstractPanel{
         instance = this;
 		addPaintListener(new PaintListener(){
 			private int width=900;
-			private int height=210;
+			private int height=220;
 
 
 			public void paintControl(final PaintEvent event) {
@@ -72,32 +72,45 @@ public class StatisticPanel extends AbstractPanel{
 				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_BLUE));
 				int sec=0;
 				for (Integer current:speeds) {
-					event.gc.drawLine(startPosX+sec*15, startPosY + height - 6, startPosX+sec*15, startPosY + 6);
+					event.gc.setLineStyle(SWT.LINE_DOT);
+					event.gc.drawLine(startPosX+sec*15, startPosY + height - 11, startPosX+sec*15, startPosY + 11);
 					event.gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_DARK_BLUE));
-					Rectangle r = new Rectangle(startPosX+1+sec*15, startPosY + height - 6, 14, Math.max(-(current/part), -199));
+					Rectangle r = new Rectangle(startPosX+sec*15, startPosY + height - 11, 15, Math.max(-(current/part), -199));
+					event.gc.setLineStyle(SWT.LINE_SOLID);
 					event.gc.fillRectangle(r);
+					event.gc.drawRectangle(r);
 					total+=current;
 					sec++;
 				}
 				avg = (int) (total/(long)60);
-				drawMaxLine(startPosX, startPosY, event);
-				drawMinLine(startPosX, startPosY, event);
+				drawMaxLine(startPosX, startPosY, event, max);
+				drawMinLine(startPosX, startPosY, event, min);
 				drawAvgLine(startPosX, startPosY, event, avg, part);
 			}
 
-			private void drawMaxLine(int startPosX, int startPosY, PaintEvent event) {
+			private void drawMaxLine(int startPosX, int startPosY, PaintEvent event, int max) {
+				event.gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
 				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GREEN));
-				event.gc.drawLine(startPosX, startPosY + 5, startPosX+width, startPosY + 5);
+				event.gc.drawLine(startPosX, startPosY + 10, startPosX+width, startPosY + 10);
+				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
+				event.gc.drawText("max: " + max, startPosX + 10, startPosY + 12, true);
 			}
 
-			private void drawMinLine(int startPosX, int startPosY, PaintEvent event) {
+			private void drawMinLine(int startPosX, int startPosY, PaintEvent event, int min) {
+				event.gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
 				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_RED));
-				event.gc.drawLine(startPosX, startPosY + height - 5, startPosX+width, startPosY + height - 5);
+				event.gc.drawLine(startPosX, startPosY + height - 10, startPosX+width, startPosY + height - 10);
+				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
+				event.gc.drawText("min: " + min, startPosX + 10, startPosY + height - 11, true);
 			}
 
 			private void drawAvgLine(int startPosX, int startPosY, PaintEvent event, int avg, int part) {
+				event.gc.setBackground(getDisplay().getSystemColor(SWT.COLOR_BLACK));
 				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_CYAN));
-				event.gc.drawLine(startPosX, startPosY + height - 6 + Math.max(-(avg/part), -199), startPosX+width, startPosY + height - 6 + Math.max(-(avg/part), -199));	
+				event.gc.drawLine(startPosX, startPosY + height - 11 + Math.max(-(avg/part), -199), startPosX+width, startPosY + height - 11 + Math.max(-(avg/part), -199));	
+				event.gc.setForeground(getDisplay().getSystemColor(SWT.COLOR_GRAY));
+				event.gc.drawText("avg: " + avg, startPosX + 10, startPosY + height - 11 + Math.max(-(avg/part),-199), true);
+				;
 			}
 
 			private void drawBox(int startPosX, int startPosY, final PaintEvent event) {

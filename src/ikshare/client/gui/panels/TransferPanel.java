@@ -15,6 +15,7 @@ import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.FileTransferListener;
 
 import java.io.File;
+import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
@@ -52,12 +53,16 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 
 	private Table tblUploadTransfer, tblDownloadTransfer;
 	private Menu rightClickMenu;
-
+	private HashMap<String, TableItem> downloadHashMap, uploadHashMap;
+	
 	public TransferPanel(String text, String icon) {
 		super(text, icon);
 		FillLayout layout = new FillLayout();
 		this.setLayout(layout);
 		this.init();
+		downloadHashMap = new HashMap<String, TableItem>();
+		uploadHashMap = new HashMap<String, TableItem>();
+		
 		EventController.getInstance().addFileTransferListener(this);
 	}
 
@@ -216,6 +221,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 					        TableEditor editor = new TableEditor(tblDownloadTransfer);
 					        editor.grabHorizontal = editor.grabVertical = true;
 					        editor.setEditor(bar, item, 2);
+					        downloadHashMap.put(transfer.getId(), item);
 						}
 						else if(transfer.getState() == TransferState.UPLOADING){
 							item = new TableItem(tblUploadTransfer,SWT.NONE);
@@ -225,6 +231,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 					        TableEditor editor = new TableEditor(tblUploadTransfer);
 					        editor.grabHorizontal = editor.grabVertical = true;
 					        editor.setEditor(bar, item, 2);
+					        uploadHashMap.put(transfer.getId(), item);
 						}
 
 						if (item != null) {
@@ -245,29 +252,21 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		this.getDisplay().asyncExec(
 				new Runnable() {
 					public void run(){
+						TableItem item = null;
 						if(transfer.getState() == TransferState.CANCELLEDDOWNLOAD){
-							for(TableItem item : tblDownloadTransfer.getItems())
-							{
-								Transfer t = (Transfer) item.getData("transfer");
-								if(t.getId().equals(transfer.getId()))
-								{
-									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("canceled"));
-									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_YELLOW));
-								}
+							item = downloadHashMap.get(transfer.getId());
+							if (item != null) {
+								item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("canceled"));
+								item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_YELLOW));
 							}
 						}
 						else if(transfer.getState() == TransferState.CANCELLEDUPLOAD){
-							for(TableItem item : tblUploadTransfer.getItems())
-							{
-								Transfer t = (Transfer) item.getData("transfer");
-								if(t.getId().equals(transfer.getId()))
-								{
-									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("canceled"));
-									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_YELLOW));
-								}
+							item = uploadHashMap.get(transfer.getId());
+							if (item != null) {
+								item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("canceled"));
+								item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_YELLOW));
 							}
 						}
-
 					}
 				});
 	}
@@ -277,73 +276,33 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 
 	public void transferStateChanged(final Transfer transfer) {
 		this.getDisplay().asyncExec(
+
 				new Runnable() {
 					public void run(){
+						System.out.println(transfer);
+						
 						TableItem item = null;
-						Transfer t = null;
-						boolean found=false;
-						int counter=0;
 						if(transfer.getState() == TransferState.DOWNLOADING){
-							while (!found && counter < tblDownloadTransfer.getItemCount()) {
-								item = tblDownloadTransfer.getItem(counter);
-								t = (Transfer) item.getData("transfer");
-								if(transfer.getId().equals(transfer.getId())) {
-									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
-									item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
-									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("downloading"));
-									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
-									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
-									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
-									found = true;
-								}
-								counter++;
-							}
-						} else if(transfer.getState() == TransferState.UPLOADING){ 
-							while (!found && counter < tblDownloadTransfer.getItemCount()) {
-								item = tblUploadTransfer.getItem(counter);
-								t = (Transfer) item.getData("transfer");
-								if(transfer.getId().equals(transfer.getId())) {
-									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
-									item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
-									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("downloading"));
-									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
-									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
-									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
-									found = true;
-								}
-								counter++;
-							}
-						}
-							/*
-							for(TableItem item : tblDownloadTransfer.getItems())
-							{
-								Transfer t = (Transfer) item.getData("transfer");
-								if(t.getId().equals(transfer.getId()))
-								{
-									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
-									item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
-									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("downloading"));
-									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
-									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
-									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
-								}
+							item = downloadHashMap.get(transfer.getId());
+							if (item != null) {
+								item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(transfer.getFileSize()));
+								item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
+								item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("downloading"));
+								item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  								item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
+								((ProgressBar)item.getData("progressbar")).setSelection(transfer.getProgress());
 							}
 						}
 						else if(transfer.getState() == TransferState.UPLOADING){
-							for(TableItem item : tblUploadTransfer.getItems())
-							{
-								Transfer t = (Transfer) item.getData("transfer");
-								if(t.getId().equals(transfer.getId()))
-								{
-									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
-									item.setText(TransferPanel.speedPos, UtilityClass.formatFileSize(transfer.getSpeed()));
-									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("uploading"));
-									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
-									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
-									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
-								}
+							item = uploadHashMap.get(transfer.getId());
+							if (item != null) {
+								item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(transfer.getFileSize()));
+								item.setText(TransferPanel.speedPos, UtilityClass.formatFileSize(transfer.getSpeed()));
+								item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("uploading"));
+								item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
+								item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));			
+								((ProgressBar)item.getData("progressbar")).setSelection(transfer.getProgress());
 							}
-						}*/
+						}
 					}
 				});
 	}
@@ -359,28 +318,22 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		this.getDisplay().asyncExec(
 				new Runnable() {
 					public void run(){
+						TableItem item = null;
 						if(transfer.getState() == TransferState.FAILED){
-							for(TableItem item : tblUploadTransfer.getItems())
-							{
-								Transfer t = (Transfer) item.getData("transfer");
-								if(t.getId().equals(transfer.getId()))
-								{
-									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("failed"));
-									item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
-									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));  
-									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
-								}
+							item = downloadHashMap.get(transfer.getId());
+							if (item != null) {
+								item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("failed"));
+								item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
+								item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));  
+								item.setText(TransferPanel.remainingPos,UtilityClass.formatTime((long)0));
 							}
-							for(TableItem item : tblDownloadTransfer.getItems())
-							{
-								Transfer t = (Transfer) item.getData("transfer");
-								if(t.getId().equals(transfer.getId()))
-								{
-									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("failed"));
-									item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
-									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));  
-									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
-								}
+							
+							item = uploadHashMap.get(transfer.getId());
+							if (item != null) {
+								item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("failed"));
+								item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
+								item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));  
+								item.setText(TransferPanel.remainingPos,UtilityClass.formatTime((long)0));
 							}
 						}
 					}
@@ -388,32 +341,28 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 	}
 
     public void transferFinished(final Transfer transfer) {
-        this.getDisplay().asyncExec(
-            new Runnable() {
-                public void run(){
-                    if(transfer.getState() == TransferState.FINISHED){
-                        for(TableItem item : tblDownloadTransfer.getItems())
-                        {
-                            Transfer t = (Transfer) item.getData("transfer");
-                            if(t.getId().equals(transfer.getId()))
-                            {
-                                item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("finished"));
-                                item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
-                                ((ProgressBar)item.getData("progressbar")).setSelection(100);
-                            }
-                        }
-                        for(TableItem item : tblUploadTransfer.getItems())
-                        {
-                            Transfer t = (Transfer) item.getData("transfer");
-                            if(t.getId().equals(transfer.getId()))
-                            {
-                                item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("finished"));
-                                item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
-                                ((ProgressBar)item.getData("progressbar")).setSelection(100);
-                            }
+    	this.getDisplay().asyncExec(
+    		new Runnable() {
+    			public void run(){
+    				TableItem item = null;
+    				if(transfer.getState() == TransferState.FINISHED){
+    					item = downloadHashMap.get(transfer.getId());
+    					if(item != null){
+    						item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("finished"));
+    						item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
+    						((ProgressBar)item.getData("progressbar")).setSelection(100);
+    						item.setText(TransferPanel.remainingPos, UtilityClass.formatTime((long)0));
+    						item.setText(TransferPanel.speedPos, UtilityClass.formatFileSize((long)0));
+    					}
+    					item = uploadHashMap.get(transfer.getId());
+    					if(item != null) {
+    						item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("finished"));
+    						item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
+    						((ProgressBar)item.getData("progressbar")).setSelection(100);
+    						item.setText(TransferPanel.remainingPos, UtilityClass.formatTime((long)0));
+    						item.setText(TransferPanel.speedPos, UtilityClass.formatFileSize((long)0));
                         }
                     }
-                    
                 }
         });
     }
@@ -423,29 +372,25 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		this.getDisplay().asyncExec(
 				new Runnable() {
 					public void run(){
+						TableItem item = null;
 						if(transfer.getState() == TransferState.PAUSEDDOWNLOAD){
-							for(TableItem item : tblDownloadTransfer.getItems())
-							{
-								Transfer t = (Transfer) item.getData("transfer");
-								if(t.getId().equals(transfer.getId()))
-								{
-									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("paused"));
-									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
-								}
+							item = downloadHashMap.get(transfer.getId());
+							if(item != null) {
+								item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("paused"));
+								item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
+								item.setText(TransferPanel.remainingPos, "..:..:..");
+								item.setText(TransferPanel.speedPos, UtilityClass.formatFileSize((long)0));
 							}
 						}
 						else if(transfer.getState() == TransferState.PAUSEDUPLOAD){
-							for(TableItem item : tblUploadTransfer.getItems())
-							{
-								Transfer t = (Transfer) item.getData("transfer");
-								if(t.getId().equals(transfer.getId()))
-								{
-									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("paused"));
-									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
-								}
+							item = uploadHashMap.get(transfer.getId());
+							if(item != null) {
+								item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("paused"));
+								item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GRAY));
+								item.setText(TransferPanel.remainingPos, "..:..:..");
+								item.setText(TransferPanel.speedPos, UtilityClass.formatFileSize((long)0));
 							}
 						}
-
 					}
 				});
 		
@@ -456,34 +401,27 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		this.getDisplay().asyncExec(
 				new Runnable() {
 					public void run(){
+						TableItem item = null;
 						if(transfer.getState() == TransferState.RESUMEDDOWNLOAD){
-							for(TableItem item : tblDownloadTransfer.getItems())
-							{
-								Transfer t = (Transfer) item.getData("transfer");
-								if(t.getId().equals(transfer.getId()))
-								{
-									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
-									item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
-									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("downloading"));
-									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
-									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
-									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
-								}
+							item = downloadHashMap.get(transfer.getId());
+							if (item != null) {
+								item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(transfer.getFileSize()));
+								item.setText(TransferPanel.speedPos,UtilityClass.formatFileSize(transfer.getSpeed()));
+								item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("downloading"));
+								item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
+								item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));									
+								((ProgressBar)item.getData("progressbar")).setSelection(transfer.getProgress());
 							}
 						}
 						else if(transfer.getState() == TransferState.RESUMEDUPLOAD){
-							for(TableItem item : tblUploadTransfer.getItems())
-							{
-								Transfer t = (Transfer) item.getData("transfer");
-								if(t.getId().equals(transfer.getId()))
-								{
-									item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(t.getFileSize()));
-									item.setText(TransferPanel.speedPos, UtilityClass.formatFileSize(transfer.getSpeed()));
-									item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("uploading"));
-									item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
-									item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
-									((ProgressBar)item.getData("progressbar")).setSelection(t.getProgress());
-								}
+							item = uploadHashMap.get(transfer.getId());
+							if(item != null) {
+								item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(transfer.getFileSize()));
+								item.setText(TransferPanel.speedPos, UtilityClass.formatFileSize(transfer.getSpeed()));
+								item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("uploading"));
+								item.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_BLUE));  
+								item.setText(TransferPanel.remainingPos,UtilityClass.formatTime(transfer.getRemainingTime()));
+								((ProgressBar)item.getData("progressbar")).setSelection(transfer.getProgress());
 							}
 						}
 					}
