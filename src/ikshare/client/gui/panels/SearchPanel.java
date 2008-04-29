@@ -16,6 +16,7 @@ import ikshare.client.gui.MainScreen;
 
 import ikshare.domain.IKShareFile;
 import ikshare.domain.event.listener.ServerConversationListener;
+import ikshare.domain.exception.NoServerConnectionException;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.DownloadInformationResponseCommand;
 import ikshare.protocol.command.FoundResultCommando;
@@ -368,7 +369,11 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
 
                 SearchResult selected = (SearchResult) tblResults.getItem(selectedRow).getData("result");
                 if (selected != null) {
-                    ClientController.getInstance().getDownloadInformationForResult(selected);
+                    try {
+                        ClientController.getInstance().getDownloadInformationForResult(selected);
+                    } catch (NoServerConnectionException ex) {
+                        new ExceptionWindow(ex,MainScreen.getInstance(),false);
+                    }
                 }
             }
         });
@@ -432,7 +437,11 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     private void search() {
                 String searchId = String.valueOf(new Date().getTime());
                 if (!advanced) {
-                    ClientController.getInstance().findBasic(searchId, txtKeywordBasic.getText());
+            try {
+                ClientController.getInstance().findBasic(searchId, txtKeywordBasic.getText());
+            } catch (NoServerConnectionException ex) {
+                new ExceptionWindow(ex,MainScreen.getInstance(),false);
+            }
                 }
                 else {
                     long minBytes=0;
@@ -450,12 +459,20 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                         }
                     }   
                     if(rbFile.getSelection()){          //search for a file
-                        ClientController.getInstance().findAdvancedFile(searchId, txtKeywordAdvanced.getText(),
-                                keywordAnd, cbTypes.getSelectionIndex(),minBytes , maxBytes );
+                try {
+                    
+                    ClientController.getInstance().findAdvancedFile(searchId, txtKeywordAdvanced.getText(), keywordAnd, cbTypes.getSelectionIndex(), minBytes, maxBytes);
+                } catch (NoServerConnectionException ex) {
+                    new ExceptionWindow(ex,MainScreen.getInstance(),false);
+                }
                     }
                     else{                               //search for a folder
-                        ClientController.getInstance().findAdvancedFolder(searchId, txtKeywordAdvanced.getText(),
-                                keywordAnd, minBytes , maxBytes);
+                try {
+                    
+                    ClientController.getInstance().findAdvancedFolder(searchId, txtKeywordAdvanced.getText(), keywordAnd, minBytes, maxBytes);
+                } catch (NoServerConnectionException ex) {
+                    new ExceptionWindow(ex,MainScreen.getInstance(),false);
+                }
                         
                     }
                 }
