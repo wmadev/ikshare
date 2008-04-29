@@ -200,4 +200,9 @@ public class SettingsPanel extends AbstractPanel{
         txtMessagePort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtMessagePort.setText(String.valueOf(config.getMessagePort()));
      }
+
+    @Override
+    public void initialiseFocus() {
+
+    }
 }
