@@ -22,6 +22,10 @@ import ikshare.protocol.command.chat.ChatYouEnterRoomCommando;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.custom.CTabFolder;
+import org.eclipse.swt.custom.CTabFolder2Adapter;
+import org.eclipse.swt.custom.CTabFolderEvent;
+import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
@@ -35,8 +39,6 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
-import org.eclipse.swt.widgets.TabFolder;
-import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Text;
 
 import ikshare.client.gui.AbstractPanel;
@@ -49,7 +51,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 {
 	private LogonState loggedOn = LogonState.Offline;
 	
-    private TabFolder chatWindowTabFolder;
+    private CTabFolder chatWindowTabFolder;
     private HashMap<String, ChatRoom> chatRooms;
     
     private List publicRoomsList;
@@ -65,6 +67,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
         chatRooms = new HashMap<String, ChatRoom>();
         
         EventController.getInstance().addChatServerConversationListener(this);
+        EventController.getInstance().addClientConfigurationListener(this);
         
         GridLayout mainLayout = new GridLayout(2, false);
         this.setLayout(mainLayout);
@@ -78,7 +81,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 	    	Composite cmpRooms = new Composite(this, SWT.NONE);
 	    	GridLayout cmpRoomsLayout = new GridLayout(1, false);
 	    	cmpRoomsLayout.marginBottom = cmpRoomsLayout.marginHeight = cmpRoomsLayout.marginLeft = 
-	    		cmpRoomsLayout.marginRight = cmpRoomsLayout.marginTop = cmpRoomsLayout.marginWidth = 0;
+    		cmpRoomsLayout.marginRight = cmpRoomsLayout.marginTop = cmpRoomsLayout.marginWidth = 0;
 	    	cmpRooms.setLayout(cmpRoomsLayout);
 	    	cmpRooms.setLayoutData(new GridData(SWT.NONE, SWT.FILL, false, true));
 	    	
@@ -102,13 +105,13 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		    	btnLog.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
 		    	btnLog.setText("Log on"); // TODO: bundle
 		    	btnLog.addListener(SWT.Selection, new Listener() {
-					@Override
-					public void handleEvent(Event event) {
-						if(loggedOn != LogonState.Offline)
-							logOff();
-						else
-							logOn();
-					}
+                    @Override
+                    public void handleEvent(Event event) {
+                        if(loggedOn != LogonState.Offline)
+                            logOff();
+                        else
+                            logOn();
+                    }
 		    	});
 		    	
 		    	lblLog = new Label(grpLog, SWT.BACKGROUND);
@@ -187,22 +190,37 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
     	}
     	
     	{
-	        chatWindowTabFolder = new TabFolder(this, SWT.NONE);
-                chatWindowTabFolder.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+	        chatWindowTabFolder = new CTabFolder(this, SWT.NONE);
+            chatWindowTabFolder.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true));
+            chatWindowTabFolder.addCTabFolder2Listener(new CTabFolder2Adapter() 
+            {
+                @Override
+                public void close(CTabFolderEvent event) 
+                {
+                    if((event.item instanceof CTabItem) && (loggedOn==LogonState.Online))
+                    {
+                        leaveRoom(((CTabItem)event.item).getText());
+                    }
+                }
+            });
+            
+            chatWindowTabFolder.addListener(SWT.Selection, new Listener(){
+                public void handleEvent(Event event) {
+                    chatRooms.get(chatWindowTabFolder.getSelection().getText()).getEnterTextField().setFocus();
+                }
+            });
     	}
     }
     
     private void BuildChatPanel(ArrayList<String> members, final String roomName)
     {
-    	// TODO: room panels kunnen sluiten.
-    	
         ChatRoom room = new ChatRoom();
         room.setRoomName(roomName);
         
         //== Chat Window ==
-        TabItem chatRoomTab = new TabItem(chatWindowTabFolder, SWT.BORDER);
+        final CTabItem chatRoomTab = new CTabItem(chatWindowTabFolder, SWT.BORDER | SWT.CLOSE);
         chatRoomTab.setText(roomName);
-        
+    
         Composite cmpChatWindow = new Composite(chatWindowTabFolder, SWT.RIGHT);
         GridData gdChatWindow = new GridData(SWT.FILL, SWT.FILL, true, true);
         cmpChatWindow.setLayoutData(gdChatWindow);
@@ -223,6 +241,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
         final Text txtChatEnterField = new Text(grpChatWindow, SWT.BORDER);
         txtChatEnterField.setEditable(true);
         txtChatEnterField.setLayoutData(new GridData(SWT.FILL, SWT.NONE, true, false));
+        room.setEnterTextField(txtChatEnterField);
         txtChatEnterField.addKeyListener(new KeyAdapter() {
         	public void keyPressed(KeyEvent event)
         	{
@@ -233,8 +252,6 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 	        	}
         	}
         });
-
-
 
         Group grpChatMembers = new Group(cmpChatWindow, SWT.BACKGROUND);
         grpChatMembers.setLayout(new GridLayout(1, false));
@@ -250,32 +267,50 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
         chatRooms.put(room.getRoomname(), room);
         
         chatRoomTab.setControl(cmpChatWindow);
+        
+        chatWindowTabFolder.setSelection(chatRoomTab);
+        
+        txtChatEnterField.setFocus();
     }
 
 	private void textEntered(String text, String roomName) {
-		if(loggedOn == LogonState.Online && !text.equals(""))
-		{
-			String fullMessage = "<" + ClientConfigurationController.getInstance().getConfiguration().getNickname() + "> ";
-			fullMessage += text;
-			appendMessage(roomName, fullMessage);
-		}
+        if(loggedOn == LogonState.Online && !text.equals(""))
+        {
+            String nickName = ClientConfigurationController.getInstance().getConfiguration().getNickname();
+            String fullMessage = "<" + nickName + "> ";
+            fullMessage += text;
+            appendMessage(roomName, (fullMessage + "\n"));
+            ClientController.getInstance().chatMessage(text, roomName, false, nickName);
+        }
 	}
 	
 	private void logOn(){
-		if(ClientController.getInstance().chatLogon(ClientConfigurationController.getInstance().getConfiguration().getNickname()))
-		{
-			btnLog.setText("Log off");
-			setStateOnline(1);
-		}
+        if(ClientController.getInstance().chatLogon(ClientConfigurationController.getInstance().getConfiguration().getNickname()))
+        {
+            btnLog.setText("Log off");
+            setStateOnline(1);
+        }
 	}
 	
 	private void logOff(){
-		publicRoomsList.removeAll();
-		chatRooms.clear();
-		ClientController.getInstance().chatLogoff(ClientConfigurationController.getInstance().getConfiguration().getNickname());
-		btnLog.setText("Log on");
-		setStateOnline(2);
+        if(loggedOn!=LogonState.Offline)
+        {
+			publicRoomsList.removeAll();
+			chatRooms.clear();
+			ClientController.getInstance().chatLogoff(ClientConfigurationController.getInstance().getConfiguration().getNickname());
+			btnLog.setText("Log on");
+			setStateOnline(2);
+            for(CTabItem item : chatWindowTabFolder.getItems())
+            {
+                item.dispose();
+            }
+        }
 	}
+        
+    private void leaveRoom(String roomName) {
+        ClientController.getInstance().chatLeaveRoom(roomName);
+        chatRooms.remove(roomName);
+    }
 	
 	private void setStateOnline(int state)
 	{
@@ -318,81 +353,81 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
     private void appendMessage(String roomName, String message)
     {
         ChatRoom room = chatRooms.get(roomName);
-        room.getTextField().append(message + "\n");
+        room.getTextField().append(message);
     }
     
 
-	@Override
+@Override
     public void receivedMessage(final ChatMessageCommando c) {
 		this.getDisplay().asyncExec(
-				new Runnable() 
-				{
-			        public void run() 
-			        {	
-				        if(!c.isPrivateMessage() && c.getText()!=null && !c.getText().equals(""))
-				        {
-				            String message = "<" + c.getSender() + "> " + c.getText() + "\n";
-				            appendMessage(c.getRecipient(), message);
-				        }
+			new Runnable() 
+			{
+		        public void run() 
+		        {	
+			        if(!c.isPrivateMessage() && c.getText()!=null && !c.getText().equals(""))
+			        {
+			            String message = "<" + c.getSender() + "> " + c.getText() + "\n";
+			            appendMessage(c.getRecipient(), message);
 			        }
-				}
-			);
+		        }
+			}
+		);
     }
     
     @Override
     public void userLeftRoom(final ChatHasLeftRoomCommando c) {
 		this.getDisplay().asyncExec(
-				new Runnable() 
-				{
-			        public void run() 
+			new Runnable() 
+			{
+		        public void run() 
+		        {
+			        ChatRoom room = chatRooms.get(c.getRoomName());
+			        if(room!=null)
 			        {
-				        ChatRoom room = chatRooms.get(c.getRoomName());
-				        if(room!=null)
-				        {
-				            room.getMembersList().remove(c.getNickName());
-				        
-				            String message = "* " + c.getNickName() + " has left the room.";// TODO: bundle
-				            appendMessage(c.getRoomName(), message);
-				        }
+			            room.getMembersList().remove(c.getNickName());
+			        
+			            String message = "* " + c.getNickName() + " has left the room.\n";// TODO: bundle
+			            appendMessage(c.getRoomName(), message);
 			        }
-				}
-			);
+		        }
+			}
+		);
     }
 
     @Override
     public void userEntersRoom(final ChatHasEnteredRoomCommando c) {
 		this.getDisplay().asyncExec(
-				new Runnable() 
-				{
-			        public void run() 
+			new Runnable() 
+			{
+		        public void run() 
+		        {
+			        ChatRoom room = chatRooms.get(c.getRoomName());
+			        if(room!=null)
 			        {
-				        ChatRoom room = chatRooms.get(c.getRoomName());
-				        if(room!=null)
-				        {
-				            room.getMembersList().add(c.getNickName());
-				        
-				            String message = "* " + c.getNickName() + " has entered the room.";// TODO: bundle
-				            appendMessage(c.getRoomName(), message);
-				        }
+			            room.getMembersList().add(c.getNickName());
+			        
+			            String message = "* " + c.getNickName() + " has entered the room.\n";// TODO: bundle
+			            appendMessage(c.getRoomName(), message);
 			        }
-				}
-			);
+		        }
+			}
+		);
     }
 
     @Override
     public void youEnterRoom(final ChatYouEnterRoomCommando c) {
 		this.getDisplay().asyncExec(
-				new Runnable() 
-				{
-			        public void run() 
-			        {
-				        BuildChatPanel(c.getRoomMembers(), c.getRoomName());
-				        
-				        String message = "you have entered the room.";// TODO: bundle
-				        appendMessage(c.getRoomName(), message);
-			        }
-				}
-			);
+			new Runnable() 
+			{
+		        public void run() 
+		        {
+			        BuildChatPanel(c.getRoomMembers(), c.getRoomName());
+			        
+			        String message = "you have entered the room.\n";// TODO: bundle
+			        appendMessage(c.getRoomName(), message);
+		        }
+			}
+		);
     }
     
 	@Override
@@ -436,8 +471,9 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		Offline
 	}
 
-    @Override
-    public void initialiseFocus() {
-       
-    }
+	@Override
+	public void initialiseFocus() {
+		// TODO Auto-generated method stub
+		
+	}
 }

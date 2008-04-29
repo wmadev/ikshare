@@ -74,6 +74,7 @@ public class ChatServerConversationThread implements Runnable
     
     public void sendCommand(Commando command){
         if(running){
+            System.out.println("[OUT] "+command.toString());
             outputWriter.println(command.toString());
         }
     }

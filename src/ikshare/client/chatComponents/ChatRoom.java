@@ -12,6 +12,7 @@ public class ChatRoom
     private List members;
     private Text textField;
     private String roomName;
+    private Text enterTextField;
     
     public ChatRoom() 
     {
@@ -45,5 +46,15 @@ public class ChatRoom
     public String getRoomname()
     {
         return roomName;
+    }
+    
+    public void setEnterTextField(Text text)
+    {
+        this.enterTextField = text;
+    }
+    
+    public Text getEnterTextField()
+    {
+        return enterTextField;
     }
 }
