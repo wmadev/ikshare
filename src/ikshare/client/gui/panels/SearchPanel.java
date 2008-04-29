@@ -55,7 +55,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     private HashMap<String, CTabItem> searches;
     private Text txtKeywordBasic, txtKeywordAdvanced, txtMax, txtMin;
     private CTabFolder folder;
-    private Button btnSearch, rbFile, rbFolder;
+    private Button btnSearch, rbFile, rbFolder, btnAndOr;
     private Combo cbSizeMax, cbSizeMin, cbTypes;
     private String keyword="", minSize="", maxSize="";
     private int typeID=0, minID=0, maxID=0;
@@ -151,12 +151,12 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                                         rbFolder.setSelection(true);
                                         cbTypes.setEnabled(false);
                                     }
-                                    /*if(keywordAnd){
+                                    if(keywordAnd){
                                         btnAndOr.setText(ClientConfigurationController.getInstance().getString("and"));
                                     }
                                     else{
                                         btnAndOr.setText(ClientConfigurationController.getInstance().getString("or"));
-                                    }*/
+                                    }
                                 }
                                 else {
                                     advanced = false;
@@ -254,7 +254,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
             
         });
         txtKeywordAdvanced.addKeyListener(this);
-        final Button btnAndOr = new Button(grpAdvanced, SWT.BORDER);
+        btnAndOr = new Button(grpAdvanced, SWT.BORDER);
         btnAndOr.setText(ClientConfigurationController.getInstance().getString("and"));
         btnAndOr.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false, 2, 1));
         btnAndOr.addListener(SWT.Selection, new Listener() {
