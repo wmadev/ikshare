@@ -41,6 +41,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
     
     private Label lblStatus;
     private Button btnConnect;
+    private Text txtAccountName;
             
     public HomePanel(String text,String icon){
         super(text,icon);
@@ -59,7 +60,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
         Label lblAccountName = new Label(grpConnect,SWT.NONE);
         lblAccountName.setText(ClientConfigurationController.getInstance().getString("accountname"));
         lblAccountName.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,false,false,1,1));
-        final Text txtAccountName = new Text(grpConnect,SWT.BORDER);
+        txtAccountName = new Text(grpConnect,SWT.BORDER);
         txtAccountName.setLayoutData(new GridData(SWT.FILL,SWT.FILL,false,false,1,1));
         
         Label lblAccountPassword = new Label(grpConnect,SWT.NONE);
@@ -98,7 +99,7 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                 if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logon"))){
                     
                 	try {
-                        //ClientController.getInstance().startServerConversation();
+                        ClientController.getInstance().startServerConversation();
                         ClientController.getInstance().logon(txtAccountName.getText(), txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
                         ClientController.getInstance().share(txtAccountName.getText(), ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
                     	PeerFacade.getInstance();
@@ -185,6 +186,11 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                     
                 }
         });
+    }
+
+    @Override
+    public void initialiseFocus() {
+        txtAccountName.setFocus();
     }
 
 }
