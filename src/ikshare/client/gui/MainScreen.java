@@ -1,5 +1,6 @@
 package ikshare.client.gui;
 
+import ikshare.client.ClientController;
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.client.gui.panels.AboutPanel;
 import ikshare.client.gui.panels.ChatPanel;
@@ -60,7 +61,7 @@ public class MainScreen {
         doInfobar();
 
         addPanel(new HomePanel(ClientConfigurationController.getInstance().getString("home"),"resources/icons/tb_home.png"));
-        addPanel(new MediaPlayerPanel(ClientConfigurationController.getInstance().getString("media"),"resources/icons/tb_media.png"));
+        //addPanel(new MediaPlayerPanel(ClientConfigurationController.getInstance().getString("media"),"resources/icons/tb_media.png"));
         addPanel (new SearchPanel(ClientConfigurationController.getInstance().getString("search"),"resources/icons/tb_search.png"));
         addPanel (new TransferPanel(ClientConfigurationController.getInstance().getString("transfer"),"resources/icons/tb_down.png"));
         addPanel (new ChatPanel(ClientConfigurationController.getInstance().getString("chat"),"resources/icons/tb_chat.png"));
@@ -68,7 +69,9 @@ public class MainScreen {
         addPanel (new StatisticPanel(ClientConfigurationController.getInstance().getString("statistics"),"resources/icons/tb_stat.png"));
         addPanel (new HelpPanel(ClientConfigurationController.getInstance().getString("help"),"resources/icons/tb_help.png"));
         addPanel (new AboutPanel(ClientConfigurationController.getInstance().getString("about"),"resources/icons/tb_about.png"));
-        
+        layout.topControl = panels.get(0);
+        panels.get(0).getToolItem().setSelection(true);
+        panels.get(0).initialiseFocus();
         
         shell.open();
         shell.forceActive();
@@ -80,7 +83,7 @@ public class MainScreen {
                 }
         }
         ClientConfigurationController.getInstance().saveConfiguration();
-        
+               
         display.dispose();
         System.exit(0);
     }
@@ -161,12 +164,8 @@ public class MainScreen {
      * Adds the different panels to the composite, sets the topcontrol on the first panel that is been added.
      */
     private void addPanel(final AbstractPanel p) {
-            panels.add(p);
-            if(panels.size()==1) {
-                    layout.topControl = p;
-                    p.getToolItem().setSelection(true);
-            }
-            p.getToolItem().addListener(SWT.Selection, new Listener() {
+           panels.add(p);
+           p.getToolItem().addListener(SWT.Selection, new Listener() {
                     public void handleEvent(Event e) {
                             for (AbstractPanel pnl : panels)
                                     pnl.getToolItem().setSelection(false);
@@ -174,6 +173,7 @@ public class MainScreen {
                             layout.topControl = p;
                             p.getToolItem().setSelection(true);
                             parent.layout();
+                            p.initialiseFocus();
                     }
             });
     }
