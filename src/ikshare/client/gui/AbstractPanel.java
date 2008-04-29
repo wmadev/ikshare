@@ -6,7 +6,7 @@ import org.eclipse.swt.*;
 import org.eclipse.swt.widgets.*;
 
 
-public class AbstractPanel extends Composite {
+public abstract class AbstractPanel extends Composite {
         private String title;
 	private Image icon;
 	private ToolItem toolItem;
@@ -53,4 +53,6 @@ public class AbstractPanel extends Composite {
 	public String getTitle() {
 		return title;
 	}
+        
+        public abstract void initialiseFocus();
 }
