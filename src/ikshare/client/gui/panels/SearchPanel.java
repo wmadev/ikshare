@@ -40,13 +40,14 @@ import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-public class SearchPanel extends AbstractPanel implements ServerConversationListener {
+public class SearchPanel extends AbstractPanel implements ServerConversationListener, KeyListener {
 
     private static String ICON_SEARCH = "resources/icons/sp_found.png";
     private boolean advanced = false, keywordAnd = true;
@@ -104,14 +105,6 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         cmpSearch.setLayoutData(gd);
         final StackLayout layout = new StackLayout();
         cmpSearch.setLayout(layout);
-        cmpSearch.addKeyListener(new KeyAdapter() {
-            @Override
-            public void keyPressed(KeyEvent e) {
-                if(e.character==SWT.CR){
-                    search();
-                }
-                
-            }});
         layout.topControl = drawBasicSearch(cmpSearch);
 
         //SearchResults
@@ -227,12 +220,12 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                     }
                     else{
                         btnSearch.setEnabled(true);
-                        btnSearch.setFocus();
                     }
                 }
             }
             
         });
+        txtKeywordBasic.addKeyListener(this);
         return grpBasic;
     }
      
@@ -259,6 +252,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
             }
             
         });
+        txtKeywordAdvanced.addKeyListener(this);
         final Button btnAndOr = new Button(grpAdvanced, SWT.BORDER);
         btnAndOr.setText(ClientConfigurationController.getInstance().getString("and"));
         btnAndOr.setLayoutData(new GridData(SWT.LEFT, SWT.FILL, false, false, 2, 1));
@@ -319,6 +313,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         radioButtons.setLayout(new FillLayout());
         rbFile = new Button(radioButtons, SWT.RADIO);
         rbFile.setText(ClientConfigurationController.getInstance().getString("file"));
+        rbFile.addKeyListener(this);
         rbFolder = new Button(radioButtons, SWT.RADIO);
         rbFolder.setText(ClientConfigurationController.getInstance().getString("folder"));
         rbFolder.addListener(SWT.Selection, new Listener(){
@@ -333,6 +328,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
             }
             
         });
+        rbFolder.addKeyListener(this);
         return grpAdvanced;
     }
 
@@ -465,5 +461,24 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                 }
 
                 
+    }
+
+    public void keyPressed(KeyEvent e) {
+        if(btnSearch.isEnabled()){
+            if(e.character==SWT.CR){
+                    search();
+            }
+            else if(e.character==SWT.TAB && (rbFile.isFocusControl() || rbFolder.isFocusControl() || txtKeywordBasic.isFocusControl())){
+                btnSearch.setFocus();
+                
+            }
+               
+        }
+       
+                
+    }
+
+    public void keyReleased(KeyEvent e) {
+        
     }
 }
