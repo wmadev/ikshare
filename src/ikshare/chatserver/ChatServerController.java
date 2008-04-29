@@ -89,6 +89,8 @@ public class ChatServerController {
         {
             if( onlineClients.get(counter).getNickName().equals(clientName))
                 client = onlineClients.get(counter);
+            
+            counter++;
         }
         
         return client;
