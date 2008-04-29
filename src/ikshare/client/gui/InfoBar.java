@@ -39,7 +39,7 @@ public class InfoBar extends Composite implements TransferQueueListener {
 
     private void init() {
         // Transfer part
-        new Label(this, SWT.NONE).setText("Transfers: ");
+        new Label(this, SWT.NONE).setText(ClientConfigurationController.getInstance().getString("transfers")+":");
 
         if (new File(ICON_DOWN).exists()) {
             new Label(this, SWT.NONE).setImage(new Image(Display.getCurrent(), ICON_DOWN));
@@ -55,7 +55,7 @@ public class InfoBar extends Composite implements TransferQueueListener {
 
         // Shared folder part
         new Label(this, SWT.NONE).setText("|");
-        new Label(this, SWT.NONE).setText("Shared Files: ");
+        new Label(this, SWT.NONE).setText(ClientConfigurationController.getInstance().getString("sharedFiles")+":");
         int[] info = ClientConfigurationController.getInstance().getSharedInformation();
         if (new File(ICON_SHAREDFOLDERS).exists()) {
             new Label(this, SWT.NONE).setImage(new Image(Display.getCurrent(), ICON_SHAREDFOLDERS));
