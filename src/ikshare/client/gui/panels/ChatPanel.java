@@ -435,4 +435,9 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		Logging,
 		Offline
 	}
+
+    @Override
+    public void initialiseFocus() {
+       
+    }
 }
