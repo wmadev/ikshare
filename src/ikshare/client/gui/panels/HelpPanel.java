@@ -55,22 +55,18 @@ public class HelpPanel extends AbstractPanel{
         
         
         final List list = new List(this, SWT.SINGLE);
-        list.setLayoutData(new GridData(SWT.LEFT,SWT.FILL,false,true,1,1));
+        GridData gd = new GridData(SWT.LEFT,SWT.FILL,false,true,1,1);
+        gd.widthHint = 170;
+        list.setLayoutData(gd);
         final Browser browser = new Browser(this, SWT.NONE);
         browser.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,1,1));
         list.removeAll();
         for (int i = 0; i < titles.length; i++){
-            list.add(titles[i]);
+            list.add(titles[i].replaceAll(".html", "").substring(3));
         }
         list.select(0);
         browser.setUrl(urls[0]);
-        /*Composite comp = new Composite(this, SWT.NONE);
-	data = new GridData(GridData.FILL_BOTH);
-	comp.setLayoutData(data);
-	comp.setLayout(new FillLayout());*/
-	//final SashForm form = new SashForm(this, SWT.HORIZONTAL);
-	//form.setLayout(new FillLayout());
-			
+       	
 	
 	list.addListener(SWT.Selection, new Listener() {
 		public void handleEvent(Event e) {
@@ -106,6 +102,11 @@ public class HelpPanel extends AbstractPanel{
          browser.setUrl(urls[index]);
             }
       });*/
+    }
+
+    @Override
+    public void initialiseFocus() {
+        
     }
 
 }
