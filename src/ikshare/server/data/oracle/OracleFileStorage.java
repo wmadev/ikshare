@@ -284,25 +284,17 @@ public class OracleFileStorage implements FileStorage {
     public List<SearchResult> advancedFolderSearch(String keyword, boolean textAnd, long minSize, long maxSize) throws DatabaseException {
         ArrayList<SearchResult> results = null;
         String searchString="SELECT fi.FOLDERID,FILENAME,ACCOUNTNAME,FILESIZE FROM SHAREDFILES fi JOIN SHAREDFOLDERS fo ON fo.FOLDERID=fi.FOLDERID WHERE lower(FILENAME) LIKE '";
-        List<String> keys= new ArrayList<String>();
-        int startIndex=0;
-        while(startIndex<keyword.length() && keyword.indexOf(" ", startIndex)!=-1){
-            keys.add(keyword.substring(startIndex, keyword.indexOf(" ", startIndex)));
-            startIndex=keyword.indexOf(" ", startIndex)+1;
-        }
-        Iterator<String> it = keys.iterator();
-        String key=it.next().toLowerCase();
-        searchString+="%"+key+"%' ";
+        keyword = keyword.toLowerCase();
+        StringTokenizer tokenizer = new StringTokenizer(keyword," ");
+        searchString+="%"+tokenizer.nextToken()+"%' ";
         if(textAnd){
-            while(it.hasNext()) {
-                key = it.next().toLowerCase();
-                searchString+= "AND lower(FILENAME) LIKE '%"+key+"%' ";
-            }               
+            while(tokenizer.hasMoreTokens()){
+                searchString+= "AND lower(FILENAME) LIKE '%"+tokenizer.nextToken()+"%' ";
+            }
         }
         else{
-            while(it.hasNext()) {
-                key = it.next().toLowerCase();
-                searchString+= "OR lower(FILENAME) LIKE '%"+key+"%' ";
+            while(tokenizer.hasMoreTokens()) {
+                searchString+= "OR lower(FILENAME) LIKE '%"+tokenizer.nextToken()+"%' ";
             }               
         }
         if(minSize!=0 && maxSize!=0){
