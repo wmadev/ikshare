@@ -11,6 +11,7 @@ import ikshare.client.gui.ExceptionWindow;
 import ikshare.client.gui.MainScreen;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.ServerConversationListener;
+import ikshare.domain.exception.NoServerConnectionException;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CreatedAccountCommando;
 import ikshare.protocol.command.InvalidRegisterCommando;
@@ -100,9 +101,9 @@ public class CreateAccountDialog extends Dialog implements ServerConversationLis
                         data.setAccountName(txtAccountName.getText());
                         data.setAccountPassword(txtAccountPassword.getText());
                         data.setAccountEmail(txtAccountEmail.getText());
-                        ClientController.getInstance().startServerConversation();
+                        //ClientController.getInstance().startServerConversation();
                         ClientController.getInstance().createAccount(data.getAccountName(), data.getAccountPassword(), data.getAccountEmail());
-                    } catch (IOException ex) {
+                    } catch (NoServerConnectionException ex) {
                         new ExceptionWindow(ex,MainScreen.getInstance(),false);
                     }
                      }

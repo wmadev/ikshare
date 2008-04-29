@@ -9,6 +9,8 @@ import ikshare.domain.Peer;
 import ikshare.domain.SearchResult;
 import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;
+import ikshare.domain.exception.NoServerConnectionException;
+import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CreateAccountCommando;
 import ikshare.protocol.command.DownloadInformationRequestCommand;
 import ikshare.protocol.command.DownloadInformationResponseCommand;
@@ -30,6 +32,8 @@ import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class ClientController {
@@ -48,24 +52,23 @@ public class ClientController {
         return instance;
     }
 
-    public void createAccount(String accountName, String accountPassword, String accountEmail) throws IOException {
+    public void createAccount(String accountName, String accountPassword, String accountEmail) throws NoServerConnectionException {
 
         CreateAccountCommando cac = new CreateAccountCommando();
         cac.setAccountName(accountName);
         cac.setPassword(accountPassword);
         cac.setEmail(accountEmail);
-        startServerConversation();
-        serverConversation.sendCommand(cac);
+        sendCommand(cac);
     }
 
    
-    public void getDownloadInformationForResult(SearchResult rs) {
+    public void getDownloadInformationForResult(SearchResult rs) throws NoServerConnectionException {
         DownloadInformationRequestCommand dirc = new DownloadInformationRequestCommand();
         dirc.setAccountName(rs.getOwner());
         dirc.setFileName(rs.getName());
         dirc.setFileSize(rs.getSize());
         dirc.setFolderId(rs.getParentId());
-        serverConversation.sendCommand(dirc);
+        sendCommand(dirc);
     }
 
     public Transfer getTransferForDownload(DownloadInformationResponseCommand dirc) throws UnknownHostException {
@@ -77,12 +80,12 @@ public class ClientController {
         return t;
     }
 
-    public void logoff(String accountName, String password, int port) {
+    public void logoff(String accountName, String password, int port) throws NoServerConnectionException {
         LogOffCommando loc = new LogOffCommando();
         loc.setAccountName(accountName);
         loc.setPassword(password);
         loc.setPort(port);
-        serverConversation.sendCommand(loc);
+        sendCommand(loc);
     }
     
     public void startServerConversation() throws IOException{
@@ -98,23 +101,41 @@ public class ClientController {
     	}
     }
 
-    public boolean logon(String accountname,String password,int port){
+    public boolean logon(String accountname,String password,int port) throws NoServerConnectionException{
         LogOnCommando loc = new LogOnCommando();
         loc.setAccountName(accountname);
         loc.setPassword(password);
         loc.setPort(port);
-        serverConversation.sendCommand(loc);
+        sendCommand(loc);
         return true;
     }
-    public boolean findBasic(String searchId,String keyword){
+    public boolean findBasic(String searchId,String keyword) throws NoServerConnectionException{
         FindBasicCommando fbc = new FindBasicCommando();
         fbc.setKeyword(keyword);
         fbc.setSearchID(searchId);
-        serverConversation.sendCommand(fbc);
+        sendCommand(fbc);
         return true;
     }
     
-    public void findAdvancedFile(String searchId, String text, boolean keywordAnd, int typeID, long minBytes, long maxBytes) {
+    private void sendCommand(Commando c) throws NoServerConnectionException{
+        if(serverConversation == null){
+            try {
+
+                startServerConversation();
+                serverConversation.sendCommand(c);
+            } catch (IOException ex) {
+                throw new NoServerConnectionException("No connection with the server");
+            }
+            
+        }
+        else{
+            serverConversation.sendCommand(c);
+        }
+        
+        
+    }
+    
+    public void findAdvancedFile(String searchId, String text, boolean keywordAnd, int typeID, long minBytes, long maxBytes) throws NoServerConnectionException {
         FindAdvancedFileCommando fafc = new FindAdvancedFileCommando();
         fafc.setSearchID(searchId);
         fafc.setKeyword(text);
@@ -122,18 +143,18 @@ public class ClientController {
         fafc.setTypeID(typeID);
         fafc.setMinSize(minBytes);
         fafc.setMaxSize(maxBytes);
-        serverConversation.sendCommand(fafc);
+        sendCommand(fafc);
         
     }
 
-    public void findAdvancedFolder(String searchId, String text, boolean keywordAnd, long minBytes, long maxBytes) {
+    public void findAdvancedFolder(String searchId, String text, boolean keywordAnd, long minBytes, long maxBytes) throws NoServerConnectionException {
         FindAdvancedFolderCommando fafc = new FindAdvancedFolderCommando();
         fafc.setSearchID(searchId);
         fafc.setKeyword(text);
         fafc.setTextAnd(keywordAnd);
         fafc.setMinSize(minBytes);
         fafc.setMaxSize(maxBytes);
-        serverConversation.sendCommand(fafc);
+        sendCommand(fafc);
     }
 
     public boolean share(String accountName,File root) throws IOException{
