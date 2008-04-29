@@ -333,14 +333,14 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         return grpAdvanced;
     }
 
-    private void createTabItem(SearchResult sr) {
+    private void createTabItem(SearchResult sr, String keyword) {
         final CTabItem result = new CTabItem(folder, SWT.CLOSE);
         
         searches.put(sr.getId(), result);
         if (new File(ICON_SEARCH).exists()) {
             result.setImage(new Image(Display.getCurrent(), ICON_SEARCH));
         }
-        result.setText(sr.getId());
+        result.setText(keyword);
         result.addDisposeListener(new DisposeListener() {
 
             public void widgetDisposed(DisposeEvent e) {
@@ -411,7 +411,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                     if (searches.containsKey(sr.getId())) {
                         updateTabItem(searches.get(sr.getId()), sr);
                     } else {
-                        createTabItem(sr);
+                        createTabItem(sr, frc.getSearchKeyword());
                     }
                 }
                 else if(c instanceof DownloadInformationResponseCommand){
