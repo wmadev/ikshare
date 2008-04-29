@@ -194,38 +194,54 @@ public class OracleFileStorage implements FileStorage {
         }
         switch (typeID){
             case 1:             //audio
-                searchString+="AND (lower(FILENAME) LIKE '%"+audioExtensions[0]+"' ";
-                for( int i=1;i<audioExtensions.length;i++) {
-                searchString+= "OR lower(FILENAME) LIKE '%"+audioExtensions[i]+"' ";
+                if(audioExtensions.length!=0){
+                    searchString+="AND (lower(FILENAME) LIKE '%"+audioExtensions[0]+"' ";
+                    for( int i=1;i<audioExtensions.length;i++) {
+                    searchString+= "OR lower(FILENAME) LIKE '%"+audioExtensions[i]+"' ";
+                    }
+                    searchString+=") ";
                 }
-                searchString+=") ";
                 break;
             case 2:             //video
-                searchString+="AND (lower(FILENAME) LIKE '%"+videoExtensions[0]+"' ";
-                for( int i=1;i<videoExtensions.length;i++) {
-                searchString+= "OR lower(FILENAME) LIKE '%"+videoExtensions[i]+"' ";
+                if(videoExtensions.length!=0){
+                    searchString+="AND (lower(FILENAME) LIKE '%"+videoExtensions[0]+"' ";
+                    for( int i=1;i<videoExtensions.length;i++) {
+                    searchString+= "OR lower(FILENAME) LIKE '%"+videoExtensions[i]+"' ";
+                    }
+                    searchString+=") ";
                 }
-                searchString+=") ";
                 break;
             case 3:             //text
-                searchString+="AND (lower(FILENAME) LIKE '%"+textExtensions[0]+"' ";
-                for( int i=1;i<textExtensions.length;i++) {
-                searchString+= "OR lower(FILENAME) LIKE '%"+textExtensions[i]+"' ";
+                if(textExtensions.length!=0){
+                    searchString+="AND (lower(FILENAME) LIKE '%"+textExtensions[0]+"' ";
+                    for( int i=1;i<textExtensions.length;i++) {
+                    searchString+= "OR lower(FILENAME) LIKE '%"+textExtensions[i]+"' ";
+                    }
+                    searchString+=") ";
                 }
-                searchString+=") ";
                 break;
             case 4:
-                searchString+="AND (lower(FILENAME) NOT LIKE '%"+audioExtensions[0]+"' ";
+                if(audioExtensions.length!=0){
+                    searchString+="AND (lower(FILENAME) NOT LIKE '%"+audioExtensions[0]+"' ";
+                }
                 for( int i=1;i<audioExtensions.length;i++) {
                 searchString+= "AND lower(FILENAME) NOT LIKE '%"+audioExtensions[i]+"' ";
+                }
+                if(audioExtensions.length==0 && videoExtensions.length!=0){
+                    searchString+="AND (lower(FILENAME) NOT LIKE '%"+videoExtensions[0]+"' ";
                 }
                 for( int i=0;i<videoExtensions.length;i++) {
                 searchString+= "AND lower(FILENAME) NOT LIKE '%"+videoExtensions[i]+"' ";
                 }
+                if(audioExtensions.length==0 && videoExtensions.length==0 && textExtensions.length!=0){
+                    searchString+="AND (lower(FILENAME) NOT LIKE '%"+textExtensions[0]+"' ";
+                }
                 for( int i=0;i<textExtensions.length;i++) {
                 searchString+= "AND lower(FILENAME) NOT LIKE '%"+textExtensions[i]+"' ";
                 }
-                searchString+=") ";
+                if(audioExtensions.length!=0 || videoExtensions.length!=0 || textExtensions.length!=0){
+                    searchString+=") ";
+                }
                 break;
         }
         if(minSize!=0 && maxSize!=0){
