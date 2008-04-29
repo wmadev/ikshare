@@ -23,7 +23,10 @@ class DefaultClientConfiguration extends ClientConfiguration {
         date.set(Calendar.YEAR, 1986);
         date.set(Calendar.MONTH, 8);
         super.setBirthday(date);
-        super.setSharedFolder(new File(System.getProperty("user.home")));
+        if(!new File(System.getProperty("user.home")+System.getProperty("file.separator")+"ikshare").exists()){
+            new File(System.getProperty("user.home")+System.getProperty("file.separator")+"ikshare").mkdir();
+        }
+        super.setSharedFolder(new File(System.getProperty("user.home")+System.getProperty("file.separator")+"ikshare"));
         
         // Default network settings
         super.setIkshareServerAddress("127.0.0.1");
