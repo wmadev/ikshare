@@ -99,4 +99,9 @@ public class MediaPlayerPanel extends AbstractPanel {
 	
 	        
     }
+
+    @Override
+    public void initialiseFocus() {
+        
+    }
 }
