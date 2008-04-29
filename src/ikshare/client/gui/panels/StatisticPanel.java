@@ -173,4 +173,9 @@ public class StatisticPanel extends AbstractPanel{
 		this.redraw();
 	}
 
+    @Override
+    public void initialiseFocus() {
+
+    }
+
 }
