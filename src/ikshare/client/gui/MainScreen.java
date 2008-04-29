@@ -5,6 +5,7 @@ import ikshare.client.gui.panels.AboutPanel;
 import ikshare.client.gui.panels.ChatPanel;
 import ikshare.client.gui.panels.HelpPanel;
 import ikshare.client.gui.panels.HomePanel;
+import ikshare.client.gui.panels.MediaPlayerPanel;
 import ikshare.client.gui.panels.SearchPanel;
 import ikshare.client.gui.panels.SettingsPanel;
 import ikshare.client.gui.panels.StatisticPanel;
@@ -59,6 +60,7 @@ public class MainScreen {
         doInfobar();
 
         addPanel(new HomePanel(ClientConfigurationController.getInstance().getString("home"),"resources/icons/tb_home.png"));
+        addPanel(new MediaPlayerPanel(ClientConfigurationController.getInstance().getString("media"),"resources/icons/tb_media.png"));
         addPanel (new SearchPanel(ClientConfigurationController.getInstance().getString("search"),"resources/icons/tb_search.png"));
         addPanel (new TransferPanel(ClientConfigurationController.getInstance().getString("transfer"),"resources/icons/tb_down.png"));
         addPanel (new ChatPanel(ClientConfigurationController.getInstance().getString("chat"),"resources/icons/tb_chat.png"));
@@ -66,6 +68,7 @@ public class MainScreen {
         addPanel (new StatisticPanel(ClientConfigurationController.getInstance().getString("statistics"),"resources/icons/tb_stat.png"));
         addPanel (new HelpPanel(ClientConfigurationController.getInstance().getString("help"),"resources/icons/tb_help.png"));
         addPanel (new AboutPanel(ClientConfigurationController.getInstance().getString("about"),"resources/icons/tb_about.png"));
+        
         
         shell.open();
         shell.forceActive();
@@ -77,6 +80,7 @@ public class MainScreen {
                 }
         }
         ClientConfigurationController.getInstance().saveConfiguration();
+        
         display.dispose();
         System.exit(0);
     }
