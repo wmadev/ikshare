@@ -20,7 +20,6 @@ public class MainScreen {
     private Display display;
     private Shell shell;
     private java.util.List<AbstractPanel> panels;
-    private Menu menuBar;
     private ToolBar toolBar;
     private InfoBar infoBar;
     private Composite parent;
@@ -49,8 +48,7 @@ public class MainScreen {
         display = new Display();
         shell = new Shell(display);
         panels = new ArrayList<AbstractPanel>();
-        // Add menubar to the shell
-        //doMenu();
+        
         // Make layout of the shell
         doLayout();
         // Add toolbar to the shell
@@ -97,13 +95,7 @@ public class MainScreen {
     public boolean isOpen() {
             return isOpen;
     }
-    /*
-     * Makes a new menubar and adds it to the mainscreen.
-     */
-    private void doMenu() {
-        MenuBar b = new MenuBar(shell,SWT.BAR);
-        shell.setMenuBar(b.getMenu());
-    }
+    
     /*
      * Makes a new toolbar and adds it to the mainscreen.
      * Sets the layout of the toolbar in the shell (1 vertical grid and 2 horizontal grids)
