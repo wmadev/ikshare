@@ -11,6 +11,7 @@ public class FoundResultCommando extends Commando {
     private String accountName;
     private boolean folder;
     private long size;
+    private String searchKeyword;
     
     public FoundResultCommando() {
         super();
@@ -19,15 +20,16 @@ public class FoundResultCommando extends Commando {
     public FoundResultCommando(String commandoString) {
         super(commandoString);
         setSearchID(commandoLine.get(1));
-        if(commandoLine.get(2).equals("D")){
+        setSearchKeyword(commandoLine.get(2));
+        if(commandoLine.get(3).equals("D")){
             setFolder(true);
         }else{
             setFolder(false);
         }
-        setName(commandoLine.get(3));
-        setAccountName(commandoLine.get(4));
-        setSize(Long.parseLong(commandoLine.get(5)));
-        setParentId(Integer.parseInt(commandoLine.get(6)));
+        setName(commandoLine.get(4));
+        setAccountName(commandoLine.get(5));
+        setSize(Long.parseLong(commandoLine.get(6)));
+        setParentId(Integer.parseInt(commandoLine.get(7)));
     }
 
     public int getParentId() {
@@ -36,6 +38,14 @@ public class FoundResultCommando extends Commando {
 
     public void setParentId(int parentid) {
         this.parentid = parentid;
+    }
+
+    public String getSearchKeyword() {
+        return searchKeyword;
+    }
+
+    public void setSearchKeyword(String searchKeyword) {
+        this.searchKeyword = searchKeyword;
     }
 
     
@@ -85,7 +95,7 @@ public class FoundResultCommando extends Commando {
     @Override
     public String toString() {
         String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("foundresult")+del+getSearchID()+del+(isFolder()?"D":"F")+
+        return commandoBundle.getString("foundresult")+del+getSearchID()+del+getSearchKeyword()+del+(isFolder()?"D":"F")+
                 del+getName()+
                 del+getAccountName()+del+getSize()+del+getParentId();
     }
