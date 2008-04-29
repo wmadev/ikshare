@@ -42,7 +42,7 @@ public class ClientConfigurationController {
         int[] info = new int[2];
         info[0] = -1;
         info[1] = 0;
-        countNumber(info, getConfiguration().getSharedFolder());
+        countNumber(info, config.getSharedFolder());
         //System.out.println(getString("shareinfofolder")+info[0]+" "+getString("shareinfofile")+" "+info[1]);
         return info;
     }

@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.StringTokenizer;
 
 public class OracleFileStorage implements FileStorage {
     private static OracleFileStorage instance;
@@ -178,25 +179,17 @@ public class OracleFileStorage implements FileStorage {
     public List<SearchResult> advancedFileSearch(String keyword, boolean textAnd, int typeID, long minSize, long maxSize) throws DatabaseException {
         ArrayList<SearchResult> results = null;
         String searchString="SELECT fi.FOLDERID,FILENAME,ACCOUNTNAME,FILESIZE FROM SHAREDFILES fi JOIN SHAREDFOLDERS fo ON fo.FOLDERID=fi.FOLDERID WHERE lower(FILENAME) LIKE '";
-        List<String> keys= new ArrayList<String>();
-        int startIndex=0;
-        while(startIndex<keyword.length() && keyword.indexOf(" ", startIndex)!=-1){
-            keys.add(keyword.substring(startIndex, keyword.indexOf(" ", startIndex)));
-            startIndex=keyword.indexOf(" ", startIndex)+1;
-        }
-        Iterator<String> it = keys.iterator();
-        String key=it.next().toLowerCase();
-        searchString+="%"+key+"%' ";
+        keyword = keyword.toLowerCase();
+        StringTokenizer tokenizer = new StringTokenizer(keyword," ");
+        searchString+="%"+tokenizer.nextToken()+"%' ";
         if(textAnd){
-            while(it.hasNext()) {
-                key = it.next().toLowerCase();
-                searchString+= "AND lower(FILENAME) LIKE '%"+key+"%' ";
-            }               
+            while(tokenizer.hasMoreTokens()){
+                searchString+= "AND lower(FILENAME) LIKE '%"+tokenizer.nextToken()+"%' ";
+            }
         }
         else{
-            while(it.hasNext()) {
-                key = it.next().toLowerCase();
-                searchString+= "OR lower(FILENAME) LIKE '%"+key+"%' ";
+            while(tokenizer.hasMoreTokens()) {
+                searchString+= "OR lower(FILENAME) LIKE '%"+tokenizer.nextToken()+"%' ";
             }               
         }
         switch (typeID){
@@ -206,18 +199,21 @@ public class OracleFileStorage implements FileStorage {
                 searchString+= "OR lower(FILENAME) LIKE '%"+audioExtensions[i]+"' ";
                 }
                 searchString+=") ";
+                break;
             case 2:             //video
                 searchString+="AND (lower(FILENAME) LIKE '%"+videoExtensions[0]+"' ";
                 for( int i=1;i<videoExtensions.length;i++) {
                 searchString+= "OR lower(FILENAME) LIKE '%"+videoExtensions[i]+"' ";
                 }
                 searchString+=") ";
+                break;
             case 3:             //text
                 searchString+="AND (lower(FILENAME) LIKE '%"+textExtensions[0]+"' ";
                 for( int i=1;i<textExtensions.length;i++) {
                 searchString+= "OR lower(FILENAME) LIKE '%"+textExtensions[i]+"' ";
                 }
                 searchString+=") ";
+                break;
             case 4:
                 searchString+="AND (lower(FILENAME) NOT LIKE '%"+audioExtensions[0]+"' ";
                 for( int i=1;i<audioExtensions.length;i++) {
@@ -230,6 +226,7 @@ public class OracleFileStorage implements FileStorage {
                 searchString+= "AND lower(FILENAME) NOT LIKE '%"+textExtensions[i]+"' ";
                 }
                 searchString+=") ";
+                break;
         }
         if(minSize!=0 && maxSize!=0){
             searchString+= "AND FILESIZE BETWEEN "+minSize+" AND "+maxSize+" ";
@@ -244,6 +241,7 @@ public class OracleFileStorage implements FileStorage {
         Connection conn = OracleDatabaseFactory.getConnection();
         try{
             Statement stmt=conn.createStatement();
+            System.out.println("QUERY: "+searchString);
             ResultSet result=stmt.executeQuery(searchString);
             results =new ArrayList<SearchResult>();
             while(result.next()){
