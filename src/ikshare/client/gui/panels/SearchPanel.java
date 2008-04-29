@@ -38,6 +38,8 @@ import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
+import org.eclipse.swt.events.KeyAdapter;
+import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
@@ -102,6 +104,14 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         cmpSearch.setLayoutData(gd);
         final StackLayout layout = new StackLayout();
         cmpSearch.setLayout(layout);
+        cmpSearch.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if(e.character==SWT.CR){
+                    search();
+                }
+                
+            }});
         layout.topControl = drawBasicSearch(cmpSearch);
 
         //SearchResults
@@ -217,6 +227,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                     }
                     else{
                         btnSearch.setEnabled(true);
+                        btnSearch.setFocus();
                     }
                 }
             }
