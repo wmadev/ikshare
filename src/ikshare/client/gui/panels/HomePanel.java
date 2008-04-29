@@ -11,6 +11,7 @@ import ikshare.client.gui.dialogs.CreateAccountDialogData;
 import ikshare.domain.PeerFacade;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.ServerConversationListener;
+import ikshare.domain.exception.NoServerConnectionException;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.LogNiLukNiCommando;
 import ikshare.protocol.command.WelcomeCommando;
@@ -18,6 +19,8 @@ import ikshare.protocol.command.WelcomeCommando;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
@@ -95,28 +98,33 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                 if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logon"))){
                     
                 	try {
-                        ClientController.getInstance().startServerConversation();
+                        //ClientController.getInstance().startServerConversation();
                         ClientController.getInstance().logon(txtAccountName.getText(), txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
                         ClientController.getInstance().share(txtAccountName.getText(), ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
                     	PeerFacade.getInstance();
-                	} catch (IOException ex) {
-                        new ExceptionWindow(ex,MainScreen.getInstance(),false);
-                    }
+                	}
+                        catch(IOException ex){
+                            new ExceptionWindow(ex,MainScreen.getInstance(),false);
+                        }
+                        catch (NoServerConnectionException ex) {
+                            new ExceptionWindow(ex,MainScreen.getInstance(),false);
+                        }
                    
 
                 }
                 else if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logoff"))){
-                    ClientController.getInstance().logoff(
-                        txtAccountName.getText(),
-                        txtAccountPassword.getText(),
-                        ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
+                    try {
+                        ClientController.getInstance().logoff(txtAccountName.getText(), txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
                         ClientController.getInstance().stopServerConversation();
                         lblStatus.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
                         lblStatus.setText(ClientConfigurationController.getInstance().getString("disconnected"));
                         btnConnect.setText(ClientConfigurationController.getInstance().getString("logon"));
-                        if(new File(ICON_LOGON).exists()){
+                        if (new File(ICON_LOGON).exists()) {
                             btnConnect.setImage(new Image(Display.getCurrent(), ICON_LOGON));
                         }
+                    } catch (NoServerConnectionException ex) {
+                        new ExceptionWindow(ex,MainScreen.getInstance(),false);
+                    }
                 }
             }
         });
@@ -126,9 +134,13 @@ public class HomePanel extends AbstractPanel implements ServerConversationListen
                 CreateAccountDialog dialog = new CreateAccountDialog(getShell());
                 CreateAccountDialogData data = dialog.open();
                 if(data!=null){
-                    txtAccountName.setText(data.getAccountName());
-                    txtAccountPassword.setText(data.getAccountPassword());
-                    ClientController.getInstance().logon(data.getAccountName(), data.getAccountPassword(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
+                    try {
+                        txtAccountName.setText(data.getAccountName());
+                        txtAccountPassword.setText(data.getAccountPassword());
+                        ClientController.getInstance().logon(data.getAccountName(), data.getAccountPassword(), ClientConfigurationController.getInstance().getConfiguration().getFileTransferPort());
+                    } catch (NoServerConnectionException ex) {
+                        new ExceptionWindow(ex,MainScreen.getInstance(),false);
+                    }
                 }
             }
         });
