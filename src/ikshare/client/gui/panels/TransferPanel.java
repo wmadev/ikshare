@@ -279,7 +279,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 
 				new Runnable() {
 					public void run(){
-						System.out.println(transfer);
+						System.out.println(transfer.getState());
 						
 						TableItem item = null;
 						if(transfer.getState() == TransferState.DOWNLOADING){
@@ -295,6 +295,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 						else if(transfer.getState() == TransferState.UPLOADING){
 							item = uploadHashMap.get(transfer.getId());
 							if (item != null) {
+								System.out.println(transfer.getSpeed());
 								item.setText(TransferPanel.sizePos, UtilityClass.formatFileSize(transfer.getFileSize()));
 								item.setText(TransferPanel.speedPos, UtilityClass.formatFileSize(transfer.getSpeed()));
 								item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("uploading"));
