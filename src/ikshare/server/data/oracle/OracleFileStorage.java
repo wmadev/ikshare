@@ -178,7 +178,7 @@ public class OracleFileStorage implements FileStorage {
     
     public List<SearchResult> advancedFileSearch(String keyword, boolean textAnd, int typeID, long minSize, long maxSize) throws DatabaseException {
         ArrayList<SearchResult> results = null;
-        String searchString="SELECT fi.FOLDERID,FILENAME,ACCOUNTNAME,FILESIZE FROM SHAREDFILES fi JOIN SHAREDFOLDERS fo ON fo.FOLDERID=fi.FOLDERID WHERE lower(FILENAME) LIKE '";
+        String searchString="WITH y AS (SELECT x.USERNAME FROM ONLINE_USERS x WHERE x.ACTION='LOGON' AND x.USERNAME NOT IN ( SELECT USERNAME FROM ONLINE_USERS WERE ACTION = 'LOGOFF' AND TIMESTAMP> x.TIMESTAMP AND USERNAME=x.USERNAME ) ) SELECT fi.FOLDERID,FILENAME,ACCOUNTNAME,FILESIZE FROM SHAREDFILES fi JOIN SHAREDFOLDERS fo ON fo.FOLDERID=fi.FOLDERID WHERE fo.ACCOUNTNAME in ( SELECT y.USERNAME FROM y ) and lower(FILENAME) LIKE '";
         keyword = keyword.toLowerCase();
         StringTokenizer tokenizer = new StringTokenizer(keyword," ");
         searchString+="%"+tokenizer.nextToken()+"%' ";
