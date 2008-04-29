@@ -65,4 +65,9 @@ public class AboutPanel extends AbstractPanel {
 		
 		versie.setText(output);
 	}
+
+    @Override
+    public void initialiseFocus() {
+        
+    }
 }
