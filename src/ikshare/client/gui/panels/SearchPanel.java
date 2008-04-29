@@ -20,6 +20,7 @@ import ikshare.domain.exception.NoServerConnectionException;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.DownloadInformationResponseCommand;
 import ikshare.protocol.command.FoundResultCommando;
+import ikshare.protocol.command.NoResultsFoundCommando;
 import java.io.File;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -211,6 +212,8 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         lblSearchBasic.setLayoutData(gd);
         txtKeywordBasic = new Text(grpBasic, SWT.BORDER);
         txtKeywordBasic.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
+        boolean focus = txtKeywordBasic.setFocus();
+        System.out.println(focus);
         txtKeywordBasic.addListener(SWT.Modify, new Listener() {
 
             public void handleEvent(Event event) {
@@ -384,6 +387,31 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         addTableColumn(tblResults, ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
         addTableRow(sr, tblResults);
     }
+    
+    private void createTabItem(String notfoundkeyword) {
+        final CTabItem result = new CTabItem(folder, SWT.CLOSE);
+        
+        if (new File(ICON_SEARCH).exists()) {
+            result.setImage(new Image(Display.getCurrent(), ICON_SEARCH));
+        }
+        result.setText("No results");
+        
+        result.addDisposeListener(new DisposeListener() {
+
+            public void widgetDisposed(DisposeEvent e) {
+                result.dispose();
+            }
+            
+        });
+        folder.setSelection(result);
+        
+        Composite cmpResult1 = new Composite(folder, SWT.NONE);
+        cmpResult1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
+        cmpResult1.setLayout(new GridLayout(1, false));
+        new Label(cmpResult1,SWT.NONE).setText("No result found for: "+notfoundkeyword);
+        result.setControl(cmpResult1);
+       
+    }
 
     private void addTableRow(SearchResult sr, Table table) {
         TableItem item = new TableItem(table, SWT.NONE);
@@ -413,6 +441,9 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                     } else {
                         createTabItem(sr, frc.getSearchKeyword());
                     }
+                }
+                else if(c instanceof NoResultsFoundCommando){
+                    createTabItem(((NoResultsFoundCommando)c).getKeyword());
                 }
                 else if(c instanceof DownloadInformationResponseCommand){
                     try {
@@ -481,21 +512,28 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     }
 
     public void keyPressed(KeyEvent e) {
-        if(btnSearch.isEnabled()){
-            if(e.character==SWT.CR){
-                    search();
-            }
-            else if(e.character==SWT.TAB && (rbFile.isFocusControl() || rbFolder.isFocusControl() || txtKeywordBasic.isFocusControl())){
-                btnSearch.setFocus();
-                
-            }
-               
-        }
-       
-                
+                        
     }
 
     public void keyReleased(KeyEvent e) {
-        
+        if(btnSearch.isEnabled()){
+                if(e.character == ' ' && !advanced){
+                    new ExceptionWindow(new Exception("GEen spaties"), MainScreen.getInstance(), false);
+                    txtKeywordBasic.setText(txtKeywordBasic.getText().substring(0,txtKeywordBasic.getText().length()-1));
+                }
+                else if(e.keyCode == SWT.CR){
+                    search();
+                    btnSearch.setFocus();
+                }
+        }
+    }
+
+    @Override
+    public void initialiseFocus() {
+        if(advanced){
+            txtKeywordAdvanced.setFocus();
+        }else{
+            txtKeywordBasic.setFocus();
+        }
     }
 }
