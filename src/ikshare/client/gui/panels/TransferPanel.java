@@ -430,17 +430,28 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 	}
 
 	public void transfersCleared() {
-		// TODO Auto-generated method stub
+
 		for (int i=0; i<tblDownloadTransfer.getItemCount(); i++) {
-			if (tblDownloadTransfer.getItem(i).getData("transfer")==null)
-				tblDownloadTransfer.remove(i);
+			((ProgressBar)tblDownloadTransfer.getItem(i).getData("progressbar")).dispose();
 		}
-		tblDownloadTransfer.redraw();
+		
+		
 		for (int i=0; i<tblUploadTransfer.getItemCount(); i++) {
-			if (tblUploadTransfer.getItem(i).getData("transfer")==null)
-				tblUploadTransfer.remove(i);
+			((ProgressBar)tblUploadTransfer.getItem(i).getData("progressbar")).dispose();
 		}
-		tblUploadTransfer.redraw();
+		
+		
+		/*
+		tblDownloadTransfer.removeAll();
+		tblUploadTransfer.removeAll();
+		*/
+	}
+
+
+	@Override
+	public void initialiseFocus() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }
