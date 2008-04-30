@@ -6,9 +6,12 @@ import ikshare.client.threads.ServerConversationThread;
 import ikshare.client.threads.ShareSynchronisationThread;
 import ikshare.domain.IKShareFile;
 import ikshare.domain.Peer;
+import ikshare.domain.PeerFacade;
 import ikshare.domain.SearchResult;
 import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;
+import ikshare.domain.event.EventController;
+import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.domain.exception.NoServerConnectionException;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CreateAccountCommando;
@@ -19,6 +22,7 @@ import ikshare.protocol.command.FindAdvancedFolderCommando;
 import ikshare.protocol.command.FindBasicCommando;
 import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
+import ikshare.protocol.command.WelcomeCommando;
 import ikshare.protocol.command.chat.ChatEnterRoomCommando;
 import ikshare.protocol.command.chat.ChatLeaveRoomCommando;
 import ikshare.protocol.command.chat.ChatLogOffCommando;
@@ -36,13 +40,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 
-public class ClientController {
+public class ClientController implements ServerConversationListener{
     private static ClientController instance;
     private ExecutorService executorService;
     private ServerConversationThread serverConversation;
     private ChatServerConversationThread chatServerConversation;
     
     private ClientController(){
+        EventController.getInstance().addServerConversationListener(this);
         executorService = Executors.newCachedThreadPool();
     }
     
@@ -217,5 +222,18 @@ public class ClientController {
     		chatServerConversation.stop();
     		chatServerConversation = null;
     	}
+    }
+
+    public void receivedCommando(Commando c) {
+        if( c instanceof WelcomeCommando){
+            try {
+                WelcomeCommando wc = (WelcomeCommando) c;
+                Peer p = new Peer(wc.getAccountName(), InetAddress.getByName(wc.getIpAddress()));
+                PeerFacade.getInstance().setPeer(p);
+            } catch (UnknownHostException ex) {
+                ex.printStackTrace();
+                // TODO betere afhandeling
+            }
+        }
     }
 }

@@ -57,18 +57,18 @@ public class PeerFacade {
 	protected PeerFacade() {
 		
 		//test
-		try {
+		/*try {
 			peer = new Peer("jonas", InetAddress.getByName(ClientConfigurationController.getInstance().getConfiguration().getMyAddress()));
 			
 			//System.out.println(InetAddress.);
 			/*
 			peer = new Peer("Pizarro", InetAddress.getLocalHost());
 			otherPeer = new Peer("Monet", InetAddress.getByName("192.168.1.3"));
-			*/
+			*//*
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		}*/
 
 		peerFileServer = new PeerFileServer();
 		peerFileServer.startServer();
