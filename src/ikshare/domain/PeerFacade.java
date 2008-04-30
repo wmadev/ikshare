@@ -1,5 +1,6 @@
 package ikshare.domain;
 
+import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
 import ikshare.protocol.command.CancelTransferCommando;
 import ikshare.protocol.command.FileRequestCommando;
@@ -57,7 +58,9 @@ public class PeerFacade {
 		
 		//test
 		try {
-			peer = new Peer("jonas", InetAddress.getByName("192.168.16.237"));
+			peer = new Peer("jonas", InetAddress.getByName(ClientConfigurationController.getInstance().getConfiguration().getMyAddress()));
+			
+			//System.out.println(InetAddress.);
 			/*
 			peer = new Peer("Pizarro", InetAddress.getLocalHost());
 			otherPeer = new Peer("Monet", InetAddress.getByName("192.168.1.3"));
