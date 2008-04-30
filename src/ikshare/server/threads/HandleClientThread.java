@@ -287,6 +287,7 @@ public class HandleClientThread implements Runnable{
                 if (ServerController.getInstance().logon(user)) {
                     WelcomeCommando wc = new WelcomeCommando();
                     wc.setAccountName(user.getAccountName());
+                    wc.setIpAddress(clientSocket.getInetAddress().getHostAddress());
                     outputWriter.println(wc.toString());
                 }
             }
@@ -305,58 +306,7 @@ public class HandleClientThread implements Runnable{
         }
     }
 
-    /*private void handleShareCommando(Commando c) {
-        ShareCommando sc = (ShareCommando)c;
-        StringTokenizer tokenizer = new StringTokenizer(sc.getShares(),";");
-        String token = tokenizer.nextToken();
-        String[] split = token.split(":");
-        SharedFolder root = new SharedFolder(true, sc.getAccountName(),split[0]);
-        parseShares(root,Integer.parseInt(split[2]),tokenizer);
-        try {
-            ServerController.getInstance().addShares(sc.getAccountName(), root);
-            printTree(root);
-        }
-        catch (DatabaseException ex) {
-            ServerErrorCommando sec = new ServerErrorCommando();
-            sec.setMessage(ex.getMessage());
-            outputWriter.println(sec.toString());
-        }
-    }
-        private static void printTree(SharedItem root) {
-        if(root.isFolder()){
-            System.out.println("Folder: "+root.getState()+" : "+
-                    ((SharedFolder)root).getFolderID()+" : "+
-                    ((SharedFolder)root).getParentID()+" : "+
-                    ((SharedFolder)root).getName());
-            for(SharedItem item:root.getSharedItems()){
-                printTree((SharedItem)item);    
-            }
-            
-        }
-        else {
-            System.out.println("File: "+root.getState()+" : "+((SharedFile)root).getFolderID()+" : "+((SharedFile)root).getName());
-        }
-    }
     
-    private void parseShares(SharedFolder root,int number,StringTokenizer tokenizer){
-        while(number>0){
-            String token = tokenizer.nextToken();
-            String[] split = token.split(":");
-            if(split[1].equalsIgnoreCase("DIR") && Integer.parseInt(split[2])>0){
-                SharedFolder folder = new SharedFolder(true, root.getAccountName(),
-                        split[0].substring(split[0].indexOf(System.getProperty("file.separator"),2)));
-                root.getSharedItems().add(folder);
-                parseShares(folder, Integer.parseInt(split[2]), tokenizer);
-            }
-            else{
-                if(Long.parseLong(split[2])>0){
-                    root.getSharedItems().add(new SharedFile(false,split[0],Long.parseLong(split[2])));
-                }
-            }
-            number--;
-        }
-    }*/
-
     private void handleShareSynchronisation(Commando c) {
         StartShareSynchronisationCommando sssc = (StartShareSynchronisationCommando)c;
         accountName = sssc.getAccountName();
