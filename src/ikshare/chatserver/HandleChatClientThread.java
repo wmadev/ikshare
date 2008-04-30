@@ -11,6 +11,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  *
@@ -48,7 +49,8 @@ public class HandleChatClientThread implements Runnable
                 String input = inputReader.readLine();
                 if(input!=null)
                 {
-                	System.out.println("[INC] " + input);
+                	if(ChatServer.debug)
+                		System.out.println("[INC] " + input);
                 	
                 	try
                 	{
@@ -84,16 +86,25 @@ public class HandleChatClientThread implements Runnable
                 	}
                 	catch(CommandNotFoundException excep)
                 	{
-                		System.out.println("Invalid command: " + excep.getMessage());
+                		if(ChatServer.debug)
+                			System.out.println("Invalid command: " + excep.getMessage());
                 	}
                 }
                 else
                 	wait(1); //wait 1 millisecond
             }
         }
+        catch(SocketException se)
+        {
+        	if(client != null)
+        		ChatServerController.getInstance().ClientLogsOff(client);
+        	Stop();
+        }
         catch(Exception e)
         {
-            e.printStackTrace();
+        	if(ChatServer.debug)
+            	e.printStackTrace();
+            Stop();
         }
     }
     
@@ -150,13 +161,10 @@ public class HandleChatClientThread implements Runnable
     {
         ChatClient toFind = ChatServerController.getInstance().GetClientByName(command.getNickName());
         
-        if(toFind != null)
+        if(toFind != null && toFind.getNickName().equals(client.getNickName()))
         {
-            if(toFind.getIP()==clientSocket.getInetAddress())
-            {
-                ChatServerController.getInstance().ClientLogsOff(toFind);
-                Stop();
-            }
+            ChatServerController.getInstance().ClientLogsOff(toFind);
+            Stop();
         }
     }
    
@@ -175,7 +183,8 @@ public class HandleChatClientThread implements Runnable
     
     public void SendMessage(Commando command)
     {
-    	System.out.println("[OUT] " + command.toString());
+    	if(ChatServer.debug)
+    		System.out.println("[OUT] " + command.toString());
     	outputWriter.println(command.toString());
     }
     
@@ -190,7 +199,8 @@ public class HandleChatClientThread implements Runnable
     	}
     	catch(Exception e)
     	{
-    		e.printStackTrace();
+    		if(ChatServer.debug)
+    			e.printStackTrace();
     	}
     }
 }

@@ -1,5 +1,6 @@
 package ikshare.client.threads;
 
+import ikshare.client.ClientController;
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
 import ikshare.protocol.command.Commando;
@@ -17,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 
 /**
  *
@@ -31,6 +33,9 @@ public class ChatServerConversationThread implements Runnable
     
     public ChatServerConversationThread() throws IOException
     {    
+    	System.out.println("Connecting to chatserver on: " + ClientConfigurationController.getInstance().getConfiguration().getChatServerAddress() + " : " +
+            ClientConfigurationController.getInstance().getConfiguration().getChatServerPort());
+    	
         serverConnection = new Socket(
             InetAddress.getByName(ClientConfigurationController.getInstance().getConfiguration().getChatServerAddress()),
             ClientConfigurationController.getInstance().getConfiguration().getChatServerPort());
@@ -67,8 +72,16 @@ public class ChatServerConversationThread implements Runnable
                 }
             }
             serverConnection.close();
-        } catch (Exception ex) {
+        } 
+        catch (SocketException se)
+        {
+        	EventController.getInstance().triggerChatServerInterupt("connection interupted");
+        	ClientController.getInstance().stopChatServerConversation();
+        }
+        catch (Exception ex) 
+        {
             ex.printStackTrace();
+            ClientController.getInstance().stopChatServerConversation();
         }
     }
     

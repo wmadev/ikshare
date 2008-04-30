@@ -39,7 +39,6 @@ public class ChatServerController {
         	testRoom.setRoomName("test room " + i);
         	rooms.add(testRoom);
         }
-
     }
     
     public static ChatServerController getInstance()
@@ -149,7 +148,6 @@ public class ChatServerController {
 		
 		if(!room.HasClient(client))
 		{
-			System.out.print( ">> room " + roomName + " has users: ");
 			for(ChatClient chClient : room.getClients())
 			{
 				System.out.print(chClient.getNickName() + " ");
