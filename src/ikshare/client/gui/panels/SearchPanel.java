@@ -214,8 +214,6 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         lblSearchBasic.setLayoutData(gd);
         txtKeywordBasic = new Text(grpBasic, SWT.BORDER);
         txtKeywordBasic.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
-        boolean focus = txtKeywordBasic.setFocus();
-        System.out.println(focus);
         txtKeywordBasic.addListener(SWT.Modify, new Listener() {
 
             public void handleEvent(Event event) {
