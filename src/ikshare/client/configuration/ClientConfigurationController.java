@@ -47,15 +47,17 @@ public class ClientConfigurationController {
         return info;
     }
     private void countNumber(int[] counter,File f){
-        if(f.isDirectory()){
-            counter[0]++;
-            for(File sub:f.listFiles()){
-                countNumber(counter, sub);
-            }
-        }
-        else{
-            counter[1]++;
-        }
+    	if (f != null) {
+	        if(f.isDirectory()){
+	            counter[0]++;
+	            for(File sub:f.listFiles()){
+	                countNumber(counter, sub);
+	            }
+	        }
+	        else{
+	            counter[1]++;
+	        }
+    	}
     }
     
     public void loadConfiguration() {
@@ -148,6 +150,12 @@ public class ClientConfigurationController {
             	}
             }else if(child.getNodeName().equals("chat-server-address")) {
             	config.setChatServerAddress(((Element)child).getTextContent());
+            }else if(child.getNodeName().equals("my-address")) {
+            	try {
+            		config.setMyAddress(((Element)child).getTextContent());
+            	} catch (Exception e){
+            		config.setMyAddress("192.168.1.1");
+            	}
             }
         }
     }
@@ -234,6 +242,12 @@ public class ClientConfigurationController {
         Element chatServerPort = doc.createElement("chat-server-port");
         chatServerPort.appendChild(doc.createTextNode(String.valueOf(config.getChatServerPort())));
          
+        
+        // my ip address
+        Element myAddress = doc.createElement("my-address");
+        myAddress.appendChild(doc.createTextNode(String.valueOf(config.getMyAddress())));
+    
+        
         // add to networksettings
         networkSettings.appendChild(serverAddress);
         networkSettings.appendChild(serverPort);
@@ -241,6 +255,7 @@ public class ClientConfigurationController {
         networkSettings.appendChild(messagePort);
         networkSettings.appendChild(chatServerAddress);
         networkSettings.appendChild(chatServerPort);
+        networkSettings.appendChild(myAddress);
         return networkSettings;
     }
     
@@ -253,6 +268,8 @@ public class ClientConfigurationController {
         }
     }
     public ClientConfiguration getConfiguration(){
+    	if (config == null)
+    		loadConfiguration();
         return config;
     }
 }
