@@ -134,6 +134,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                                     advanced = true;
                                     btnAdvanced.setText(ClientConfigurationController.getInstance().getString("basic"));
                                     layout.topControl = drawAdvancedSearch(cmpSearch);
+                                    txtKeywordAdvanced.setFocus();
                                     if(keyword.startsWith(txtKeywordBasic.getText())){
                                         txtKeywordAdvanced.setText(keyword);
                                     }
@@ -169,6 +170,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                                     maxSize=txtMax.getText();
                                     minSize=txtMin.getText();
                                     keyword=txtKeywordAdvanced.getText();
+                                    txtKeywordBasic.setFocus();
                                     txtKeywordBasic.setText(keyword.substring(0, keyword.indexOf(" ")==-1?keyword.length():keyword.indexOf(" ")));
                                     if(rbFile.getSelection()){
                                         file=true;
