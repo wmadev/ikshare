@@ -12,6 +12,9 @@ import java.util.concurrent.Executors;
  */
 public class ChatServer implements Runnable 
 { 
+	private static int SERVER_PORT = 6005;
+	public static boolean debug = false;
+	
     private boolean running = false;
     private ServerSocket serverSocket;
     private ExecutorService executorService;
@@ -19,15 +22,19 @@ public class ChatServer implements Runnable
     public ChatServer(){
         try 
         {
-            serverSocket = new ServerSocket(6005);
+        	System.out.print("Starting chat server on port " + SERVER_PORT + "... ");
+            serverSocket = new ServerSocket(SERVER_PORT);
             serverSocket.setReuseAddress(true);
             serverSocket.setSoTimeout(0);
             executorService = Executors.newCachedThreadPool();
             running = true;
+            System.out.println("started.");
         } 
         catch (IOException ex) 
         {
-            ex.printStackTrace();
+        	System.out.println("exception!");
+        	if(debug)
+            	ex.printStackTrace();
         }
     }
 
@@ -44,7 +51,8 @@ public class ChatServer implements Runnable
             	serverSocket.close();
         } 
         catch (IOException ex){
-            ex.printStackTrace();
+        	if(debug)
+            	ex.printStackTrace();
         }
     }
 

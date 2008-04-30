@@ -28,7 +28,7 @@ public class SettingsPanel extends AbstractPanel{
     private ClientConfiguration config;
     
     
-    private Text txtnick,txtSharedFolder,txtServerAddress,txtServerPort,txtMyAddress, txtFileTransferPort,txtMessagePort;
+    private Text txtnick,txtSharedFolder,txtServerAddress,txtServerPort,txtMyAddress, txtFileTransferPort,txtMessagePort,txtChatServerPort,txtChatServerAddress;
     private Spinner spinMaxUpload;
     private Combo cblanguages;
     private DateTime dt;
@@ -63,6 +63,7 @@ public class SettingsPanel extends AbstractPanel{
                 config.setMyAddress(txtMyAddress.getText());
                 config.setMaximumUploads(spinMaxUpload.getSelection());
                 config.setMessagePort(Integer.parseInt(txtMessagePort.getText()));
+                config.setChatServerAddress(txtChatServerAddress.getText());
                 try{
                     config.setIkshareServerPort(Integer.parseInt(txtServerPort.getText()));
                 }catch(NumberFormatException e){
@@ -72,6 +73,11 @@ public class SettingsPanel extends AbstractPanel{
                     config.setFileTransferPort(Integer.parseInt(txtFileTransferPort.getText()));
                 }catch(NumberFormatException e){
                     config.setFileTransferPort(6666);
+                }
+                try{
+                    config.setChatServerPort(Integer.parseInt(txtChatServerPort.getText()));
+                }catch(NumberFormatException e){
+                    config.setChatServerPort(6005);
                 }
                 ClientConfigurationController.getInstance().saveConfiguration(config);
                 EventController.getInstance().triggerConfigurationUpdatedEvent(config);
@@ -209,6 +215,20 @@ public class SettingsPanel extends AbstractPanel{
         txtMessagePort=new Text(network, SWT.BORDER);
         txtMessagePort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtMessagePort.setText(String.valueOf(config.getMessagePort()));
+        
+        Label lblChatServerPort=new Label(network, SWT.FILL);
+        lblChatServerPort.setText("chatserverport"); //TODO: bundle
+        lblChatServerPort.setLayoutData(firstColum);
+        txtChatServerPort=new Text(network, SWT.BORDER);
+        txtChatServerPort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtChatServerPort.setText(String.valueOf(config.getChatServerPort()));
+        
+        Label lblChatServerAddress=new Label(network, SWT.FILL);
+        lblChatServerAddress.setText("chatserveraddress"); //TODO: bundle
+        lblChatServerAddress.setLayoutData(firstColum);
+        txtChatServerAddress=new Text(network, SWT.BORDER);
+        txtChatServerAddress.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
+        txtChatServerAddress.setText(String.valueOf(config.getChatServerAddress()));
      }
 
     @Override

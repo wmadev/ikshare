@@ -18,4 +18,5 @@ public interface ChatServerConversationListener {
     public void userEntersRoom(ChatHasEnteredRoomCommando c);
     public void youEnterRoom(ChatYouEnterRoomCommando c);
 	public void invalidRoomPassword(ChatInvalidRoomPasswordCommando c);
+	public void chatServerInterupt(String message);
 }

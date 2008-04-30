@@ -96,13 +96,13 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 	    		cmpLog.setLayout(layoutLog);
 	    		
 		    	Group grpLog = new Group(cmpLog, SWT.BACKGROUND);
-		    	grpLog.setLayout(new GridLayout(2, true));
+		    	grpLog.setLayout(new GridLayout(2, false));
 		    	GridData gdGroupLog = new GridData(SWT.FILL, SWT.FILL, false, false);
 		    	gdGroupLog.widthHint = 200;
 		    	grpLog.setLayoutData(gdGroupLog);
 		    	
 		    	btnLog = new Button(grpLog, SWT.BACKGROUND);
-		    	btnLog.setLayoutData(new GridData(SWT.FILL, SWT.FILL, false, false));
+		    	btnLog.setLayoutData(new GridData(SWT.NONE, SWT.NONE, false, false));
 		    	btnLog.setText("Log on"); // TODO: bundle
 		    	btnLog.addListener(SWT.Selection, new Listener() {
                     @Override
@@ -114,14 +114,15 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
                     }
 		    	});
 		    	
-		    	lblLog = new Label(grpLog, SWT.BACKGROUND);
+		    	lblLog = new Label(grpLog, SWT.LEFT);
 		    	lblLog.setText(ClientConfigurationController.getInstance().getConfiguration().getNickname());
+		    	lblLog.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false));
 		    	
 		    	lblOnline = new Label(grpLog, SWT.CENTER);
-		    	GridData gdLblOnline = new GridData(SWT.FILL, SWT.FILL, false, false);
+		    	GridData gdLblOnline = new GridData(SWT.FILL, SWT.FILL, true, false);
 		    	gdLblOnline.horizontalSpan = 2;
 		    	lblOnline.setLayoutData(gdLblOnline);
-		    	setStateOnline(2);
+		    	setConnectState(2);
 		    	
 		    	layoutLog.topControl = grpLog;
 	    	}
@@ -218,7 +219,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
         room.setRoomName(roomName);
         
         //== Chat Window ==
-        final CTabItem chatRoomTab = new CTabItem(chatWindowTabFolder, SWT.BORDER | SWT.CLOSE);
+        final CTabItem chatRoomTab = new CTabItem(chatWindowTabFolder, SWT.CLOSE);
         chatRoomTab.setText(roomName);
     
         Composite cmpChatWindow = new Composite(chatWindowTabFolder, SWT.RIGHT);
@@ -276,7 +277,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 	private void textEntered(String text, String roomName) {
         if(loggedOn == LogonState.Online && !text.equals(""))
         {
-            String nickName = ClientConfigurationController.getInstance().getConfiguration().getNickname();
+            String nickName = lblLog.getText();
             String fullMessage = "<" + nickName + "> ";
             fullMessage += text;
             appendMessage(roomName, (fullMessage + "\n"));
@@ -285,11 +286,13 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 	}
 	
 	private void logOn(){
-        if(ClientController.getInstance().chatLogon(ClientConfigurationController.getInstance().getConfiguration().getNickname()))
+        if(ClientController.getInstance().chatLogon(lblLog.getText()))
         {
-            btnLog.setText("Log off");
-            setStateOnline(1);
+            btnLog.setText("Log off"); //TODO bundle
+            setConnectState(1);
         }
+        else
+        	setConnectState(3, "Server could not be reached"); //TODO bundle
 	}
 	
 	private void logOff(){
@@ -297,13 +300,15 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
         {
 			publicRoomsList.removeAll();
 			chatRooms.clear();
-			ClientController.getInstance().chatLogoff(ClientConfigurationController.getInstance().getConfiguration().getNickname());
-			btnLog.setText("Log on");
-			setStateOnline(2);
+			ClientController.getInstance().chatLogoff(lblLog.getText());
+			btnLog.setText("Log on"); //TODO bundle
+			setConnectState(2);
             for(CTabItem item : chatWindowTabFolder.getItems())
             {
                 item.dispose();
             }
+            
+            lblLog.setText(ClientConfigurationController.getInstance().getConfiguration().getNickname());
         }
 	}
         
@@ -312,7 +317,12 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
         chatRooms.remove(roomName);
     }
 	
-	private void setStateOnline(int state)
+    private void setConnectState(int state)
+    {
+    	setConnectState(state, "");
+    }
+    
+	private void setConnectState(int state, String message)
 	{
 		if(lblOnline!=null)
 		{
@@ -341,7 +351,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 				}
 				default:
 				{
-					lblOnline.setText("Offline"); //TODO: bundle
+					lblOnline.setText(message); //TODO: bundle
 					lblOnline.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 					loggedOn = LogonState.Offline;
 					break;
@@ -357,7 +367,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
     }
     
 
-@Override
+    @Override
     public void receivedMessage(final ChatMessageCommando c) {
 		this.getDisplay().asyncExec(
 			new Runnable() 
@@ -444,7 +454,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		        		chatRooms.put(room, newRoom);
 		        		publicRoomsList.add(room);
 		        	}
-		        	setStateOnline(0);
+		        	setConnectState(0);
 		        }
 			}
 		);
@@ -455,10 +465,30 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		// TODO Auto-generated method stub
 		
 	}
+    
+	@Override
+	public void chatServerInterupt(String message) {
+		this.getDisplay().asyncExec(
+			new Runnable() 
+			{
+		        public void run() 
+		        {
+					publicRoomsList.removeAll();
+					chatRooms.clear();
+					btnLog.setText("Log on"); //TODO bundle
+					setConnectState(3, "Server connection interupted");  //TODO bundle
+		            for(CTabItem item : chatWindowTabFolder.getItems())
+		            {
+		                item.dispose();
+		            }
+		        }
+			}
+		);
+	}
    
 	@Override
 	public void update(ClientConfiguration config) {
-		if(lblLog!= null)
+		if(lblLog!= null && loggedOn==LogonState.Offline)
 		{
 			lblLog.setText(config.getNickname());
 		}

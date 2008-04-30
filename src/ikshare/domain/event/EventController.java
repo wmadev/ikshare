@@ -220,4 +220,11 @@ public class EventController {
             listener.invalidRoomPassword(c);
         }
 	}
+	
+	public void triggerChatServerInterupt(String message){
+		for(ChatServerConversationListener listener : chatServerConversationListeners)
+		{
+			listener.chatServerInterupt(message);
+		}
+	}
 }
