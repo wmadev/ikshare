@@ -8,15 +8,31 @@ public class ClientConfiguration {
     private String nickname;
     private Calendar birthday;
     private File sharedFolder;
-    private String ikshareServerAddress, chatServerAddress;
+    private String ikshareServerAddress, chatServerAddress, myAddress;
     private int ikshareServerPort, messagePort, fileTransferPort, maximumUploads, chatServerPort;
     
     public ClientConfiguration(){
         
     }
     
+    
+    
 
-    public int getMaximumUploads() {
+    public String getMyAddress() {
+		return myAddress;
+	}
+
+
+
+
+	public void setMyAddress(String myAddress) {
+		this.myAddress = myAddress;
+	}
+
+
+
+
+	public int getMaximumUploads() {
 		return maximumUploads;
 	}
 
