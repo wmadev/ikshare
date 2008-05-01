@@ -228,6 +228,7 @@ public class HomePanel extends AbstractPanel implements ClientControllerListener
             new Runnable() {
                 public void run(){
                 try {
+                    ClientConfigurationController.getInstance().getConfiguration().setAccountName(txtAccountName.getText());
                     ClientController.getInstance().share(txtAccountName.getText(), ClientConfigurationController.getInstance().getConfiguration().getSharedFolder());
                     lblStatus.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
                     lblStatus.setText(ClientConfigurationController.getInstance().getString("connected"));
