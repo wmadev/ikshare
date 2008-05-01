@@ -97,7 +97,10 @@ public class ClientConfigurationController {
         NodeList childNodes = node.getChildNodes();
         for (int i = 0; i < childNodes.getLength(); i++) {
             Node child = childNodes.item(i);
-            if (child.getNodeName().equals("language")){
+            if(child.getNodeName().equals("accountname")){
+                config.setAccountName(((Element) child).getTextContent());
+            }
+            else if (child.getNodeName().equals("language")){
                 config.setLanguage(((Element) child).getTextContent());
             }else if(child.getNodeName().equals("birthday")){
                 StringTokenizer tokenizer = new StringTokenizer(((Element) child).getTextContent(),"-");
@@ -196,6 +199,10 @@ public class ClientConfigurationController {
     
     private Element buildUserSettingsNode(Document doc){
         Element userSettings = doc.createElement("user-settings");
+        
+        Element accountName = doc.createElement("accountname");
+        accountName.appendChild(doc.createTextNode(config.getAccountName()));
+
         // Language
         Element language = doc.createElement("language");
         language.appendChild(doc.createTextNode(config.getLanguage()));
@@ -215,6 +222,7 @@ public class ClientConfigurationController {
         Element maximumUploads = doc.createElement("maximum-uploads");
         maximumUploads.appendChild(doc.createTextNode(String.valueOf(config.getMaximumUploads())));
         // add to usersettings
+        userSettings.appendChild(accountName);
         userSettings.appendChild(nickname);
         userSettings.appendChild(language);
         userSettings.appendChild(birthday);
