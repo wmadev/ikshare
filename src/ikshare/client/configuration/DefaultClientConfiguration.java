@@ -28,7 +28,7 @@ class DefaultClientConfiguration extends ClientConfiguration {
             new File(System.getProperty("user.home")+System.getProperty("file.separator")+"ikshare").mkdir();
             new File(System.getProperty("user.home")+System.getProperty("file.separator")+"ikshare"+System.getProperty("file.separator")+"SharedFolder").mkdir();
         }
-        super.setSharedFolder(new File(System.getProperty("user.home")+System.getProperty("file.separator")+"ikshare"));
+        super.setSharedFolder(new File(System.getProperty("user.home")+System.getProperty("file.separator")+"ikshare"+System.getProperty("file.separator")+"SharedFolder"));
         
         // Default network settings
         super.setIkshareServerAddress("127.0.0.1");
