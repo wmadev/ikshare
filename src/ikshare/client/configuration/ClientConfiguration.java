@@ -10,7 +10,7 @@ public class ClientConfiguration {
     private String accountPassword;
     private Calendar birthday;
     private File sharedFolder;
-    private String ikshareServerAddress, chatServerAddress, myAddress;
+    private String ikshareServerAddress, chatServerAddress;
     private int ikshareServerPort, messagePort, fileTransferPort, maximumUploads, chatServerPort;
     
     public ClientConfiguration(){
@@ -25,20 +25,7 @@ public class ClientConfiguration {
         this.accountName = accountName;
     }
 
-    public String getMyAddress() {
-		return myAddress;
-	}
-
-
-
-
-	public void setMyAddress(String myAddress) {
-		this.myAddress = myAddress;
-	}
-
-
-
-
+    
 	public int getMaximumUploads() {
 		return maximumUploads;
 	}

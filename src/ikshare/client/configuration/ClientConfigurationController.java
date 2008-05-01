@@ -158,12 +158,6 @@ public class ClientConfigurationController {
             	}
             }else if(child.getNodeName().equals("chat-server-address")) {
             	config.setChatServerAddress(((Element)child).getTextContent());
-            }else if(child.getNodeName().equals("my-address")) {
-            	try {
-            		config.setMyAddress(((Element)child).getTextContent());
-            	} catch (Exception e){
-            		config.setMyAddress("192.168.1.1");
-            	}
             }
         }
     }
@@ -256,10 +250,7 @@ public class ClientConfigurationController {
         chatServerPort.appendChild(doc.createTextNode(String.valueOf(config.getChatServerPort())));
          
         
-        // my ip address
-        Element myAddress = doc.createElement("my-address");
-        myAddress.appendChild(doc.createTextNode(String.valueOf(config.getMyAddress())));
-    
+            
         
         // add to networksettings
         networkSettings.appendChild(serverAddress);
@@ -268,7 +259,6 @@ public class ClientConfigurationController {
         networkSettings.appendChild(messagePort);
         networkSettings.appendChild(chatServerAddress);
         networkSettings.appendChild(chatServerPort);
-        networkSettings.appendChild(myAddress);
         return networkSettings;
     }
     

@@ -28,7 +28,7 @@ public class SettingsPanel extends AbstractPanel{
     private ClientConfiguration config;
     
     
-    private Text txtnick,txtSharedFolder,txtServerAddress,txtServerPort,txtMyAddress, txtFileTransferPort,txtMessagePort,txtChatServerPort,txtChatServerAddress;
+    private Text txtnick,txtSharedFolder,txtServerAddress,txtServerPort, txtFileTransferPort,txtMessagePort,txtChatServerPort,txtChatServerAddress;
     private Spinner spinMaxUpload;
     private Combo cblanguages;
     private DateTime dt;
@@ -60,7 +60,6 @@ public class SettingsPanel extends AbstractPanel{
                 config.setNickname(txtnick.getText());
                 config.setSharedFolder(new File(txtSharedFolder.getText()));
                 config.setIkshareServerAddress(txtServerAddress.getText());
-                config.setMyAddress(txtMyAddress.getText());
                 config.setMaximumUploads(spinMaxUpload.getSelection());
                 config.setMessagePort(Integer.parseInt(txtMessagePort.getText()));
                 config.setChatServerAddress(txtChatServerAddress.getText());
@@ -195,12 +194,8 @@ public class SettingsPanel extends AbstractPanel{
         txtServerPort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtServerPort.setText(String.valueOf(config.getIkshareServerPort()));
 
-        Label lblMyAddress=new Label(network, SWT.FILL);
-        lblMyAddress.setText(ClientConfigurationController.getInstance().getString("myaddress"));
-        lblMyAddress.setLayoutData(firstColum);
-        txtMyAddress=new Text(network, SWT.BORDER);
-        txtMyAddress.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-        txtMyAddress.setText(String.valueOf(config.getMyAddress()));
+        
+        
         
         Label lblTransferPort=new Label(network, SWT.FILL);
         lblTransferPort.setText(ClientConfigurationController.getInstance().getString("transferport"));

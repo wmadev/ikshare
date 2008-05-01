@@ -37,7 +37,6 @@ class DefaultClientConfiguration extends ClientConfiguration {
         super.setChatServerAddress("127.0.0.1");
         super.setChatServerPort(6005);
         super.setMaximumUploads(10);
-        super.setMyAddress("127.0.0.1");
     }
 
 }
