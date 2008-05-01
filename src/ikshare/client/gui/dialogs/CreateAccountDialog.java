@@ -104,6 +104,7 @@ public class CreateAccountDialog extends Dialog implements ServerConversationLis
                         data.setAccountEmail(txtAccountEmail.getText());
                         ClientController.getInstance().startServerConversation();
                         ClientController.getInstance().createAccount(data.getAccountName(), data.getAccountPassword(), data.getAccountEmail());
+                        ClientConfigurationController.getInstance().getConfiguration().setAccountName(data.getAccountName());
                     } catch (NoServerConnectionException ex) {
                         lblError.setText(ClientConfigurationController.getInstance().getString("noconnectionwithserver"));
                     }
