@@ -12,6 +12,7 @@ import ikshare.client.gui.MainScreen;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.domain.exception.NoServerConnectionException;
+import ikshare.exceptions.ConfigurationException;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CreatedAccountCommando;
 import ikshare.protocol.command.InvalidRegisterCommando;
@@ -82,7 +83,7 @@ public class CreateAccountDialog extends Dialog implements ServerConversationLis
         lblAccountEmail.setLayoutData(firstColum);
         txtAccountEmail = new Text(shell, SWT.BORDER );
         txtAccountEmail.setLayoutData(secondColum);
-        lblError = new Label(shell,SWT.NONE);
+        lblError = new Label(shell,SWT.NONE | SWT.WRAP);
         lblError.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,4,1));
         lblError.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
         btnCreate = new Button (shell, SWT.PUSH);
@@ -101,12 +102,18 @@ public class CreateAccountDialog extends Dialog implements ServerConversationLis
                         data.setAccountName(txtAccountName.getText());
                         data.setAccountPassword(txtAccountPassword.getText());
                         data.setAccountEmail(txtAccountEmail.getText());
-                        //ClientController.getInstance().startServerConversation();
+                        ClientController.getInstance().startServerConversation();
                         ClientController.getInstance().createAccount(data.getAccountName(), data.getAccountPassword(), data.getAccountEmail());
                     } catch (NoServerConnectionException ex) {
-                        new ExceptionWindow(ex,MainScreen.getInstance(),false);
+                        lblError.setText(ClientConfigurationController.getInstance().getString("noconnectionwithserver"));
                     }
-                     }
+                    catch(ConfigurationException e){
+                        lblError.setText(ClientConfigurationController.getInstance().getString("encryptpassworderror"));
+                    }
+                    catch(IOException e){
+                        new ExceptionWindow(e, MainScreen.getInstance(), false);
+                    }
+                }
             
             }
         });
