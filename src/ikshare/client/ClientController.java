@@ -13,6 +13,7 @@ import ikshare.domain.TransferState;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.domain.exception.NoServerConnectionException;
+import ikshare.exceptions.ConfigurationException;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CreateAccountCommando;
 import ikshare.protocol.command.DownloadInformationRequestCommand;
@@ -20,6 +21,7 @@ import ikshare.protocol.command.DownloadInformationResponseCommand;
 import ikshare.protocol.command.FindAdvancedFileCommando;
 import ikshare.protocol.command.FindAdvancedFolderCommando;
 import ikshare.protocol.command.FindBasicCommando;
+import ikshare.protocol.command.LogNiLukNiCommando;
 import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
 import ikshare.protocol.command.WelcomeCommando;
@@ -33,6 +35,8 @@ import java.io.File;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -57,11 +61,11 @@ public class ClientController implements ServerConversationListener{
         return instance;
     }
 
-    public void createAccount(String accountName, String accountPassword, String accountEmail) throws NoServerConnectionException {
+    public void createAccount(String accountName, String accountPassword, String accountEmail) throws NoServerConnectionException, ConfigurationException {
 
         CreateAccountCommando cac = new CreateAccountCommando();
         cac.setAccountName(accountName);
-        cac.setPassword(accountPassword);
+        cac.setPassword(md5encrypt(accountPassword));
         cac.setEmail(accountEmail);
         sendCommand(cac);
     }
@@ -85,17 +89,19 @@ public class ClientController implements ServerConversationListener{
         return t;
     }
 
-    public void logoff(String accountName, String password, int port) throws NoServerConnectionException {
+    public void logoff(String accountName, String password, int port) throws NoServerConnectionException, ConfigurationException {
         LogOffCommando loc = new LogOffCommando();
         loc.setAccountName(accountName);
-        loc.setPassword(password);
+        loc.setPassword(md5encrypt(password));
         loc.setPort(port);
         sendCommand(loc);
     }
     
     public void startServerConversation() throws IOException{
-        serverConversation = new ServerConversationThread();
-        executorService.execute(serverConversation);
+        if(serverConversation == null){
+            serverConversation = new ServerConversationThread();
+            executorService.execute(serverConversation);
+        }
     }
     
     public void startChatServerConversion() throws IOException{
@@ -106,10 +112,10 @@ public class ClientController implements ServerConversationListener{
     	}
     }
 
-    public boolean logon(String accountname,String password,int port) throws NoServerConnectionException{
+    public boolean logon(String accountname,String password,int port) throws NoServerConnectionException, ConfigurationException{
         LogOnCommando loc = new LogOnCommando();
         loc.setAccountName(accountname);
-        loc.setPassword(password);
+        loc.setPassword(md5encrypt(password));
         loc.setPort(port);
         sendCommand(loc);
         return true;
@@ -223,17 +229,37 @@ public class ClientController implements ServerConversationListener{
     		chatServerConversation = null;
     	}
     }
-
+    private String md5encrypt(String text) throws ConfigurationException {
+        String md5 = "";
+        try {
+            
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            md.update(text.getBytes());
+            byte[] md5bytes = md.digest();
+            for (byte b : md5bytes) {
+                md5 += Integer.toHexString( b & 0xff );
+            }
+            return md5;
+        } catch (NoSuchAlgorithmException ex) {
+            throw new ConfigurationException(ClientConfigurationController.getInstance().getString("configurationException"),ex);
+        }
+    }
+    
+    
     public void receivedCommando(Commando c) {
         if( c instanceof WelcomeCommando){
             try {
                 WelcomeCommando wc = (WelcomeCommando) c;
                 Peer p = new Peer(wc.getAccountName(), InetAddress.getByName(wc.getIpAddress()));
                 PeerFacade.getInstance().setPeer(p);
+                EventController.getInstance().triggerLoggedOnEvent();
             } catch (UnknownHostException ex) {
                 ex.printStackTrace();
                 // TODO betere afhandeling
             }
+        }
+        else if (c instanceof LogNiLukNiCommando){
+            EventController.getInstance().triggerLogOnFailedEvent(((LogNiLukNiCommando)c).getMessage());
         }
     }
 }

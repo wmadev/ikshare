@@ -9,6 +9,7 @@ import ikshare.client.configuration.ClientConfiguration;
 import ikshare.domain.Transfer;
 import ikshare.domain.event.listener.ChatServerConversationListener;
 import ikshare.domain.event.listener.ClientConfigurationListener;
+import ikshare.domain.event.listener.ClientControllerListener;
 import ikshare.domain.event.listener.FileTransferListener;
 import ikshare.domain.event.listener.SelectedMediaFileListener;
 import ikshare.domain.event.listener.ServerConversationListener;
@@ -46,6 +47,8 @@ public class EventController {
 
 	private ArrayList<ChatServerConversationListener> chatServerConversationListeners;
 
+        private ArrayList<ClientControllerListener> clientControllerListeners;
+        
 	private EventController() {
 		fileTransferListeners = new ArrayList<FileTransferListener>();
 		serverConversationListeners = new ArrayList<ServerConversationListener>();
@@ -53,6 +56,7 @@ public class EventController {
 		transferQueueListeners = new ArrayList<TransferQueueListener>();
 		selectedMediaFileListener = new ArrayList<SelectedMediaFileListener>();
 		chatServerConversationListeners = new ArrayList<ChatServerConversationListener>();
+                clientControllerListeners = new ArrayList<ClientControllerListener>();
 	}
 
 	public static EventController getInstance() {
@@ -60,6 +64,9 @@ public class EventController {
 			instance = new EventController();
 		return instance;
 	}
+        public void addClientControllerListener(ClientControllerListener l){
+            clientControllerListeners.add(l);
+        }
 
 	public void addFileTransferListener(FileTransferListener l) {
 		fileTransferListeners.add(l);
@@ -86,7 +93,20 @@ public class EventController {
 	public void addChatServerConversationListener(ChatServerConversationListener l) {
         chatServerConversationListeners.add(l);
 	}
+        
+        public void triggerLoggedOnEvent(){
+            for(ClientControllerListener l : clientControllerListeners){
+                l.onLogOn();
+            }
+        }
 
+        public void triggerLogOnFailedEvent(String message){
+            for(ClientControllerListener l : clientControllerListeners){
+                l.onLogOnFailed(message);
+            }
+        }
+        
+        
 	public void triggerConfigurationUpdatedEvent(ClientConfiguration config) {
 		for (ClientConfigurationListener listener : clientConfigurationListeners) {
 			listener.update(config);

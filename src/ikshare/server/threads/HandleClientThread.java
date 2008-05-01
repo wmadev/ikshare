@@ -85,6 +85,7 @@ public class HandleClientThread implements Runnable{
                 }
             }
             clientSocket.close();
+            System.out.println("Client afgesloten");
         } catch (Exception ex) {
             ex.printStackTrace();
         }
