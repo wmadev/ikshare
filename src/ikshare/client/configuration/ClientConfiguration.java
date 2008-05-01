@@ -6,6 +6,8 @@ import java.util.Calendar;
 public class ClientConfiguration {
     private String language;
     private String nickname;
+    private String accountName;
+    private String accountPassword;
     private Calendar birthday;
     private File sharedFolder;
     private String ikshareServerAddress, chatServerAddress, myAddress;
@@ -14,9 +16,14 @@ public class ClientConfiguration {
     public ClientConfiguration(){
         
     }
-    
-    
-    
+
+    public String getAccountName() {
+        return accountName;
+    }
+
+    public void setAccountName(String accountName) {
+        this.accountName = accountName;
+    }
 
     public String getMyAddress() {
 		return myAddress;
