@@ -70,7 +70,7 @@ public class InfoBar extends Composite implements TransferQueueListener {
         lblNrSharedFiles.setText(String.valueOf(info[1]));
 
         // player
-        new MP3Player(this, SWT.NONE);
+        //new MP3Player(this, SWT.NONE);
 
 
     }
