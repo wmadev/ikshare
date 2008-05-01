@@ -78,6 +78,7 @@ public class HomePanel extends AbstractPanel implements ClientControllerListener
         lblAccountName.setLayoutData(lblData);
         txtAccountName = new Text(grpConnect, SWT.BORDER);
         txtAccountName.setLayoutData(txtData);
+        txtAccountName.setText(ClientConfigurationController.getInstance().getConfiguration().getAccountName());
         
         lblAccountNameValidation = new Label(grpConnect,SWT.NONE);
         lblAccountNameValidation.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false,1,1));
@@ -215,7 +216,11 @@ public class HomePanel extends AbstractPanel implements ClientControllerListener
 
     @Override
     public void initialiseFocus() {
-        txtAccountName.setFocus();
+        if(txtAccountName.getText().length()>0)
+            txtAccountPassword.setFocus();
+        else{
+            txtAccountName.setFocus();
+        }
     }
     
     public void onLogOn() {
