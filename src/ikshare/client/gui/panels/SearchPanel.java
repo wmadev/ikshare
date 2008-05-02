@@ -381,7 +381,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
             if(sr.getParentId()!=0){
                 TreeItem parent = treeItems.get(sr.getParentId());
                 if(parent!=null){
-                    item = new TreeItem(parent,SWT.NONE);
+                    item = new TreeItem(parent,SWT.NONE,0);
                 }
                 else{
                     item = new TreeItem(tree,SWT.NONE);
