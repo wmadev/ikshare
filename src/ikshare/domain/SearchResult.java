@@ -10,7 +10,8 @@ public class SearchResult {
     private long size;
     private boolean folder;
     private int parentid;
-
+    private int folderId;
+    
     public SearchResult(String name, String owner, long size, boolean folder) {
         this.name = name;
         this.owner = owner;
@@ -44,6 +45,14 @@ public class SearchResult {
         this.folder = folder;
     }
 
+    public int getFolderId(){
+        return folderId;
+    }
+    
+    public void setFolderId(int folderid){
+        this.folderId = folderid;
+    }
+    
     public boolean isFolder() {
         return folder;
     }
