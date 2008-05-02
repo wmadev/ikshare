@@ -9,7 +9,7 @@ public class SearchResult {
     private String name;
     private long size;
     private boolean folder;
-    private int parentid;
+    private int parentId;
     private int folderId;
     
     public SearchResult(String name, String owner, long size, boolean folder) {
@@ -25,16 +25,17 @@ public class SearchResult {
         this.size = size;
         this.owner = accountName;
         this.folder = folder;
-        this.parentid = parentid;
-    }
+        this.parentId = parentid;
+      }
     
      
-    public SearchResult(String name, String accountName, long size, boolean folder, int parentid) {
+    public SearchResult(String name, String accountName, long size, boolean folder, int parentid, int folderid) {
         this.name = name;
         this.size = size;
         this.owner = accountName;
         this.folder = folder;
-        this.parentid = parentid;
+        this.parentId = parentid;
+        this.folderId = folderid;
     }
 
     public SearchResult(String searchID, String name, long size, String accountName, boolean folder) {
@@ -86,11 +87,11 @@ public class SearchResult {
     }
 
     public int getParentId() {
-        return parentid;
+        return parentId;
     }
 
     public void setParentId(int id) {
-        parentid = id;
+        parentId = id;
     }
     private Peer peer;
     private IKShareFile file;
