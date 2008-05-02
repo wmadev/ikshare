@@ -248,9 +248,6 @@ public class ClientConfigurationController {
         // chat server port
         Element chatServerPort = doc.createElement("chat-server-port");
         chatServerPort.appendChild(doc.createTextNode(String.valueOf(config.getChatServerPort())));
-         
-        
-            
         
         // add to networksettings
         networkSettings.appendChild(serverAddress);
