@@ -250,6 +250,7 @@ public class HandleClientThread implements Runnable{
             for(SearchResult result : results){
                 FoundResultCommando frc = new FoundResultCommando();
                 frc.setSearchID(fafc.getSearchID());
+                frc.setSearchKeyword(fafc.getKeyword());
                 frc.setFolder(result.isFolder());
                 frc.setAccountName(result.getOwner());
                 frc.setName(result.getName());
