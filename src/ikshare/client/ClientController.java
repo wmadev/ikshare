@@ -76,7 +76,7 @@ public class ClientController implements ServerConversationListener{
         dirc.setAccountName(rs.getOwner());
         dirc.setFileName(rs.getName());
         dirc.setFileSize(rs.getSize());
-        dirc.setFolderId(rs.getParentId());
+        dirc.setFolderId(rs.getFolderId());
         sendCommand(dirc);
     }
 
