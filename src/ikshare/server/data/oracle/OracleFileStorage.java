@@ -1,4 +1,4 @@
-package ikshare.server.data.oracle;
+ package ikshare.server.data.oracle;
 
 import ikshare.domain.DownloadInformation;
 import ikshare.domain.SearchResult;
@@ -10,7 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.ResourceBundle;
 import java.util.StringTokenizer;
@@ -161,7 +160,7 @@ public class OracleFileStorage implements FileStorage {
             results =new ArrayList<SearchResult>();
             while(result.next()){
                 SearchResult sr=new SearchResult(result.getString(bundle.getString("filename"))
-                        ,result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("filesize")),false,result.getInt(bundle.getString("parentid")));
+                        ,result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("filesize")),false,0,result.getInt(bundle.getString("parentid")));
                 results.add(sr);
             }
             result.close();
@@ -263,7 +262,7 @@ public class OracleFileStorage implements FileStorage {
             results =new ArrayList<SearchResult>();
             while(result.next()){
                 SearchResult sr=new SearchResult(result.getString(bundle.getString("filename"))
-                        ,result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("filesize")),false,result.getInt(bundle.getString("parentid")));
+                        ,result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("filesize")),false,0,result.getInt(bundle.getString("parentid")));
                 results.add(sr);
             }
             result.close();
@@ -284,20 +283,27 @@ public class OracleFileStorage implements FileStorage {
 
     public List<SearchResult> advancedFolderSearch(String keyword, boolean textAnd, long minSize, long maxSize) throws DatabaseException {
         ArrayList<SearchResult> results = null;
-        String searchString="SELECT fi.FOLDERID,FILENAME,ACCOUNTNAME,FILESIZE FROM SHAREDFILES fi JOIN SHAREDFOLDERS fo ON fo.FOLDERID=fi.FOLDERID WHERE lower(FILENAME) LIKE '";
+        String searchString="WITH y AS (SELECT x.USERNAME FROM ONLINE_USERS x WHERE x.ACTION='LOGON' AND x.USERNAME NOT IN " +
+                "( SELECT USERNAME FROM ONLINE_USERS WHERE ACTION = 'LOGOFF' AND TIMESTAMP> x.TIMESTAMP AND USERNAME=x.USERNAME ) ), " +
+                "w AS (SELECT distinct(folderid), foldername, parentfolderid, accountname from sharedfolders" +
+                "where parentfolderid<>0 and accountname in (select username from y) start with lower(foldername) like '";
         keyword = keyword.toLowerCase();
         StringTokenizer tokenizer = new StringTokenizer(keyword," ");
         searchString+="%"+tokenizer.nextToken()+"%' ";
         if(textAnd){
             while(tokenizer.hasMoreTokens()){
-                searchString+= "AND lower(FILENAME) LIKE '%"+tokenizer.nextToken()+"%' ";
+                searchString+= "AND lower(FOLDERNAME) LIKE '%"+tokenizer.nextToken()+"%' ";
             }
         }
         else{
             while(tokenizer.hasMoreTokens()) {
-                searchString+= "OR lower(FILENAME) LIKE '%"+tokenizer.nextToken()+"%' ";
+                searchString+= "OR lower(FOLDERNAME) LIKE '%"+tokenizer.nextToken()+"%' ";
             }               
         }
+        searchString+="connect by prior folderid = parentfolderid), "+
+                "x as (select filename, fi.folderid, filesize, accountname " +
+                "from sharedfiles fi join w on w.folderid=fi.folderid) " +
+                "select folderid, foldername, parentfolderid, (select sum(filesize) from x where folderid=w.folderid) as filesize, accountname ";                
         if(minSize!=0 && maxSize!=0){
             searchString+= "AND FILESIZE BETWEEN "+minSize+" AND "+maxSize+" ";
         }
@@ -307,6 +313,9 @@ public class OracleFileStorage implements FileStorage {
         else if (maxSize!=0){
             searchString+= "AND FILESIZE<"+maxSize+" ";
         }
+        searchString+="from w union all " +
+                "select folderid, filename, 0, filesize, accountname from x " +
+                "order by folderid, parentfolderid desc";
               
         Connection conn = OracleDatabaseFactory.getConnection();
         try{
@@ -315,7 +324,7 @@ public class OracleFileStorage implements FileStorage {
             results =new ArrayList<SearchResult>();
             while(result.next()){
                 SearchResult sr=new SearchResult(result.getString(bundle.getString("filename"))
-                        ,result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("filesize")),false,result.getInt(bundle.getString("parentid")));
+                        ,result.getString(bundle.getString("accountname")),result.getLong(bundle.getString("filesize")),result.getInt(bundle.getString("parentid"))!=0,result.getInt(bundle.getString("parentid")), result.getInt(bundle.getString("folderid")));
                 results.add(sr);
             }
             result.close();
