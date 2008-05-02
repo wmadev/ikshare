@@ -19,13 +19,14 @@ public class SearchResult {
         this.folder = folder;
     }
 
-    public SearchResult(String id,String name, long size, String accountName, boolean folder, int parentid) {
+    public SearchResult(String id,String name, long size, String accountName, boolean folder, int parentid,int folderid) {
         this.id = id;
         this.name = name;
         this.size = size;
         this.owner = accountName;
         this.folder = folder;
         this.parentId = parentid;
+        this.folderId = folderid;
       }
     
      

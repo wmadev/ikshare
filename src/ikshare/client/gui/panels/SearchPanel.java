@@ -40,6 +40,8 @@ import org.eclipse.swt.custom.CTabFolderAdapter;
 import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
+import org.eclipse.swt.custom.TableTree;
+import org.eclipse.swt.custom.TableTreeItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
 import org.eclipse.swt.events.KeyAdapter;
@@ -56,21 +58,24 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     private static String ICON_SEARCH = "resources/icons/sp_found.png";
     private boolean advanced = false, keywordAnd = true;
     private HashMap<String, CTabItem> searches;
+    private HashMap<Integer,TreeItem> treeItems;
     private Text txtKeywordBasic, txtKeywordAdvanced, txtMax, txtMin;
-        private CTabFolder folder;
+    private CTabFolder folder;
     private Button btnSearch, rbFile, rbFolder, btnAndOr;
     private Combo cbSizeMax, cbSizeMin, cbTypes;
     private String keyword="", minSize="", maxSize="";
     private int typeID=0, minID=0, maxID=0;
     private boolean file=true;
     private Label lblValidation;
-
+    
     public SearchPanel(String text, String icon) {
         super(text, icon);
         EventController.getInstance().addServerConversationListener(this);
         searches = new HashMap<String, CTabItem>();
+        treeItems = new HashMap<Integer,TreeItem>();
         this.setLayout(new GridLayout(2, false));
         this.init();
+        
     }
 
 
@@ -342,20 +347,18 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         cmpResult1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
         cmpResult1.setLayout(new GridLayout(1, false));
         
-        final Table tblResults = new Table(cmpResult1, SWT.FULL_SELECTION | SWT.BORDER);
-        result.setData("table", tblResults);
-        tblResults.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
-        tblResults.setLinesVisible(true);
-        tblResults.setHeaderVisible(true);
-        tblResults.addMouseListener(new MouseAdapter() {
+        final Tree treeResults = new Tree(cmpResult1, SWT.FULL_SELECTION | SWT.BORDER);
+        result.setData("tree",treeResults);
+        treeResults.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        treeResults.setLinesVisible(true);
+        treeResults.setHeaderVisible(true);
+        treeResults.addMouseListener(new MouseAdapter() {
 
             public void mouseDoubleClick(MouseEvent event) {
-                final int selectedRow = tblResults.getSelectionIndex();
-                if (selectedRow == -1) {
+                if(treeResults.getSelection()[0]== null){
                     return;
                 }
-
-                SearchResult selected = (SearchResult) tblResults.getItem(selectedRow).getData("result");
+                SearchResult selected = (SearchResult) treeResults.getSelection()[0].getData("result");
                 if (selected != null) {
                     try {
                         ClientController.getInstance().getDownloadInformationForResult(selected);
@@ -365,12 +368,51 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                 }
             }
         });
-
         result.setControl(cmpResult1);
-        addTableColumn(tblResults, ClientConfigurationController.getInstance().getString("filename"), 300, SWT.LEFT);
-        addTableColumn(tblResults, ClientConfigurationController.getInstance().getString("size"), 100, SWT.RIGHT);
-        addTableColumn(tblResults, ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
-        addTableRow(sr, tblResults);
+        addTreeColumn(treeResults, ClientConfigurationController.getInstance().getString("filename"), 300, SWT.LEFT);
+        addTreeColumn(treeResults, ClientConfigurationController.getInstance().getString("size"), 100, SWT.RIGHT);
+        addTreeColumn(treeResults, ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
+        addTreeRow(sr, treeResults);
+    }
+    
+    private void addTreeRow(SearchResult sr, Tree tree) {
+        TreeItem item = null;
+        if(sr.isFolder()){
+            if(sr.getParentId()!=0){
+                TreeItem parent = treeItems.get(sr.getParentId());
+                if(parent!=null){
+                    item = new TreeItem(parent,SWT.NONE);
+                }
+                else{
+                    item = new TreeItem(tree,SWT.NONE);
+                }
+            }else{
+                item = new TreeItem(tree,SWT.NONE);
+            }
+            treeItems.put(sr.getFolderId(),item);
+        }
+        else{
+            TreeItem parent = treeItems.get(sr.getFolderId());
+            if(parent!=null){
+                item = new TreeItem(parent, SWT.NONE);
+            }else{
+                item = new TreeItem(tree, SWT.NONE);       
+            }
+
+        }
+        item.setData("result", sr);
+        item.setText(0, sr.getName());
+        item.setText(1, UtilityClass.formatFileSize(sr.getSize()));
+        item.setText(2, sr.getOwner());
+
+    }
+    
+    private void addTreeColumn(Tree tree, String text, int width, int align) {
+        TreeColumn column = new TreeColumn(tree, SWT.NONE);
+        column.setText(text);
+        column.pack();
+        column.setWidth(width);
+        column.setAlignment(align);
     }
     
     private void createTabItem(String notfoundkeyword) {
@@ -398,29 +440,13 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
        
     }
 
-    private void addTableRow(SearchResult sr, Table table) {
-        TableItem item = new TableItem(table, SWT.NONE);
-        item.setData("result", sr);
-        item.setText(0, sr.getName());
-        item.setText(1, UtilityClass.formatFileSize(sr.getSize()));
-        item.setText(2, sr.getOwner());
-    }
-
-    private void addTableColumn(Table table, String text, int width, int align) {
-        TableColumn column = new TableColumn(table, SWT.NONE);
-        column.setText(text);
-        column.pack();
-        column.setWidth(width);
-        column.setAlignment(align);
-    }
-
-    public void receivedCommando(final Commando c) {
+   public void receivedCommando(final Commando c) {
         this.getDisplay().asyncExec(new Runnable() {
 
             public void run() {
                 if (c instanceof FoundResultCommando) {
                     FoundResultCommando frc = (FoundResultCommando) c;
-                    SearchResult sr  = new SearchResult(frc.getSearchID(), frc.getName(), frc.getSize(),frc.getAccountName(),frc.isFolder(),frc.getParentId());
+                    SearchResult sr  = new SearchResult(frc.getSearchID(), frc.getName(), frc.getSize(),frc.getAccountName(),frc.isFolder(),frc.getParentId(),frc.getFolderId());
                     if (searches.containsKey(sr.getId())) {
                         updateTabItem(searches.get(sr.getId()), sr);
                     } else {
@@ -446,8 +472,8 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     }
 
     private void updateTabItem(CTabItem tab, SearchResult sr) {
-        Table tblResults = (Table) tab.getData("table");
-        addTableRow(sr, tblResults);
+        Tree treeResults = (Tree) tab.getData("tree");
+        addTreeRow(sr, treeResults);
     }
     private boolean validate(){
         boolean valid = true;
