@@ -26,6 +26,8 @@ class DefaultClientConfiguration extends ClientConfiguration {
         super.setBirthday(date);
         if(!new File(System.getProperty("user.home")+System.getProperty("file.separator")+"ikshare").exists()){
             new File(System.getProperty("user.home")+System.getProperty("file.separator")+"ikshare").mkdir();
+        }
+        if(!new File(System.getProperty("user.home")+System.getProperty("file.separator")+"ikshare"+System.getProperty("file.separator")+"SharedFolder").exists()){
             new File(System.getProperty("user.home")+System.getProperty("file.separator")+"ikshare"+System.getProperty("file.separator")+"SharedFolder").mkdir();
         }
         super.setSharedFolder(new File(System.getProperty("user.home")+System.getProperty("file.separator")+"ikshare"+System.getProperty("file.separator")+"SharedFolder"));
