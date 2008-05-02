@@ -477,7 +477,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     }
     private boolean validate(){
         boolean valid = true;
-        Pattern p = Pattern.compile("[\\w-\\.\\@_]{5,32}+");
+        Pattern p = Pattern.compile("[\\w- \\.\\@_]{5,32}+");
         if(!advanced){
             Matcher m = p.matcher(txtKeywordBasic.getText());
             if(!m.matches()){
