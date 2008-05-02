@@ -192,6 +192,7 @@ public class HandleClientThread implements Runnable{
                 frc.setName(result.getName());
                 frc.setSize(result.getSize());
                 frc.setParentId(result.getParentId());
+                frc.setFolderId(result.getFolderId());
                 outputWriter.println(frc.toString());
             }
         }else{
@@ -223,6 +224,7 @@ public class HandleClientThread implements Runnable{
                 frc.setName(result.getName());
                 frc.setSize(result.getSize());
                 frc.setParentId(result.getParentId());
+                frc.setFolderId(result.getFolderId());
                 outputWriter.println(frc.toString());
             }
         }else{
@@ -253,6 +255,7 @@ public class HandleClientThread implements Runnable{
                 frc.setName(result.getName());
                 frc.setSize(result.getSize());
                 frc.setParentId(result.getParentId());
+                frc.setFolderId(result.getFolderId());
                 outputWriter.println(frc.toString());
             }
         }else{
