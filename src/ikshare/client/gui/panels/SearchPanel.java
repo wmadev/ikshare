@@ -31,6 +31,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabFolder2Adapter;
@@ -55,12 +57,13 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     private boolean advanced = false, keywordAnd = true;
     private HashMap<String, CTabItem> searches;
     private Text txtKeywordBasic, txtKeywordAdvanced, txtMax, txtMin;
-    private CTabFolder folder;
+        private CTabFolder folder;
     private Button btnSearch, rbFile, rbFolder, btnAndOr;
     private Combo cbSizeMax, cbSizeMin, cbTypes;
     private String keyword="", minSize="", maxSize="";
     private int typeID=0, minID=0, maxID=0;
-    private boolean file=true; 
+    private boolean file=true;
+    private Label lblValidation;
 
     public SearchPanel(String text, String icon) {
         super(text, icon);
@@ -68,35 +71,8 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         searches = new HashMap<String, CTabItem>();
         this.setLayout(new GridLayout(2, false));
         this.init();
-        //this.load();
     }
 
-    private void load() {
-    	/*
-    	SearchResult[] searchResults = new SearchResult[3];
-    	String files[] = {"testgroot.avi","testmiddelgroot.rar","testklein.pdf"};
-    	for (int i=0; i<files.length; i++) {
-    		try {
-				searchResults[i] = new SearchResult(String.valueOf(new Date().getTime()) + i, new Peer("Monet", InetAddress.getLocalHost()), new IKShareFile("/", files[i]));
-				searchResults[i].setName(files[i]);
-				searchResults[i].setOwner("Monet");
-				createTabItem(searchResults[i]);
-    		} catch (UnknownHostException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-    	}
-    	*/
-    /*TableItem ti=null;
-    SearchResult searchResult=null;
-    //searchResult = new SearchResult(new Date().getTime()+"",new Peer("Monet"), new File("C:\\/" + "testmiddelgroot.rar"));
-    ti = new TableItem(tblResults, SWT.NONE);
-    ti.setText(0, searchResult.getFile().getName());
-    //ti.setText(1,UtilityClass.formatFileSize());
-    ti.setText(2, searchResult.getPeer().getAccountName());
-    ti.setData("results",searchResult);*/
-
-    }
 
     private void init() {
         //Search options
@@ -230,6 +206,10 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
             
         });
         txtKeywordBasic.addKeyListener(this);
+        lblValidation = new Label(grpBasic,SWT.WRAP);
+        lblValidation.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        lblValidation.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+        
         return grpBasic;
     }
      
@@ -294,6 +274,8 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         Label lblMin = new Label(cmpSize, SWT.NONE);
         lblMin.setText(ClientConfigurationController.getInstance().getString("between"));
         lblMin.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
+             
+        
         txtMin = new Text(cmpSize, SWT.BORDER);
         txtMin.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
         cbSizeMin = new Combo(cmpSize, SWT.DROP_DOWN | SWT.READ_ONLY);
@@ -333,6 +315,9 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
             
         });
         rbFolder.addKeyListener(this);
+        lblValidation = new Label(grpAdvanced, SWT.WRAP);
+        lblValidation.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+        lblValidation.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
         return grpAdvanced;
     }
 
@@ -464,10 +449,38 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         Table tblResults = (Table) tab.getData("table");
         addTableRow(sr, tblResults);
     }
+    private boolean validate(){
+        boolean valid = true;
+        Pattern p = Pattern.compile("[\\w-\\.\\@_]{5,32}+");
+        if(!advanced){
+            Matcher m = p.matcher(txtKeywordBasic.getText());
+            if(!m.matches()){
+                valid=false;
+            }
+        }
+        else{
+            Matcher m = p.matcher(txtKeywordAdvanced.getText());
+            if(!m.matches()){
+                valid=false;
+            }
+            p = Pattern.compile("[\\d]{0,}");
+            m = p.matcher(txtMax.getText());
+            if(!m.matches()){
+                valid=false;
+            }
+            m = p.matcher(txtMin.getText());
+            if(!m.matches()){
+                valid=false;
+            }
+        }
+        return valid;
+    }
     
     private void search() {
-                String searchId = String.valueOf(new Date().getTime());
-                if (!advanced) {
+        lblValidation.setText("");
+        if(validate()){
+            String searchId = String.valueOf(new Date().getTime());
+            if (!advanced) {
             try {
                 ClientController.getInstance().findBasic(searchId, txtKeywordBasic.getText());
             } catch (NoServerConnectionException ex) {
@@ -507,7 +520,10 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                         
                     }
                 }
-
+        }
+        else{
+            lblValidation.setText(ClientConfigurationController.getInstance().getString("invalidinput"));
+        }
                 
     }
 
@@ -516,9 +532,11 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     }
 
     public void keyReleased(KeyEvent e) {
+        lblValidation.setText("");
         if(btnSearch.isEnabled()){
                 if(e.character == ' ' && !advanced){
-                    new ExceptionWindow(new Exception("GEen spaties"), MainScreen.getInstance(), false);
+                    lblValidation.setText(ClientConfigurationController.getInstance().getString("useadvancedsearch"));
+                    //new ExceptionWindow(new Exception("GEen spaties"), MainScreen.getInstance(), false);
                     txtKeywordBasic.setText(txtKeywordBasic.getText().substring(0,txtKeywordBasic.getText().length()-1));
                 }
                 else if(e.keyCode == SWT.CR){
