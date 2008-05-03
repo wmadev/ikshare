@@ -148,11 +148,6 @@ public class ChatServerController {
 		
 		if(!room.HasClient(client))
 		{
-			for(ChatClient chClient : room.getClients())
-			{
-				System.out.print(chClient.getNickName() + " ");
-			}
-			System.out.println();
 			System.out.println( ">> " + client.getNickName() + " enters room " + roomName + ".");
 			
 			room.AddClientToRoom(client);

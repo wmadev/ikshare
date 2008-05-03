@@ -103,7 +103,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		    	
 		    	btnLog = new Button(grpLog, SWT.BACKGROUND);
 		    	btnLog.setLayoutData(new GridData(SWT.NONE, SWT.NONE, false, false));
-		    	btnLog.setText("Log on"); // TODO: bundle
+		    	btnLog.setText(ClientConfigurationController.getInstance().getChatString("logon"));
 		    	btnLog.addListener(SWT.Selection, new Listener() {
                     @Override
                     public void handleEvent(Event event) {
@@ -138,7 +138,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		        cmpPublicRooms.setLayout(layoutPublicRooms);
 		        
 		    	Group grpPublicRooms = new Group(cmpPublicRooms, SWT.BACKGROUND);
-		    	grpPublicRooms.setText("Public Chatrooms");// TODO: bundle
+		    	grpPublicRooms.setText(ClientConfigurationController.getInstance().getChatString("publicchatrooms"));
 		    	grpPublicRooms.setLayout(new GridLayout(1, false));
 		    	GridData gdGrpRooms = new GridData(SWT.FILL, SWT.FILL, false, false);
 		    	gdGrpRooms.widthHint = 200;
@@ -151,11 +151,12 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		        publicRoomsList.addListener(SWT.DefaultSelection, new Listener() {
 		        	public void handleEvent(Event e)
 		        	{
-		                String selectedItem = "";
+		                String selectedItem = null;
 		                int[] selection = publicRoomsList.getSelectionIndices();
 		                if(selection.length==1)
 		                	selectedItem = publicRoomsList.getItem(selection[0]);
-		                ClientController.getInstance().chatEnterRoom(selectedItem, "", false);
+		                if(selectedItem!=null)
+		                	ClientController.getInstance().chatEnterRoom(selectedItem, "", false);
 		        	}
 		        });
 		        
@@ -173,7 +174,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		        cmpPrivateRooms.setLayout(layoutPrivateRooms);
 		        
 		    	Group grpPrivateRooms = new Group(cmpPrivateRooms, SWT.BACKGROUND);
-		    	grpPrivateRooms.setText("Private Chatrooms");
+		    	grpPrivateRooms.setText(ClientConfigurationController.getInstance().getChatString("privatechatrooms"));
 		    	grpPrivateRooms.setLayout(new GridLayout(2, true));
 		    	GridData gdGrpPrivateRooms = new GridData(SWT.FILL, SWT.FILL, false, false);
 		    	gdGrpPrivateRooms.widthHint = 200;
@@ -181,7 +182,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		        
 		    	Label lblPrivateRoomName = new Label(grpPrivateRooms, SWT.None);
 		    	lblPrivateRoomName.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
-		    	lblPrivateRoomName.setText("Room name");// TODO: bundle
+		    	lblPrivateRoomName.setText(ClientConfigurationController.getInstance().getChatString("roomname"));
 		    	
 		    	Text txtPrivateRoomName = new Text(grpPrivateRooms, SWT.BORDER);
 		    	txtPrivateRoomName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
@@ -288,11 +289,11 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 	private void logOn(){
         if(ClientController.getInstance().chatLogon(lblLog.getText()))
         {
-            btnLog.setText("Log off"); //TODO bundle
+            btnLog.setText(ClientConfigurationController.getInstance().getChatString("logoff"));
             setConnectState(1);
         }
         else
-        	setConnectState(3, "Server could not be reached"); //TODO bundle
+        	setConnectState(3, ClientConfigurationController.getInstance().getChatString("servernotreached"));
 	}
 	
 	private void logOff(){
@@ -301,7 +302,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 			publicRoomsList.removeAll();
 			chatRooms.clear();
 			ClientController.getInstance().chatLogoff(lblLog.getText());
-			btnLog.setText("Log on"); //TODO bundle
+			btnLog.setText(ClientConfigurationController.getInstance().getChatString("logon"));
 			setConnectState(2);
             for(CTabItem item : chatWindowTabFolder.getItems())
             {
@@ -330,28 +331,28 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 			{
 				case 0:
 				{
-					lblOnline.setText("Online"); //TODO: bundle
+					lblOnline.setText(ClientConfigurationController.getInstance().getChatString("online"));
 					lblOnline.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
 					loggedOn = LogonState.Online;
 					break;
 				}
 				case 1:
 				{
-					lblOnline.setText("Connecting..."); //TODO: bundle
+					lblOnline.setText(ClientConfigurationController.getInstance().getChatString("connecting"));
 					lblOnline.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 					loggedOn = LogonState.Logging;
 					break;
 				}
 				case 2:
 				{
-					lblOnline.setText("Offline"); //TODO: bundle
+					lblOnline.setText(ClientConfigurationController.getInstance().getChatString("offline"));
 					lblOnline.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 					loggedOn = LogonState.Offline;
 					break;
 				}
 				default:
 				{
-					lblOnline.setText(message); //TODO: bundle
+					lblOnline.setText(ClientConfigurationController.getInstance().getChatString(message));
 					lblOnline.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 					loggedOn = LogonState.Offline;
 					break;
@@ -396,7 +397,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 			        {
 			            room.getMembersList().remove(c.getNickName());
 			        
-			            String message = "* " + c.getNickName() + " has left the room.\n";// TODO: bundle
+			            String message = "* " + c.getNickName() +" "+ ClientConfigurationController.getInstance().getChatString("leftroom") + "\n";
 			            appendMessage(c.getRoomName(), message);
 			        }
 		        }
@@ -416,7 +417,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 			        {
 			            room.getMembersList().add(c.getNickName());
 			        
-			            String message = "* " + c.getNickName() + " has entered the room.\n";// TODO: bundle
+			            String message = "* " + c.getNickName() +" "+ ClientConfigurationController.getInstance().getChatString("enteredroom") + "\n";
 			            appendMessage(c.getRoomName(), message);
 			        }
 		        }
@@ -433,7 +434,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		        {
 			        BuildChatPanel(c.getRoomMembers(), c.getRoomName());
 			        
-			        String message = "you have entered the room.\n";// TODO: bundle
+			        String message =  ClientConfigurationController.getInstance().getChatString("youenterroom") + "\n";
 			        appendMessage(c.getRoomName(), message);
 		        }
 			}
@@ -475,8 +476,8 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		        {
 					publicRoomsList.removeAll();
 					chatRooms.clear();
-					btnLog.setText("Log on"); //TODO bundle
-					setConnectState(3, "Server connection interupted");  //TODO bundle
+					btnLog.setText(ClientConfigurationController.getInstance().getChatString("logon"));
+					setConnectState(3, ClientConfigurationController.getInstance().getChatString("connectioninterupt"));
 		            for(CTabItem item : chatWindowTabFolder.getItems())
 		            {
 		                item.dispose();
@@ -503,7 +504,6 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 
 	@Override
 	public void initialiseFocus() {
-		// TODO Auto-generated method stub
-		
+		btnLog.setFocus();
 	}
 }

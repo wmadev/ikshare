@@ -267,6 +267,16 @@ public class ClientConfigurationController {
             return "-- KeyNotFound --";
         }
     }
+    
+    public String getChatString(String key){
+        try{
+            return ResourceBundle.getBundle("ikshare.client.gui.bundles.chatmessages",new Locale(config.getLanguage())).getString(key);
+        }
+        catch(MissingResourceException e){
+            return key;
+        }
+    }
+    
     public ClientConfiguration getConfiguration(){
     	if (config == null)
     		loadConfiguration();
