@@ -101,18 +101,12 @@ public class PeerFacade {
 		frc.setFileName(transfer.getFile().getFileName());
 		frc.setTransferId(transfer.getId());
 		frc.setSentBytes(0);
-		try {
-			Socket sendSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort());
-			PeerMessageThread peerMessageThread = new PeerMessageThread(sendSocket);
-			executorService.execute(peerMessageThread);
-			peerMessageThread.sendMessage(frc);
-			
-			messageThreads.put(transfer.getId(), peerMessageThread);
-			
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		PeerMessageThread peerMessageThread = new PeerMessageThread(transfer);
+		executorService.execute(peerMessageThread);
+		peerMessageThread.sendMessage(frc);
+		
+		messageThreads.put(transfer.getId(), peerMessageThread);
+
 	}
 	
 	public void addToUploads(Transfer transfer) {
