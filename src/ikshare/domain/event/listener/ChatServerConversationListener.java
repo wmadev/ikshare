@@ -4,6 +4,8 @@ import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
 import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
 import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
 import ikshare.protocol.command.chat.ChatMessageCommando;
+import ikshare.protocol.command.chat.ChatRoomDoesNotExistCommando;
+import ikshare.protocol.command.chat.ChatUpdateRoomsListCommando;
 import ikshare.protocol.command.chat.ChatWelcomeCommando;
 import ikshare.protocol.command.chat.ChatYouEnterRoomCommando;
 
@@ -19,4 +21,6 @@ public interface ChatServerConversationListener {
     public void youEnterRoom(ChatYouEnterRoomCommando c);
 	public void invalidRoomPassword(ChatInvalidRoomPasswordCommando c);
 	public void chatServerInterupt(String message);
+	public void chatRoomDoesNotExist(ChatRoomDoesNotExistCommando c);
+	public void chatRoomsUpdate(ChatUpdateRoomsListCommando c);
 }

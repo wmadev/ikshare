@@ -24,6 +24,9 @@ public class ChatCommandoParser {
         if (commandoString.startsWith(bundle.getString("chatmessage"))){
         	return new ChatMessageCommando(commandoString);
         }
+        else if (commandoString.startsWith(bundle.getString("chatupdateroomslist"))){
+        	return new ChatUpdateRoomsListCommando(commandoString);
+        }
         else if (commandoString.startsWith(bundle.getString("chatlogon"))){
         	return new ChatLogOnCommando(commandoString);
         }
@@ -51,11 +54,17 @@ public class ChatCommandoParser {
         else if (commandoString.startsWith(bundle.getString("chathasleftroom"))){
         	return new ChatHasLeftRoomCommando(commandoString);
         }
-        else if (commandoString.startsWith(bundle.getString("chatinvalidcommand"))){
-        	return new ChatInvalidCommando(commandoString);
+        else if (commandoString.startsWith(bundle.getString("chatcreateroom"))){
+        	return new ChatCreateRoomCommando(commandoString);
         }
         else if (commandoString.startsWith(bundle.getString("chatinvalidroompassword"))){
         	return new ChatInvalidRoomPasswordCommando(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("chatroomdoesnotexist"))){
+        	return new ChatRoomDoesNotExistCommando(commandoString);
+        }
+        else if (commandoString.startsWith(bundle.getString("chatinvalidcommand"))){
+        	return new ChatInvalidCommando(commandoString);
         }
         else{
         	throw new CommandNotFoundException(commandoString);

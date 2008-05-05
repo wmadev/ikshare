@@ -2,7 +2,11 @@ package ikshare.chatserver;
 
 import ikshare.chatserver.datatypes.ChatClient;
 import ikshare.chatserver.datatypes.ChatRoom;
+import ikshare.protocol.command.chat.ChatCreateRoomCommando;
+import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
 import ikshare.protocol.command.chat.ChatMessageCommando;
+import ikshare.protocol.command.chat.ChatRoomDoesNotExistCommando;
+import ikshare.protocol.command.chat.ChatUpdateRoomsListCommando;
 import ikshare.protocol.command.chat.ChatYouEnterRoomCommando;
 
 import java.util.ArrayList;
@@ -36,6 +40,7 @@ public class ChatServerController {
         	ChatRoom testRoom = new ChatRoom();
         	testRoom.setVisible(true);
         	testRoom.setPersistant(true);
+        	testRoom.setPassword("password"+i);
         	testRoom.setRoomName("test room " + i);
         	rooms.add(testRoom);
         }
@@ -74,7 +79,7 @@ public class ChatServerController {
     	
     	for(ChatRoom currentroom : clientsrooms)
     	{
-    		currentroom.RemoveClientFromRoom(client);
+    		ClientLeavesRoom(currentroom.getRoomName(), client);
     	}
     	
         onlineClients.remove(client);
@@ -135,29 +140,37 @@ public class ChatServerController {
     	}
 	}
 
-	public void ClientEntersRoom(String roomName, ChatClient client) 
+	public void ClientEntersRoom(String roomName, String password, ChatClient client) 
 	{
 		ChatRoom room = GetRoomByName(roomName);
 		
-		if(room == null)
+		if(room!=null && !room.HasClient(client))
 		{
-			room = new ChatRoom();
-			room.setRoomName(roomName);
-			rooms.add(room);
+			if(room.getPassword()!= null && !room.getPassword().equals("") && !room.getPassword().equals(password))
+			{
+				ChatInvalidRoomPasswordCommando CIRPCommando = new ChatInvalidRoomPasswordCommando();
+				CIRPCommando.setRoomName(roomName);
+				client.getThread().SendMessage(CIRPCommando);
+			}
+			else
+			{
+				System.out.println( ">> " + client.getNickName() + " enters room " + roomName + ".");
+				
+				room.AddClientToRoom(client);
+				
+				ChatYouEnterRoomCommando CYERCommando = new ChatYouEnterRoomCommando();
+				CYERCommando.setRoomName(roomName);
+				for(ChatClient member : room.getClients())
+					CYERCommando.addRoomMember(member.getNickName());
+				
+				client.getThread().SendMessage(CYERCommando);
+			}
 		}
-		
-		if(!room.HasClient(client))
+		else if (room == null) // room does not exist
 		{
-			System.out.println( ">> " + client.getNickName() + " enters room " + roomName + ".");
-			
-			room.AddClientToRoom(client);
-			
-			ChatYouEnterRoomCommando CYERCommando = new ChatYouEnterRoomCommando();
-			CYERCommando.setRoomName(roomName);
-			for(ChatClient member : room.getClients())
-				CYERCommando.addRoomMember(member.getNickName());
-			
-			client.getThread().SendMessage(CYERCommando);
+			ChatRoomDoesNotExistCommando CRDNECommando = new ChatRoomDoesNotExistCommando();
+			CRDNECommando.setRoomName(roomName);
+			client.getThread().SendMessage(CRDNECommando);
 		}
 	}
 
@@ -173,7 +186,18 @@ public class ChatServerController {
 		}
 		
 		if(room.getNumberOfClients()==0 && !room.isPersistant())
+		{
+			if(ChatServer.debug)
+				System.out.print("Room is empty, removing room...");
+			
 			rooms.remove(room);
+			
+			if(room.isVisible())
+				UpdateRoomsList(roomName, false);
+			
+			if(ChatServer.debug)
+				System.out.println(" gone!");
+		}
 	}
 	
 	public ArrayList<ChatRoom> getPublicRooms()
@@ -187,5 +211,41 @@ public class ChatServerController {
 		}
 		
 		return publicRooms;
+	}
+
+	public void CreateRoom(ChatCreateRoomCommando command, ChatClient client) 
+	{
+		ChatRoom foundRoom = GetRoomByName(command.getRoomName());
+		
+		if(foundRoom==null)
+		{
+			System.out.println( ">> " + client.getNickName() + " creates room " + command.getRoomName() + ".");
+			ChatRoom newRoom = new ChatRoom();
+			newRoom.setRoomName(command.getRoomName());
+			if(command.getPassword()!=null && !command.getPassword().equals(""))
+				newRoom.setPassword(command.getPassword());
+			else
+				newRoom.setPassword("");
+			newRoom.setVisible(!command.isPrivateRoom());
+			newRoom.setPersistant(false);
+			rooms.add(newRoom);
+			
+			if(newRoom.isVisible())
+				UpdateRoomsList(command.getRoomName(), true);
+			
+			ClientEntersRoom(command.getRoomName(), command.getPassword(), client);
+		}
+	}
+	
+	public void UpdateRoomsList(String roomName, boolean Added)
+	{
+		ChatUpdateRoomsListCommando CURLCommando = new ChatUpdateRoomsListCommando();
+		CURLCommando.setAdded(Added);
+		CURLCommando.setRoomName(roomName);
+		
+		for(ChatClient client : onlineClients)
+		{
+			client.getThread().SendMessage(CURLCommando);
+		}
 	}
 }

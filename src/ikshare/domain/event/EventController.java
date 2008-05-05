@@ -23,6 +23,8 @@ import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
 import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
 import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
 import ikshare.protocol.command.chat.ChatMessageCommando;
+import ikshare.protocol.command.chat.ChatRoomDoesNotExistCommando;
+import ikshare.protocol.command.chat.ChatUpdateRoomsListCommando;
 import ikshare.protocol.command.chat.ChatWelcomeCommando;
 import ikshare.protocol.command.chat.ChatYouEnterRoomCommando;
 
@@ -240,11 +242,26 @@ public class EventController {
             listener.invalidRoomPassword(c);
         }
 	}
+
+	public void triggerRoomDoesNotExist(ChatRoomDoesNotExistCommando c) {
+		for(ChatServerConversationListener listener : chatServerConversationListeners)
+		{
+			listener.chatRoomDoesNotExist(c);
+		}
+	}
 	
 	public void triggerChatServerInterupt(String message){
 		for(ChatServerConversationListener listener : chatServerConversationListeners)
 		{
 			listener.chatServerInterupt(message);
 		}
+	}
+
+	public void triggerRoomsUpdate(ChatUpdateRoomsListCommando c) {
+		for(ChatServerConversationListener listener : chatServerConversationListeners)
+		{
+			listener.chatRoomsUpdate(c);
+		}
+		
 	}
 }

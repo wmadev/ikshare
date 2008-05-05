@@ -2,24 +2,20 @@ package ikshare.protocol.command.chat;
 
 import ikshare.protocol.command.Commando;
 
-public class ChatEnterRoomCommando extends Commando
+public class ChatUpdateRoomsListCommando extends Commando
 {
 	private String roomName;
-	private String password;
+	private boolean added; //true if room is added, false if it is removed
 	
-	public ChatEnterRoomCommando(){
+	public ChatUpdateRoomsListCommando(){
 		super();
 	}
 	
-	public ChatEnterRoomCommando(String commandoString)
+	public ChatUpdateRoomsListCommando(String commandoString)
 	{
 		super(commandoString);
 		setRoomName(commandoLine.get(1));
-		
-		if(commandoLine.size()>2)
-			setPassword(commandoLine.get(2));
-		else
-			setPassword("");
+		setAdded(commandoLine.get(2).equals("1")?true:false);
 	}
 
 	public String getRoomName() 
@@ -32,19 +28,21 @@ public class ChatEnterRoomCommando extends Commando
 		this.roomName = roomName;
 	}
 	
-	public String getPassword() {
-		return password;
+	public boolean isAdded() {
+		return added;
 	}
 
-	public void setPassword(String password) {
-		this.password = password;
+	public void setAdded(boolean added) {
+		this.added = added;
 	}
 	
     @Override
     public String toString() {
         String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("chatenterroom")
+        return commandoBundle.getString("chatupdateroomslist")
         	+ del + getRoomName()
-        	+ del + getPassword();
+        	+ del + (isAdded()?"1":"0");
     }
+
+
 }
