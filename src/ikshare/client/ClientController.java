@@ -25,6 +25,7 @@ import ikshare.protocol.command.LogNiLukNiCommando;
 import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
 import ikshare.protocol.command.WelcomeCommando;
+import ikshare.protocol.command.chat.ChatCreateRoomCommando;
 import ikshare.protocol.command.chat.ChatEnterRoomCommando;
 import ikshare.protocol.command.chat.ChatLeaveRoomCommando;
 import ikshare.protocol.command.chat.ChatLogOffCommando;
@@ -191,14 +192,13 @@ public class ClientController implements ServerConversationListener{
     	stopChatServerConversation();
     }
     
-    public void chatEnterRoom(String roomName, String password, boolean privateRoom){
+    public void chatEnterRoom(String roomName, String password){
     	ChatEnterRoomCommando CERCommando = new ChatEnterRoomCommando();
     	CERCommando.setRoomName(roomName);
     	if(password == null)
     		CERCommando.setPassword("");
     	else
     		CERCommando.setPassword(password);
-    	CERCommando.setPrivateRoom(privateRoom);
     	chatServerConversation.sendCommand(CERCommando);
     }
     
@@ -216,6 +216,18 @@ public class ClientController implements ServerConversationListener{
     	CMCommando.setText(message);
     	chatServerConversation.sendCommand(CMCommando);
     }
+
+	public void chatCreateRoom(String roomName, String roomPassword, boolean publicRoom) 
+	{
+		ChatCreateRoomCommando CCRCommando = new ChatCreateRoomCommando();
+		CCRCommando.setRoomName(roomName);
+		if(roomPassword!=null && !roomPassword.equals(""))
+			CCRCommando.setPassword(roomPassword);
+		else
+			CCRCommando.setPassword("");
+		CCRCommando.setPrivateRoom(!publicRoom);
+		chatServerConversation.sendCommand(CCRCommando);
+	}
     
     public void stopServerConversation() {
         serverConversation.stop();

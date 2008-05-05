@@ -75,9 +75,9 @@ public class HandleChatClientThread implements Runnable
 	                    {
 	                        handleLogOff((ChatLogOffCommando)command);
 	                    }
-	                    else if (command instanceof ChatMessageCommando)
+	                    else if (command instanceof ChatCreateRoomCommando)
 	                    {
-	                    	handleIncomingMessage((ChatMessageCommando)command);
+	                    	handleCreateRoom((ChatCreateRoomCommando)command);
 	                    }
 	                    else
 	                    {
@@ -108,7 +108,12 @@ public class HandleChatClientThread implements Runnable
         }
     }
     
-    private void handleIncomingMessage(ChatMessageCommando command)
+    private void handleCreateRoom(ChatCreateRoomCommando command) 
+    {
+		ChatServerController.getInstance().CreateRoom(command, client);
+	}
+
+	private void handleIncomingMessage(ChatMessageCommando command)
     {
     	command.setSender(client.getNickName());
     	
@@ -117,7 +122,7 @@ public class HandleChatClientThread implements Runnable
     
     private void handleEnterRoom(ChatEnterRoomCommando command)
     {
-    	ChatServerController.getInstance().ClientEntersRoom(command.getRoomName(), client);
+    	ChatServerController.getInstance().ClientEntersRoom(command.getRoomName(), command.getPassword(), client);
     }
     
     private void handleLeaveRoom(ChatLeaveRoomCommando command)

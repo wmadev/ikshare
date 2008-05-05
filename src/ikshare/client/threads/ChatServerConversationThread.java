@@ -9,6 +9,8 @@ import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
 import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
 import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
 import ikshare.protocol.command.chat.ChatMessageCommando;
+import ikshare.protocol.command.chat.ChatRoomDoesNotExistCommando;
+import ikshare.protocol.command.chat.ChatUpdateRoomsListCommando;
 import ikshare.protocol.command.chat.ChatWelcomeCommando;
 import ikshare.protocol.command.chat.ChatYouEnterRoomCommando;
 
@@ -54,6 +56,9 @@ public class ChatServerConversationThread implements Runnable
                     if(c instanceof ChatMessageCommando){
                     	EventController.getInstance().triggerReceivingMessage((ChatMessageCommando)c);
                     }
+                    else if (c instanceof ChatUpdateRoomsListCommando) {
+                    	EventController.getInstance().triggerRoomsUpdate((ChatUpdateRoomsListCommando)c);
+                    }
                     else if (c instanceof ChatWelcomeCommando) {
                     	EventController.getInstance().triggerYouLoggedOn((ChatWelcomeCommando)c);
                     }
@@ -65,6 +70,9 @@ public class ChatServerConversationThread implements Runnable
                     }
                     else if (c instanceof ChatYouEnterRoomCommando){
                     	EventController.getInstance().triggerYouEnterRoom((ChatYouEnterRoomCommando)c);
+                    }
+                    else if (c instanceof ChatRoomDoesNotExistCommando){
+                    	EventController.getInstance().triggerRoomDoesNotExist((ChatRoomDoesNotExistCommando)c);
                     }
                     else if (c instanceof ChatInvalidRoomPasswordCommando){
                     	EventController.getInstance().triggerInvalidRoomPassword((ChatInvalidRoomPasswordCommando)c);

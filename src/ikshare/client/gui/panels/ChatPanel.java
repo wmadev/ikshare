@@ -16,6 +16,8 @@ import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
 import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
 import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
 import ikshare.protocol.command.chat.ChatMessageCommando;
+import ikshare.protocol.command.chat.ChatRoomDoesNotExistCommando;
+import ikshare.protocol.command.chat.ChatUpdateRoomsListCommando;
 import ikshare.protocol.command.chat.ChatWelcomeCommando;
 import ikshare.protocol.command.chat.ChatYouEnterRoomCommando;
 
@@ -39,9 +41,12 @@ import org.eclipse.swt.widgets.Group;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Shell;
 import org.eclipse.swt.widgets.Text;
 
 import ikshare.client.gui.AbstractPanel;
+import ikshare.client.gui.dialogs.ChatCreateRoomDialog;
+import ikshare.client.gui.dialogs.ChatRoomPasswordDialog;
 
 /**
  *
@@ -60,6 +65,8 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
     private Label lblLog;
     private Label lblOnline;
     
+    final Shell parentShell;
+    
     public ChatPanel(String text,String icon)
     {
         super(text,icon);
@@ -72,6 +79,8 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
         GridLayout mainLayout = new GridLayout(2, false);
         this.setLayout(mainLayout);
         this.init();
+        
+        parentShell = this.getShell();
     }
     
     private void init()
@@ -156,7 +165,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		                if(selection.length==1)
 		                	selectedItem = publicRoomsList.getItem(selection[0]);
 		                if(selectedItem!=null)
-		                	ClientController.getInstance().chatEnterRoom(selectedItem, "", false);
+		                	ClientController.getInstance().chatEnterRoom(selectedItem, "");
 		        	}
 		        });
 		        
@@ -184,8 +193,21 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		    	lblPrivateRoomName.setLayoutData(new GridData(SWT.LEFT, SWT.CENTER, false, false));
 		    	lblPrivateRoomName.setText(ClientConfigurationController.getInstance().getChatString("roomname"));
 		    	
-		    	Text txtPrivateRoomName = new Text(grpPrivateRooms, SWT.BORDER);
+		    	final Text txtPrivateRoomName = new Text(grpPrivateRooms, SWT.BORDER);
 		    	txtPrivateRoomName.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, true, false));
+		    	txtPrivateRoomName.addKeyListener(new KeyAdapter() {
+		        	public void keyPressed(KeyEvent event)
+		        	{
+		        		if(loggedOn == LogonState.Online)
+		        		{
+			        		if(event.keyCode == SWT.CR || event.keyCode == SWT.KEYPAD_CR)
+				        	{
+			        			ClientController.getInstance().chatEnterRoom(txtPrivateRoomName.getText(), "");
+				        		txtPrivateRoomName.setText("");
+				        	}
+		        		}
+		        	}
+		        });
 		    	
 		        layoutPrivateRooms.topControl = grpPrivateRooms;
 	    	}
@@ -247,7 +269,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
         txtChatEnterField.addKeyListener(new KeyAdapter() {
         	public void keyPressed(KeyEvent event)
         	{
-        		if(event.keyCode == SWT.CR)
+        		if(event.keyCode == SWT.CR || event.keyCode == SWT.KEYPAD_CR)
 	        	{
         			textEntered(txtChatEnterField.getText(), roomName);
         			txtChatEnterField.setText("");
@@ -462,9 +484,17 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 	}
     
     @Override
-	public void invalidRoomPassword(ChatInvalidRoomPasswordCommando c) {
-		// TODO Auto-generated method stub
-		
+	public void invalidRoomPassword(final ChatInvalidRoomPasswordCommando c) {
+		this.getDisplay().asyncExec(
+				new Runnable() 
+				{
+			        public void run() 
+			        {	
+						ChatRoomPasswordDialog CRPDialog = new ChatRoomPasswordDialog(parentShell, c.getRoomName());
+						CRPDialog.open();
+			        }
+				}
+			);
 	}
     
 	@Override
@@ -485,6 +515,38 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		        }
 			}
 		);
+	}
+	
+	@Override
+	public void chatRoomDoesNotExist(final ChatRoomDoesNotExistCommando c) 
+	{
+		this.getDisplay().asyncExec(
+				new Runnable() 
+				{
+			        public void run() 
+			        {	
+						ChatCreateRoomDialog CCRDialog = new ChatCreateRoomDialog(parentShell, c.getRoomName());
+						CCRDialog.open();
+			        }
+				}
+		);
+	} 
+	
+	@Override
+	public void chatRoomsUpdate(final ChatUpdateRoomsListCommando c) {
+		this.getDisplay().asyncExec(
+				new Runnable() 
+				{
+			        public void run() 
+			        {	
+						if(c.isAdded())
+							publicRoomsList.add(c.getRoomName());
+						else
+							publicRoomsList.remove(c.getRoomName());
+			        }
+				}
+		);
+		
 	}
    
 	@Override

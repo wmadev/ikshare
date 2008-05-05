@@ -103,8 +103,8 @@ public class ChatRoom
     {
         for(ChatClient client : clients)
         {
-        	if(command instanceof ChatMessageCommando && 
-        			!client.getNickName().equals(((ChatMessageCommando)command).getSender()))
+        	if(!(command instanceof ChatMessageCommando 
+        			&& client.getNickName().equals(((ChatMessageCommando)command).getSender())))
         		client.SendMessage(command);
         }
     }
