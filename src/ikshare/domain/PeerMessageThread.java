@@ -273,15 +273,32 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 		EventController.getInstance().triggerDownloadFailedEvent(current);
 	}
 	
-	public void sendMessage(Commando commando) {
-		System.out.println("Verstuurd Commando");
-		System.out.println("------------------");
-		System.out.println(commando);
-		System.out.println("");
-		
-		//System.out.println("[" +commando + "] wordt gezonden naar " + s.getInetAddress().getHostAddress() + " op poort " + s.getPort());
+	public void sendMessage(final Commando commando) {
+		ExecutorService es = Executors.newCachedThreadPool();
+		es.execute(new Runnable() {
 
-		outputWriter.println(commando.toString());
+			public void run() {
+				System.out.println("Verstuurd Commando");
+				System.out.println("------------------");
+				System.out.println(commando);
+				System.out.println("");
+				
+				//System.out.println("[" +commando + "] wordt gezonden naar " + s.getInetAddress().getHostAddress() + " op poort " + s.getPort());
+				try {
+					if (clientSocket == null) 
+						clientSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort());
+
+			        
+			    	outputWriter = new PrintWriter(clientSocket.getOutputStream(), true);
+			        incomingReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+				} catch (Exception e) {
+					
+				}
+				outputWriter.println(commando.toString());
+			}
+		});
+		
+		
 	}
 
 	public void activeDownloadsChanged() {
