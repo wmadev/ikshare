@@ -42,24 +42,17 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
     
     public PeerMessageThread(Socket socket){
     	EventController.getInstance().addTransferQueueListener(this);
-        try {
-			clientSocket = socket;
-            //clientSocket.setSoTimeout(5000);
-            outputWriter = new PrintWriter(clientSocket.getOutputStream(), true);
-            incomingReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-            running = true;
-        } catch (IOException ex) {
-            ex.printStackTrace();
-        }
+       clientSocket = socket;
     }
 
 	public void run() {
         try {
-        	if (clientSocket == null) {
+        	if (clientSocket == null)
         		clientSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort());
-                outputWriter = new PrintWriter(clientSocket.getOutputStream(), true);
-                incomingReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-        	}
+        
+        	outputWriter = new PrintWriter(clientSocket.getOutputStream(), true);
+            incomingReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+        	
 			
             while(running){
                 String inputLine = incomingReader.readLine();
