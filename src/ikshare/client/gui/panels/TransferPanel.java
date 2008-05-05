@@ -8,6 +8,8 @@ package ikshare.client.gui.panels;
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.UtilityClass;
+import ikshare.domain.IKShareFile;
+import ikshare.domain.Peer;
 import ikshare.domain.PeerFacade;
 import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;
@@ -57,13 +59,14 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 	
 	public TransferPanel(String text, String icon) {
 		super(text, icon);
+
+		EventController.getInstance().addFileTransferListener(this);
 		FillLayout layout = new FillLayout();
 		this.setLayout(layout);
 		this.init();
 		downloadHashMap = new HashMap<String, TableItem>();
 		uploadHashMap = new HashMap<String, TableItem>();
 		
-		EventController.getInstance().addFileTransferListener(this);
 	}
 
 
@@ -157,6 +160,21 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
 		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
 		downloadTab.setControl(cmpDownload);
+		/*
+		Transfer test = new Transfer();
+		test.setId("100");
+		test.setBlockSize(2048);
+		test.setNumberOfBytesFinished(20000);
+		test.setPeer(new Peer("hallo"));
+		test.setRemainingTime(0);
+		test.setState(TransferState.DOWNLOADING);
+		test.setFile(new IKShareFile("map", "bestand"));
+		test.setFileSize(20000);
+		test.setSpeed(100);
+		EventController.getInstance().triggerDownloadStartedEvent(test);
+		EventController.getInstance().triggerDownloadStateChangedEvent(test);
+		 */
+
 	}
 	
 	private void resumeMenu(final Transfer selected, boolean enabled) {
@@ -215,6 +233,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 
 
 	public void transferStarted(final Transfer transfer) {
+		System.out.println(transfer.getState());
 		this.getDisplay().asyncExec(
 				new Runnable() {
 					public void run(){
@@ -440,11 +459,13 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 
 		for (int i=0; i<tblDownloadTransfer.getItemCount(); i++) {
 			((ProgressBar)tblDownloadTransfer.getItem(i).getData("progressbar")).dispose();
+			tblDownloadTransfer.getItem(i).dispose();
 		}
 		
 		
 		for (int i=0; i<tblUploadTransfer.getItemCount(); i++) {
 			((ProgressBar)tblUploadTransfer.getItem(i).getData("progressbar")).dispose();
+			tblUploadTransfer.getItem(i).dispose();
 		}
 		
 		
