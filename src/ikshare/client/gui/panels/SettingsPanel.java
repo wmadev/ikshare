@@ -43,8 +43,8 @@ public class SettingsPanel extends AbstractPanel{
     private void init() {
         TabFolder folder=new TabFolder(this, SWT.NONE);
         folder.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,1,1));
-        makeGeneralFolder(folder);
-        makeNetworkFolder(folder);
+        makeGeneralTab(folder);
+        makeNetworkTab(folder);
         Button btnSave = new Button(this, SWT.NONE);
         btnSave.setLayoutData(new GridData(SWT.LEFT,SWT.FILL,false,false,1,1));
         btnSave.setText(ClientConfigurationController.getInstance().getString("save"));
@@ -84,7 +84,7 @@ public class SettingsPanel extends AbstractPanel{
         });
     }
 
-    private void makeGeneralFolder(TabFolder folder) {
+    private void makeGeneralTab(TabFolder folder) {
         TabItem generalTab = new TabItem(folder,SWT.BORDER);
         generalTab.setText(ClientConfigurationController.getInstance().getString("general"));
         if(new File(ICON_GENERAL).exists()){
@@ -167,7 +167,7 @@ public class SettingsPanel extends AbstractPanel{
 
 
     }
-    private void makeNetworkFolder(TabFolder folder) {
+    private void makeNetworkTab(TabFolder folder) {
         TabItem networkTab = new TabItem(folder,SWT.BORDER);
         networkTab.setText(ClientConfigurationController.getInstance().getString("network"));
         if(new File(ICON_NETWORK).exists()){
