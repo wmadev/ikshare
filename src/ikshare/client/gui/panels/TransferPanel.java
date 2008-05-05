@@ -71,7 +71,39 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		TabFolder folder=new TabFolder(this, SWT.NONE);
 
 		// Download
-		TabItem downloadTab = new TabItem(folder,SWT.NONE);
+		makeDownloadTab(folder);
+		// Upload
+		makeUploadTab(folder); 
+	}
+
+
+	private void makeUploadTab(TabFolder folder) {
+		TabItem uploadTab = new TabItem(folder,SWT.BORDER);
+		uploadTab.setText(ClientConfigurationController.getInstance().getString("uploads"));
+		if(new File(ICON_UP).exists()){
+			Image icon = new Image(Display.getCurrent(), ICON_UP);
+			uploadTab.setImage(icon);
+		}
+		Composite cmpUpload=new Composite(folder, SWT.NONE);
+		cmpUpload.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,3,1));
+		cmpUpload.setLayout(new GridLayout(1,false));
+		tblUploadTransfer = new Table(cmpUpload,SWT.FULL_SELECTION | SWT.BORDER);
+		tblUploadTransfer.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
+		tblUploadTransfer.setLinesVisible (true);
+		tblUploadTransfer.setHeaderVisible (true);
+		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
+		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
+		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("progress"), 100, SWT.RIGHT);
+		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("state"), 150, SWT.RIGHT);
+		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("speed"),100,SWT.RIGHT);
+		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
+		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
+		uploadTab.setControl(cmpUpload);
+	}
+
+
+	private void makeDownloadTab(TabFolder folder) {
+		TabItem downloadTab = new TabItem(folder,SWT.BORDER);
 		downloadTab.setText(ClientConfigurationController.getInstance().getString("downloads"));
 		if(new File(ICON_DOWN).exists()){
 			Image icon = new Image(Display.getCurrent(), ICON_DOWN);
@@ -125,31 +157,6 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
 		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
 		downloadTab.setControl(cmpDownload);
-
-
-
-		// Upload
-		TabItem uploadTab = new TabItem(folder,SWT.NONE);
-		if(new File(ICON_UP).exists()){
-			Image icon = new Image(Display.getCurrent(), ICON_UP);
-			uploadTab.setImage(icon);
-		}
-		uploadTab.setText(ClientConfigurationController.getInstance().getString("uploads"));
-		Composite cmpUpload=new Composite(folder, SWT.NONE);
-		cmpUpload.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,3,1));
-		cmpUpload.setLayout(new GridLayout(1,false));
-		tblUploadTransfer = new Table(cmpUpload,SWT.FULL_SELECTION | SWT.BORDER);
-		tblUploadTransfer.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
-		tblUploadTransfer.setLinesVisible (true);
-		tblUploadTransfer.setHeaderVisible (true);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("progress"), 100, SWT.RIGHT);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("state"), 150, SWT.RIGHT);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("speed"),100,SWT.RIGHT);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
-		uploadTab.setControl(cmpUpload); 
 	}
 	
 	private void resumeMenu(final Transfer selected, boolean enabled) {
