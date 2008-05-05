@@ -31,11 +31,12 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
     private PrintWriter outputWriter;
     private BufferedReader incomingReader;
     private String accountName;
+	private Transfer transfer;
         
     public PeerMessageThread(Transfer transfer){
     	EventController.getInstance().addTransferQueueListener(this);
         try {
-			clientSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort());
+        	this.transfer = transfer;
             //clientSocket.setSoTimeout(5000);
             outputWriter = new PrintWriter(clientSocket.getOutputStream(), true);
             incomingReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
@@ -60,6 +61,9 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 
 	public void run() {
         try {
+        	if (clientSocket == null)
+        		clientSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort());
+			
             while(running){
                 String inputLine = incomingReader.readLine();
                 while (inputLine != null) {
