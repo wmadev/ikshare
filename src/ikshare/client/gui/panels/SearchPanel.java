@@ -5,16 +5,12 @@ import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.ExceptionWindow;
 import ikshare.client.gui.UtilityClass;
 import ikshare.client.configuration.ClientConfigurationController;
-
-import ikshare.domain.Peer;
 import ikshare.domain.PeerFacade;
 import ikshare.domain.SearchResult;
 import ikshare.domain.Transfer;
-import ikshare.domain.TransferState;
 import ikshare.domain.event.EventController;
 import ikshare.client.gui.MainScreen;
 
-import ikshare.domain.IKShareFile;
 import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.domain.exception.NoServerConnectionException;
 import ikshare.protocol.command.Commando;
@@ -22,29 +18,18 @@ import ikshare.protocol.command.DownloadInformationResponseCommand;
 import ikshare.protocol.command.FoundResultCommando;
 import ikshare.protocol.command.NoResultsFoundCommando;
 import java.io.File;
-import java.net.InetAddress;
 import java.net.UnknownHostException;
 
-import java.util.ArrayList;
 import java.util.Date;
-
 import java.util.HashMap;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
-import org.eclipse.swt.custom.CTabFolder2Adapter;
-import org.eclipse.swt.custom.CTabFolderAdapter;
-import org.eclipse.swt.custom.CTabFolderEvent;
 import org.eclipse.swt.custom.CTabItem;
 import org.eclipse.swt.custom.StackLayout;
-import org.eclipse.swt.custom.TableTree;
-import org.eclipse.swt.custom.TableTreeItem;
 import org.eclipse.swt.events.DisposeEvent;
 import org.eclipse.swt.events.DisposeListener;
-import org.eclipse.swt.events.KeyAdapter;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
@@ -181,7 +166,6 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     }
     
      private Group drawBasicSearch(Composite parent) {
-        //((GridData)(parent.getLayoutData())).heightHint=75;
         Group grpBasic = new Group(parent, SWT.BORDER);
         grpBasic.setLayout(new GridLayout(1, false));
         grpBasic.setText(ClientConfigurationController.getInstance().getString("basic"));
@@ -277,7 +261,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         cmpSize.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
         cmpSize.setLayout(new GridLayout(3, false));
         Label lblMin = new Label(cmpSize, SWT.NONE);
-        lblMin.setText(ClientConfigurationController.getInstance().getString("between"));
+        lblMin.setText(ClientConfigurationController.getInstance().getString("min"));
         lblMin.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
              
         
@@ -288,7 +272,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         cbSizeMin.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
         
         Label lblMax = new Label(cmpSize, SWT.NONE);
-        lblMax.setText(ClientConfigurationController.getInstance().getString("and"));
+        lblMax.setText(ClientConfigurationController.getInstance().getString("max"));
         lblMax.setLayoutData(new GridData(SWT.CENTER, SWT.CENTER, true, false, 1, 1));
         txtMax = new Text(cmpSize, SWT.BORDER);
         txtMax.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
@@ -298,7 +282,8 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
      
         Label lblSearchFolder = new Label(grpAdvanced, SWT.NONE);
         lblSearchFolder.setText(ClientConfigurationController.getInstance().getString("folder"));
-        lblSearchFolder.setLayoutData(gd);
+        GridData gdfolder = new GridData(SWT.LEFT, SWT.CENTER, true, false, 1, 1);
+        lblSearchFolder.setLayoutData(gdfolder);
         Composite radioButtons = new Composite(grpAdvanced, SWT.NONE);
         radioButtons.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1));
         radioButtons.setLayout(new FillLayout());
