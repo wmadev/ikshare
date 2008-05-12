@@ -177,7 +177,8 @@ public class OracleFileStorage implements FileStorage {
     
     public List<SearchResult> advancedFileSearch(String keyword, boolean textAnd, int typeID, long minSize, long maxSize) throws DatabaseException {
         ArrayList<SearchResult> results = null;
-        String searchString="WITH y AS (SELECT x.USERNAME FROM ONLINE_USERS x WHERE x.ACTION='LOGON' AND x.USERNAME NOT IN ( SELECT USERNAME FROM ONLINE_USERS WHERE ACTION = 'LOGOFF' AND TIMESTAMP> x.TIMESTAMP AND USERNAME=x.USERNAME ) ) SELECT fi.FOLDERID,FILENAME,ACCOUNTNAME,FILESIZE FROM SHAREDFILES fi JOIN SHAREDFOLDERS fo ON fo.FOLDERID=fi.FOLDERID WHERE fo.ACCOUNTNAME in ( SELECT y.USERNAME FROM y ) and ( lower(FILENAME) LIKE '";
+        String searchString="WITH y AS (SELECT x.USERNAME FROM ONLINE_USERS x WHERE x.ACTION='LOGON' AND x.USERNAME NOT IN ( SELECT USERNAME FROM ONLINE_USERS WHERE ACTION = 'LOGOFF' AND TIMESTAMP> x.TIMESTAMP AND USERNAME=x.USERNAME ) ) " +
+                "SELECT fi.FOLDERID,FILENAME,ACCOUNTNAME,FILESIZE FROM SHAREDFILES fi JOIN SHAREDFOLDERS fo ON fo.FOLDERID=fi.FOLDERID JOIN y ON y.USERNAME=fo.ACCOUNTNAME and ( lower(FILENAME) LIKE '";
         keyword = keyword.toLowerCase();
         StringTokenizer tokenizer = new StringTokenizer(keyword," ");
         searchString+="%"+tokenizer.nextToken()+"%' ";
@@ -283,10 +284,13 @@ public class OracleFileStorage implements FileStorage {
 
     public List<SearchResult> advancedFolderSearch(String keyword, boolean textAnd, long minSize, long maxSize) throws DatabaseException {
         ArrayList<SearchResult> results = null;
-        String searchString="WITH y AS (SELECT x.USERNAME FROM ONLINE_USERS x WHERE x.ACTION='LOGON' AND x.USERNAME NOT IN " +
-                "( SELECT USERNAME FROM ONLINE_USERS WHERE ACTION = 'LOGOFF' AND TIMESTAMP> x.TIMESTAMP AND USERNAME=x.USERNAME ) ), " +
-                "w AS (SELECT distinct(folderid), foldername, parentfolderid, accountname from sharedfolders " +
-                "where parentfolderid<>0 and accountname in (select username from y) start with lower(foldername) like '";
+        String searchString="WITH y AS (SELECT x.USERNAME FROM ONLINE_USERS x WHERE x.ACTION='LOGON' AND " +
+              "x.USERNAME NOT IN ( SELECT USERNAME FROM ONLINE_USERS WHERE ACTION = 'LOGOFF' " +
+              "AND TIMESTAMP> x.TIMESTAMP AND USERNAME=x.USERNAME ) ), " +
+              "w as (SELECT distinct(fo.folderid), foldername, parentfolderid, accountname, " +
+              "sum(fi.filesize) over(partition by fo.folderid) as foldersize, connect_by_isleaf blad " +
+              "from sharedfolders fo join y on y.username=accountname join sharedfiles fi on fi.folderid=fo.folderid " +
+              "where parentfolderid<>0 start with lower(foldername) like '";
         keyword = keyword.toLowerCase();
         StringTokenizer tokenizer = new StringTokenizer(keyword," ");
         searchString+="%"+tokenizer.nextToken()+"%' ";
@@ -300,21 +304,25 @@ public class OracleFileStorage implements FileStorage {
                 searchString+= "OR lower(FOLDERNAME) LIKE '%"+tokenizer.nextToken()+"%' ";
             }               
         }
-        searchString+="connect by prior folderid = parentfolderid ), "+
-                "x as (select filename, fi.folderid, filesize, accountname " +
-                "from sharedfiles fi join w on w.folderid  =fi.folderid) " +
-                "select folderid, foldername, parentfolderid, (select sum(filesize) from x where folderid=w.folderid) as filesize, accountname ";                
+        searchString+="connect by prior folderid = parentfolderid) ," +
+                "v as (select folderid, foldername, parentfolderid, accountname, connect_by_root( foldersize) as foldersize " +
+		"from w	start with blad=1 connect by prior parentfolderid = folderid), " +
+                "z as (select folderid, foldername, parentfolderid, sum( foldersize) as foldersize, accountname " +
+		"from v group by folderid, foldername, parentfolderid, accountname ";
+
         if(minSize!=0 && maxSize!=0){
-            searchString+= "AND FILESIZE BETWEEN "+minSize+" AND "+maxSize+" ";
+            searchString+= "HAVING FOLDERSIZE BETWEEN "+minSize+" AND "+maxSize+" ";
         }
         else if (minSize!=0){
-            searchString+= "AND FILESIZE>"+minSize+" ";
+            searchString+= "HAVING FOLDERSIZE>"+minSize+" ";
              }
         else if (maxSize!=0){
-            searchString+= "AND FILESIZE<"+maxSize+" ";
+            searchString+= "HAVING FOLDERSIZE<"+maxSize+" ";
         }
-        searchString+="from w union all " +
-                "select folderid, filename, 0, filesize, accountname from x " +
+        searchString+=") " +
+                "select folderid, foldername, parentfolderid, foldersize, accountname from z " +
+                "union all select fi.folderid, filename, 0, fi.filesize, accountname " +
+                "from sharedfiles fi join z on z.folderid = fi.folderid " +
                 "order by folderid, parentfolderid desc";
               
         Connection conn = OracleDatabaseFactory.getConnection();
