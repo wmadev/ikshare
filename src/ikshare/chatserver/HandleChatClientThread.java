@@ -89,10 +89,23 @@ public class HandleChatClientThread implements Runnable
                 		if(ChatServer.debug)
                 			System.out.println("Invalid command: " + excep.getMessage());
                 	}
+                        catch(IndexOutOfBoundsException iobe)
+                        {
+                            ChatInvalidCommando invalid = new ChatInvalidCommando();
+                            invalid.setMessage("invalidnumberofarguments");
+                            SendMessage(invalid);
+                        }
+                        catch(Exception e)
+                        {
+                            ChatServerController.getInstance().ClientLogsOff(client);
+                            running = false;
+                        }
                 }
                 else
-                	wait(1); //wait 1 millisecond
+                    Thread.sleep(1);
             }
+            
+            Stop();
         }
         catch(SocketException se)
         {
@@ -102,8 +115,8 @@ public class HandleChatClientThread implements Runnable
         }
         catch(Exception e)
         {
-        	if(ChatServer.debug)
-            	e.printStackTrace();
+            if(ChatServer.debug)
+            e.printStackTrace();
             Stop();
         }
     }

@@ -22,6 +22,7 @@ import java.io.File;
 import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
 import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
 import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
+import ikshare.protocol.command.chat.ChatLogNiLukNiCommando;
 import ikshare.protocol.command.chat.ChatMessageCommando;
 import ikshare.protocol.command.chat.ChatRoomDoesNotExistCommando;
 import ikshare.protocol.command.chat.ChatUpdateRoomsListCommando;
@@ -262,6 +263,12 @@ public class EventController {
 		{
 			listener.chatRoomsUpdate(c);
 		}
-		
+	}
+
+	public void triggerLogNiLukNi(ChatLogNiLukNiCommando c) {
+		for(ChatServerConversationListener listener : chatServerConversationListeners)
+		{
+			listener.logNiLukNi(c);
+		}
 	}
 }

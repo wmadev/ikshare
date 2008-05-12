@@ -1,5 +1,8 @@
 package ikshare.protocol.command.chat;
 
+import java.util.ArrayList;
+import java.util.StringTokenizer;
+
 import ikshare.protocol.command.Commando;
 
 /**
@@ -13,6 +16,8 @@ public class ChatMessageCommando extends Commando
     private String sender;
     private boolean privateMessage = false;
     
+    private ArrayList<String> arguments;
+    
     public ChatMessageCommando()
     {
     	super();
@@ -20,14 +25,40 @@ public class ChatMessageCommando extends Commando
     
     public ChatMessageCommando(String commandoString)
     {
-    	super(commandoString);
-    	setSender(commandoLine.get(1));
-    	setRecipient(commandoLine.get(2));
-    	if(commandoLine.get(3).equals(1))
+        super(commandoString);
+        
+        arguments = new ArrayList<String>();
+        
+        StringTokenizer commandTokenizer = new StringTokenizer(commandoString, commandoBundle.getString("commandoDelimiter"), true);
+        
+        while(commandTokenizer.hasMoreTokens() && arguments.size() < 4)
+        {
+            String nextToken = commandTokenizer.nextToken();
+            if(nextToken.equals(commandoBundle.getString("commandoDelimiter")))
+            {
+                arguments.add("");
+            }
+            else
+            {
+                arguments.add(nextToken);
+                if(commandTokenizer.hasMoreTokens())
+                    commandTokenizer.nextToken();
+            }
+        }
+
+        text = "";
+        
+        while(commandTokenizer.hasMoreTokens())
+        {
+            text += commandTokenizer.nextToken();
+        }
+
+    	setSender(arguments.get(1));
+    	setRecipient(arguments.get(2));
+    	if(arguments.get(3).equals(1))
     		setPrivateMessage(true);
     	else
     		setPrivateMessage(false);
-    	setText(commandoLine.get(4));
     }
 
 	public String getText() {

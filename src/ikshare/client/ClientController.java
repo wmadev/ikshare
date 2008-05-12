@@ -217,17 +217,30 @@ public class ClientController implements ServerConversationListener{
     	chatServerConversation.sendCommand(CMCommando);
     }
 
-	public void chatCreateRoom(String roomName, String roomPassword, boolean publicRoom) 
+    public void chatCreateRoom(String roomName, String roomPassword, boolean publicRoom) 
 	{
-		ChatCreateRoomCommando CCRCommando = new ChatCreateRoomCommando();
-		CCRCommando.setRoomName(roomName);
-		if(roomPassword!=null && !roomPassword.equals(""))
-			CCRCommando.setPassword(roomPassword);
-		else
-			CCRCommando.setPassword("");
-		CCRCommando.setPrivateRoom(!publicRoom);
-		chatServerConversation.sendCommand(CCRCommando);
+        if(CheckRoomCreditial(roomName))
+        {
+			ChatCreateRoomCommando CCRCommando = new ChatCreateRoomCommando();
+			CCRCommando.setRoomName(roomName);
+			if(roomPassword!=null && !roomPassword.equals("") && CheckRoomCreditial(roomPassword))
+	                    CCRCommando.setPassword(roomPassword);
+			else
+	                    CCRCommando.setPassword("");
+			CCRCommando.setPrivateRoom(!publicRoom);
+			chatServerConversation.sendCommand(CCRCommando);
+        }
 	}
+    
+    private boolean CheckRoomCreditial(String text)
+    {
+        boolean checkPassed = true;
+        
+        if(text==null || text.equals("") || text.contains("$") || text.length() < 1 || text.length() > 31)
+            checkPassed = false;
+        
+        return checkPassed;
+    }
     
     public void stopServerConversation() {
         serverConversation.stop();
