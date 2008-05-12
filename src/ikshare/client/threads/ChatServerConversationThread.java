@@ -8,6 +8,7 @@ import ikshare.protocol.command.chat.ChatCommandoParser;
 import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
 import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
 import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
+import ikshare.protocol.command.chat.ChatLogNiLukNiCommando;
 import ikshare.protocol.command.chat.ChatMessageCommando;
 import ikshare.protocol.command.chat.ChatRoomDoesNotExistCommando;
 import ikshare.protocol.command.chat.ChatUpdateRoomsListCommando;
@@ -77,6 +78,9 @@ public class ChatServerConversationThread implements Runnable
                     else if (c instanceof ChatInvalidRoomPasswordCommando){
                     	EventController.getInstance().triggerInvalidRoomPassword((ChatInvalidRoomPasswordCommando)c);
                     }
+                    else if (c instanceof ChatLogNiLukNiCommando){
+                    	EventController.getInstance().triggerLogNiLukNi((ChatLogNiLukNiCommando)c);
+                    }
                 }
             }
             serverConnection.close();
@@ -88,6 +92,14 @@ public class ChatServerConversationThread implements Runnable
         }
         catch (Exception ex) 
         {
+            try
+            {
+                serverConnection.close();
+            }
+            catch(IOException e)
+            {
+                
+            }
             ex.printStackTrace();
             ClientController.getInstance().stopChatServerConversation();
         }

@@ -15,6 +15,7 @@ import ikshare.domain.event.listener.ClientConfigurationListener;
 import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
 import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
 import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
+import ikshare.protocol.command.chat.ChatLogNiLukNiCommando;
 import ikshare.protocol.command.chat.ChatMessageCommando;
 import ikshare.protocol.command.chat.ChatRoomDoesNotExistCommando;
 import ikshare.protocol.command.chat.ChatUpdateRoomsListCommando;
@@ -486,15 +487,15 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
     @Override
 	public void invalidRoomPassword(final ChatInvalidRoomPasswordCommando c) {
 		this.getDisplay().asyncExec(
-				new Runnable() 
-				{
-			        public void run() 
-			        {	
-						ChatRoomPasswordDialog CRPDialog = new ChatRoomPasswordDialog(parentShell, c.getRoomName());
-						CRPDialog.open();
-			        }
-				}
-			);
+			new Runnable() 
+			{
+		        public void run() 
+		        {	
+					ChatRoomPasswordDialog CRPDialog = new ChatRoomPasswordDialog(parentShell, c.getRoomName());
+					CRPDialog.open();
+		        }
+			}
+		);
 	}
     
 	@Override
@@ -521,32 +522,46 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 	public void chatRoomDoesNotExist(final ChatRoomDoesNotExistCommando c) 
 	{
 		this.getDisplay().asyncExec(
-				new Runnable() 
-				{
-			        public void run() 
-			        {	
-						ChatCreateRoomDialog CCRDialog = new ChatCreateRoomDialog(parentShell, c.getRoomName());
-						CCRDialog.open();
-			        }
-				}
+			new Runnable() 
+			{
+		        public void run() 
+		        {	
+					ChatCreateRoomDialog CCRDialog = new ChatCreateRoomDialog(parentShell, c.getRoomName());
+					CCRDialog.open();
+		        }
+			}
 		);
 	} 
 	
 	@Override
 	public void chatRoomsUpdate(final ChatUpdateRoomsListCommando c) {
 		this.getDisplay().asyncExec(
-				new Runnable() 
-				{
-			        public void run() 
-			        {	
-						if(c.isAdded())
-							publicRoomsList.add(c.getRoomName());
-						else
-							publicRoomsList.remove(c.getRoomName());
-			        }
-				}
+			new Runnable() 
+			{
+		        public void run() 
+		        {	
+					if(c.isAdded())
+						publicRoomsList.add(c.getRoomName());
+					else
+						publicRoomsList.remove(c.getRoomName());
+		        }
+			}
 		);
 		
+	}
+	
+	@Override
+	public void logNiLukNi(final ChatLogNiLukNiCommando c) {
+		this.getDisplay().asyncExec(
+			new Runnable() 
+			{
+		        public void run() 
+		        {
+					setConnectState(3, ClientConfigurationController.getInstance().getChatString(c.getMessage()));
+					btnLog.setText(ClientConfigurationController.getInstance().getChatString("logon"));
+		        }
+			}
+		);
 	}
    
 	@Override

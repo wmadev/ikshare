@@ -24,13 +24,25 @@ public class Commando {
     }
 
     private void parse() {
-        StringTokenizer commandTokenizer = new StringTokenizer(commandoString, commandoBundle.getString("commandoDelimiter"));
+        StringTokenizer commandTokenizer = new StringTokenizer(commandoString, commandoBundle.getString("commandoDelimiter"), true);
         
-        while (commandTokenizer.hasMoreTokens()) {
-            commandoLine.add(commandTokenizer.nextToken());
+        while(commandTokenizer.hasMoreTokens())
+        {
+            String nextToken = commandTokenizer.nextToken();
+            if(nextToken.equals(commandoBundle.getString("commandoDelimiter")))
+            {
+                commandoLine.add("");
+            }
+            else
+            {
+                commandoLine.add(nextToken);
+                
+                if(commandTokenizer.hasMoreTokens())
+                    commandTokenizer.nextToken();
+            }
         }
+
         commandoName = commandoLine.get(0);
-        
     }
     
     public String getCommandoName() {

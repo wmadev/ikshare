@@ -13,7 +13,10 @@ public class ChatRoomDoesNotExistCommando extends Commando
 	public ChatRoomDoesNotExistCommando(String commandoString)
 	{
 		super(commandoString);
-		setRoomName(commandoLine.get(1));
+        if(commandoLine.size()>1)
+            setRoomName(commandoLine.get(1));
+        else
+            setRoomName("");
 	}
 
 	public String getRoomName() 

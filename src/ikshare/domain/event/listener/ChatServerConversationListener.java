@@ -3,6 +3,7 @@ package ikshare.domain.event.listener;
 import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
 import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
 import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
+import ikshare.protocol.command.chat.ChatLogNiLukNiCommando;
 import ikshare.protocol.command.chat.ChatMessageCommando;
 import ikshare.protocol.command.chat.ChatRoomDoesNotExistCommando;
 import ikshare.protocol.command.chat.ChatUpdateRoomsListCommando;
@@ -23,4 +24,5 @@ public interface ChatServerConversationListener {
 	public void chatServerInterupt(String message);
 	public void chatRoomDoesNotExist(ChatRoomDoesNotExistCommando c);
 	public void chatRoomsUpdate(ChatUpdateRoomsListCommando c);
+	public void logNiLukNi(ChatLogNiLukNiCommando c);
 }

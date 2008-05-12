@@ -212,14 +212,14 @@ public class SettingsPanel extends AbstractPanel{
         txtMessagePort.setText(String.valueOf(config.getMessagePort()));
         
         Label lblChatServerPort=new Label(network, SWT.FILL);
-        lblChatServerPort.setText("chatserverport"); //TODO: bundle
+        lblChatServerPort.setText(ClientConfigurationController.getInstance().getChatString("chatserverport"));
         lblChatServerPort.setLayoutData(firstColum);
         txtChatServerPort=new Text(network, SWT.BORDER);
         txtChatServerPort.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         txtChatServerPort.setText(String.valueOf(config.getChatServerPort()));
         
         Label lblChatServerAddress=new Label(network, SWT.FILL);
-        lblChatServerAddress.setText("chatserveraddress"); //TODO: bundle
+        lblChatServerAddress.setText(ClientConfigurationController.getInstance().getChatString("chatserveraddress"));
         lblChatServerAddress.setLayoutData(firstColum);
         txtChatServerAddress=new Text(network, SWT.BORDER);
         txtChatServerAddress.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));

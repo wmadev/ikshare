@@ -2,6 +2,7 @@ package ikshare.chatserver;
 
 import ikshare.chatserver.datatypes.ChatClient;
 import ikshare.chatserver.datatypes.ChatRoom;
+import ikshare.domain.IKShareFile;
 import ikshare.protocol.command.chat.ChatCreateRoomCommando;
 import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
 import ikshare.protocol.command.chat.ChatMessageCommando;
@@ -29,21 +30,18 @@ public class ChatServerController {
     public ChatServerController() {
     	executorService = Executors.newFixedThreadPool(1);
         server = new ChatServer();
+        
         ChatRoom helpRoom = new ChatRoom();
         helpRoom.setVisible(true);
         helpRoom.setPersistant(true);
         helpRoom.setRoomName("Help");
         rooms.add(helpRoom);
         
-        for(int i = 1; i<5; i++)
-        {
-        	ChatRoom testRoom = new ChatRoom();
-        	testRoom.setVisible(true);
-        	testRoom.setPersistant(true);
-        	testRoom.setPassword("password"+i);
-        	testRoom.setRoomName("test room " + i);
-        	rooms.add(testRoom);
-        }
+        ChatRoom iKShareRoom = new ChatRoom();
+        iKShareRoom.setVisible(true);
+        iKShareRoom.setPersistant(true);
+        iKShareRoom.setRoomName("iKShare");
+        rooms.add(iKShareRoom);
     }
     
     public static ChatServerController getInstance()
@@ -219,10 +217,12 @@ public class ChatServerController {
 		
 		if(foundRoom==null)
 		{
+                    if(CheckRoomName(command.getRoomName()))
+                    {
 			System.out.println( ">> " + client.getNickName() + " creates room " + command.getRoomName() + ".");
 			ChatRoom newRoom = new ChatRoom();
 			newRoom.setRoomName(command.getRoomName());
-			if(command.getPassword()!=null && !command.getPassword().equals(""))
+			if(command.getPassword()!=null && !command.getPassword().equals("") && CheckRoomName(command.getPassword()))
 				newRoom.setPassword(command.getPassword());
 			else
 				newRoom.setPassword("");
@@ -234,9 +234,20 @@ public class ChatServerController {
 				UpdateRoomsList(command.getRoomName(), true);
 			
 			ClientEntersRoom(command.getRoomName(), command.getPassword(), client);
+                    }
 		}
 	}
 	
+    private boolean CheckRoomName(String roomName)
+    {
+        boolean nameAcceptable = true;
+
+        if(roomName==null || roomName.length() < 1 || roomName.length() > 32)
+            nameAcceptable = false;
+        
+        return nameAcceptable;
+    }
+        
 	public void UpdateRoomsList(String roomName, boolean Added)
 	{
 		ChatUpdateRoomsListCommando CURLCommando = new ChatUpdateRoomsListCommando();

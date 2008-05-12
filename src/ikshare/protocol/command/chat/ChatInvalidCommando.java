@@ -31,7 +31,7 @@ public class ChatInvalidCommando extends Commando
     @Override
     public String toString() {
         String del=commandoBundle.getString("commandoDelimiter");
-        return commandoBundle.getString("chatinvalid")
+        return commandoBundle.getString("chatinvalidcommand")
         	+ del + getMessage();
     }
 }
