@@ -60,14 +60,30 @@ public class PeerFileDownloadThread implements Runnable {
         	transfer.setState(TransferState.DOWNLOADING);
 
         	boolean resumingDownload = (transfer.getDownloadLocation()!="");
+        	boolean superFolderExist = new File(ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+transfer.getFile().getFolder()).exists();
+
+        	System.out.println("[PeerFileDownloadThread-run] folder:" + ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+transfer.getFile().getFolder());
         	
-        	if(!resumingDownload)
-        	{
-	        	String fileName = ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+System.getProperty("file.separator")+transfer.getFile().getName();
-	        	int lastIndexOfPoint = fileName.lastIndexOf(".");
-	        	System.out.println(lastIndexOfPoint);
-	        	String fileNamePrefix = fileName.substring(0, lastIndexOfPoint);
-	        	String extension=fileName.substring(lastIndexOfPoint);
+        	System.out.println("[PeerFileDownloadThread-run] superfolder exist:" + superFolderExist);
+        	String fileNamePrefix, extension;
+        	
+        	if(!resumingDownload){
+        		String fileName;
+        		if (!superFolderExist)
+        			fileName = ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+System.getProperty("file.separator")+transfer.getFile().getName();
+        		else
+        			fileName = ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+System.getProperty("file.separator")+transfer.getFile().getFolder()+System.getProperty("file.separator")+transfer.getFile().getName();
+        		
+        		
+        		int lastIndexOfPoint = fileName.lastIndexOf(".");
+	        	//System.out.println(lastIndexOfPoint);
+	        	if (lastIndexOfPoint != -1) {
+	        		fileNamePrefix = fileName.substring(0, lastIndexOfPoint);
+	        		extension=fileName.substring(lastIndexOfPoint);
+	        	} else {
+	        		fileNamePrefix = fileName;
+	        		extension = "";
+	        	}
 	
 	        	outputFile = new File(fileNamePrefix+extension);
 	            int fileNumber=1;
@@ -76,9 +92,7 @@ public class PeerFileDownloadThread implements Runnable {
 	            	 fileNumber++;
 	            }
 	            transfer.setDownloadLocation(outputFile.getAbsolutePath());
-        	}
-        	else
-        	{
+        	} else {
         		outputFile = new File(transfer.getDownloadLocation());
         	}
             
