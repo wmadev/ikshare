@@ -100,7 +100,7 @@ public class PeerFileUploadThread implements Runnable {
 				EventController.getInstance().triggerDownloadPausedEvent(transfer);
 			else {
 				transfer.setState(TransferState.FAILED);
-				e.printStackTrace();
+				//e.printStackTrace();
 				EventController.getInstance().triggerDownloadFailedEvent(transfer);
 			}
 		} finally {
@@ -123,10 +123,10 @@ public class PeerFileUploadThread implements Runnable {
 			outStream = null;
 			System.gc();
 		} catch (IOException e) {
-			e.printStackTrace();
+			//e.printStackTrace();
 		}
 
-		System.out.println("Uploadthread gestopt");
+		//System.out.println("Uploadthread gestopt");
 	}
 
 }

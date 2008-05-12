@@ -87,6 +87,8 @@ public class PeerFacade {
 		
 		peerMessageService = new PeerMessageService();
 		executorService.execute(peerMessageService);
+		
+		folders = new HashMap<Integer, SearchResult>();
 	}
 
 
@@ -103,6 +105,14 @@ public class PeerFacade {
 		frc.setSentBytes(0);
 		PeerMessageThread peerMessageThread = new PeerMessageThread(transfer);
 		executorService.execute(peerMessageThread);
+		
+		try {
+			Thread.sleep(200);
+		} catch (InterruptedException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		peerMessageThread.sendMessage(frc);
 		
 		messageThreads.put(transfer.getId(), peerMessageThread);
@@ -324,8 +334,29 @@ public class PeerFacade {
 		return uploadQueue;
 	}
 
+	public void makeFolder(SearchResult start) {
+		
+		folders.put(start.getFolderId(), start);
+		
+		String folderName = "";//ClientConfigurationController.getInstance().getConfiguration().getSharedFolder().toString();
+		
+		SearchResult temp = start;
+		while (temp!=null) {
+			folderName = temp.getName() + System.getProperty("file.separator") + folderName;
+			temp = folders.get(temp.getParentId());
+		}
+		File folder = new File(folderName);
 
-	
+		System.out.println("[PeerFacade-makeFolder]: foldername:" + folderName );
+		System.out.println("[PeerFacade-makeFolder]: folder:" + folder );
+
+		
+		if (!folder.exists());
+			folder.mkdir();
+	}
+
+
+	private HashMap<Integer, SearchResult> folders;
 	
 	
 }
