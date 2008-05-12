@@ -274,7 +274,7 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 	
 	public void sendMessage(final Commando commando) {
 
-		/*
+		
 		if (outputWriter!=null) {
 			outputWriter.println(commando.toString());
 			System.out.println("Verstuurd Commando");
@@ -282,7 +282,7 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 			System.out.println(commando);
 			System.out.println("");
 		}
-		*/
+		/*
 		
 		ExecutorService es = Executors.newCachedThreadPool();
 		es.execute(new Runnable() {
@@ -292,8 +292,7 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 				//System.out.println("[" +commando + "] wordt gezonden naar " + s.getInetAddress().getHostAddress() + " op poort " + s.getPort());
 				
 				try {
-					Thread.sleep(500);
-					
+
 					if (clientSocket == null) 
 						clientSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort());
 
@@ -310,7 +309,7 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 				}
 			}
 		});
-		
+		*/
 		
 	}
 
