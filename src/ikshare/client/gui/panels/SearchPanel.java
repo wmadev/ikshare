@@ -5,7 +5,9 @@ import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.ExceptionWindow;
 import ikshare.client.gui.UtilityClass;
 import ikshare.client.configuration.ClientConfigurationController;
+import ikshare.domain.Peer;
 import ikshare.domain.PeerFacade;
+import ikshare.domain.PeerFileDownloadThread;
 import ikshare.domain.SearchResult;
 import ikshare.domain.Transfer;
 import ikshare.domain.event.EventController;
@@ -344,12 +346,27 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                     return;
                 }
                 SearchResult selected = (SearchResult) treeResults.getSelection()[0].getData("result");
-                if (selected != null) {
+
+                	
                     try {
-                        ClientController.getInstance().getDownloadInformationForResult(selected);
+                    	getDownloadInformation(selected);
                     } catch (NoServerConnectionException ex) {
                         new ExceptionWindow(ex,MainScreen.getInstance(),false);
                     }
+            }
+            
+            public void getDownloadInformation(SearchResult start) throws NoServerConnectionException {
+                if (start != null) {
+                	if (!start.isFolder()) {
+	            		ClientController.getInstance().getDownloadInformationForResult(start);
+	            	}
+	            	else {
+	            		
+                		PeerFacade.getInstance().makeFolder(start);
+		            	TreeItem item = treeItems.get(start.getFolderId());
+		            	for (int i=0; i<item.getItemCount(); i++)
+		            		getDownloadInformation((SearchResult) item.getItem(i).getData("result"));
+	            	}
                 }
             }
         });
@@ -443,6 +460,8 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                 }
                 else if(c instanceof DownloadInformationResponseCommand){
                     try {
+                    	DownloadInformationResponseCommand dirc = (DownloadInformationResponseCommand) c;
+                    	
                         //int aantaldownloads = Integer.parseInt(MainScreen.getInstance().getInfoBar().getLblNrDownload().getText());
                         //MainScreen.getInstance().getInfoBar().getLblNrDownload().setText("" + aantaldownloads + 1);
                         Transfer t = ClientController.getInstance().getTransferForDownload((DownloadInformationResponseCommand) c);

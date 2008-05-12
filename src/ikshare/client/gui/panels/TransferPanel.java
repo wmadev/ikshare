@@ -21,6 +21,7 @@ import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.TableEditor;
+import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
@@ -39,6 +40,9 @@ import org.eclipse.swt.widgets.TabItem;
 import org.eclipse.swt.widgets.Table;
 import org.eclipse.swt.widgets.TableColumn;
 import org.eclipse.swt.widgets.TableItem;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 
 /**
  *
@@ -53,9 +57,9 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 	
 	private static int fileNamePos = 0, sizePos = 1, statusPos = 3, speedPos = 4, remainingPos = 5, userPos=6;
 
-	private Table tblUploadTransfer, tblDownloadTransfer;
+	private Tree treeUploadTransfer, treeDownloadTransfer;
 	private Menu rightClickMenu;
-	private HashMap<String, TableItem> downloadHashMap, uploadHashMap;
+	private HashMap<String, TreeItem> downloadHashMap, uploadHashMap;
 	
 	public TransferPanel(String text, String icon) {
 		super(text, icon);
@@ -64,8 +68,8 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		FillLayout layout = new FillLayout();
 		this.setLayout(layout);
 		this.init();
-		downloadHashMap = new HashMap<String, TableItem>();
-		uploadHashMap = new HashMap<String, TableItem>();
+		downloadHashMap = new HashMap<String, TreeItem>();
+		uploadHashMap = new HashMap<String, TreeItem>();
 		
 	}
 
@@ -90,17 +94,17 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		Composite cmpUpload=new Composite(folder, SWT.NONE);
 		cmpUpload.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,3,1));
 		cmpUpload.setLayout(new GridLayout(1,false));
-		tblUploadTransfer = new Table(cmpUpload,SWT.FULL_SELECTION | SWT.BORDER);
-		tblUploadTransfer.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
-		tblUploadTransfer.setLinesVisible (true);
-		tblUploadTransfer.setHeaderVisible (true);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("progress"), 100, SWT.RIGHT);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("state"), 150, SWT.RIGHT);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("speed"),100,SWT.RIGHT);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
-		addTableColumn(tblUploadTransfer,ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
+		treeUploadTransfer = new Tree(cmpUpload,SWT.FULL_SELECTION | SWT.BORDER);
+		treeUploadTransfer.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
+		treeUploadTransfer.setLinesVisible (true);
+		treeUploadTransfer.setHeaderVisible (true);
+		addTreeColumn(treeUploadTransfer,ClientConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
+		addTreeColumn(treeUploadTransfer,ClientConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
+		addTreeColumn(treeUploadTransfer,ClientConfigurationController.getInstance().getString("progress"), 100, SWT.RIGHT);
+		addTreeColumn(treeUploadTransfer,ClientConfigurationController.getInstance().getString("state"), 150, SWT.RIGHT);
+		addTreeColumn(treeUploadTransfer,ClientConfigurationController.getInstance().getString("speed"),100,SWT.RIGHT);
+		addTreeColumn(treeUploadTransfer,ClientConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
+		addTreeColumn(treeUploadTransfer,ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
 		uploadTab.setControl(cmpUpload);
 	}
 
@@ -115,21 +119,21 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		Composite cmpDownload=new Composite(folder, SWT.NONE);
 		cmpDownload.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,3,1));
 		cmpDownload.setLayout(new GridLayout(1,false));
-		tblDownloadTransfer = new Table(cmpDownload,SWT.FULL_SELECTION | SWT.BORDER);
-		tblDownloadTransfer.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
-		tblDownloadTransfer.setLinesVisible (true);
-		tblDownloadTransfer.setHeaderVisible (true);
+		treeDownloadTransfer = new Tree(cmpDownload,SWT.FULL_SELECTION | SWT.BORDER);
+		treeDownloadTransfer.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
+		treeDownloadTransfer.setLinesVisible (true);
+		treeDownloadTransfer.setHeaderVisible (true);
 		// Right click menu
-		tblDownloadTransfer.addMouseListener(new MouseAdapter() {
+		treeDownloadTransfer.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent event) {
 				if(event.button == 3){
-					final int selectedRow = tblDownloadTransfer.getSelectionIndex();
-					if (selectedRow == -1) 
+					final int selectedRow = treeDownloadTransfer.getSelectionCount();
+					if (selectedRow == 0) 
 						return;
 					
-					final Transfer selected = (Transfer)tblDownloadTransfer.getItem(selectedRow).getData("transfer");
+					final Transfer selected = (Transfer)treeDownloadTransfer.getSelection()[0].getData("transfer");
 					if (selected != null) {
-						rightClickMenu = new Menu (tblDownloadTransfer.getShell(), SWT.POP_UP);
+						rightClickMenu = new Menu (treeDownloadTransfer.getShell(), SWT.POP_UP);
 						if (selected.getState() == TransferState.DOWNLOADING) {
 							cancelMenu(selected, true);
 							pauseMenu(selected, true);
@@ -152,13 +156,13 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 			}
 		});
 
-		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
-		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
-		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("progress"), 100, SWT.RIGHT);
-		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("state"), 150, SWT.RIGHT);
-		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("speed"),100,SWT.RIGHT);
-		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
-		addTableColumn(tblDownloadTransfer,ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
+		addTreeColumn(treeDownloadTransfer,ClientConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
+		addTreeColumn(treeDownloadTransfer,ClientConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
+		addTreeColumn(treeDownloadTransfer,ClientConfigurationController.getInstance().getString("progress"), 100, SWT.RIGHT);
+		addTreeColumn(treeDownloadTransfer,ClientConfigurationController.getInstance().getString("state"), 150, SWT.RIGHT);
+		addTreeColumn(treeDownloadTransfer,ClientConfigurationController.getInstance().getString("speed"),100,SWT.RIGHT);
+		addTreeColumn(treeDownloadTransfer,ClientConfigurationController.getInstance().getString("remaining"), 100, SWT.RIGHT);
+		addTreeColumn(treeDownloadTransfer,ClientConfigurationController.getInstance().getString("peer"), 100, SWT.RIGHT);
 		downloadTab.setControl(cmpDownload);
 		/*
 		Transfer test = new Transfer();
@@ -222,8 +226,8 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 	}
 	
 
-	private void addTableColumn(Table table, String text, int width, int align) {
-		TableColumn column = new TableColumn(table, SWT.NONE);
+	private void addTreeColumn(Tree tree, String text, int width, int align) {
+		TreeColumn column = new TreeColumn(tree, SWT.NONE);
 		column.setText(text);
 		column.pack();
 		column.setWidth(width);
@@ -237,24 +241,24 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		this.getDisplay().asyncExec(
 				new Runnable() {
 					public void run(){
-						TableItem item = null;
+						TreeItem item = null;
 						ProgressBar bar = null;
 						if(transfer.getState() == TransferState.DOWNLOADING){
-							item = new TableItem(tblDownloadTransfer,SWT.NONE);
+							item = new TreeItem(treeDownloadTransfer,SWT.NONE);
 							item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("queued"));
-							bar = new ProgressBar(tblDownloadTransfer, SWT.SMOOTH);
+							bar = new ProgressBar(treeDownloadTransfer, SWT.SMOOTH);
 							bar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-					        TableEditor editor = new TableEditor(tblDownloadTransfer);
+					        TreeEditor editor = new TreeEditor(treeDownloadTransfer);
 					        editor.grabHorizontal = editor.grabVertical = true;
 					        editor.setEditor(bar, item, 2);
 					        downloadHashMap.put(transfer.getId(), item);
 						}
 						else if(transfer.getState() == TransferState.UPLOADING){
-							item = new TableItem(tblUploadTransfer,SWT.NONE);
+							item = new TreeItem(treeUploadTransfer,SWT.NONE);
 							item.setText(TransferPanel.statusPos,ClientConfigurationController.getInstance().getString("queued"));
-							bar = new ProgressBar(tblUploadTransfer, SWT.SMOOTH);
+							bar = new ProgressBar(treeUploadTransfer, SWT.SMOOTH);
 							bar.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
-					        TableEditor editor = new TableEditor(tblUploadTransfer);
+					        TreeEditor editor = new TreeEditor(treeUploadTransfer);
 					        editor.grabHorizontal = editor.grabVertical = true;
 					        editor.setEditor(bar, item, 2);
 					        uploadHashMap.put(transfer.getId(), item);
@@ -278,7 +282,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		this.getDisplay().asyncExec(
 				new Runnable() {
 					public void run(){
-						TableItem item = null;
+						TreeItem item = null;
 						if(transfer.getState() == TransferState.CANCELLEDDOWNLOAD){
 							item = downloadHashMap.get(transfer.getId());
 							if (item != null) {
@@ -307,7 +311,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 					public void run(){
 						System.out.println(transfer.getState());
 						
-						TableItem item = null;
+						TreeItem item = null;
 						if(transfer.getState() == TransferState.DOWNLOADING){
 							item = downloadHashMap.get(transfer.getId());
 							if (item != null) {
@@ -345,7 +349,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		this.getDisplay().asyncExec(
 				new Runnable() {
 					public void run(){
-						TableItem item = null;
+						TreeItem item = null;
 						if(transfer.getState() == TransferState.FAILED){
 							item = downloadHashMap.get(transfer.getId());
 							if (item != null) {
@@ -371,7 +375,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
     	this.getDisplay().asyncExec(
     		new Runnable() {
     			public void run(){
-    				TableItem item = null;
+    				TreeItem item = null;
     				if(transfer.getState() == TransferState.FINISHED){
     					item = downloadHashMap.get(transfer.getId());
     					if(item != null){
@@ -399,7 +403,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		this.getDisplay().asyncExec(
 				new Runnable() {
 					public void run(){
-						TableItem item = null;
+						TreeItem item = null;
 						if(transfer.getState() == TransferState.PAUSEDDOWNLOAD){
 							item = downloadHashMap.get(transfer.getId());
 							if(item != null) {
@@ -428,7 +432,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		this.getDisplay().asyncExec(
 				new Runnable() {
 					public void run(){
-						TableItem item = null;
+						TreeItem item = null;
 						if(transfer.getState() == TransferState.RESUMEDDOWNLOAD){
 							item = downloadHashMap.get(transfer.getId());
 							if (item != null) {
@@ -457,15 +461,15 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 
 	public void transfersCleared() {
 
-		for (int i=0; i<tblDownloadTransfer.getItemCount(); i++) {
-			((ProgressBar)tblDownloadTransfer.getItem(i).getData("progressbar")).dispose();
-			tblDownloadTransfer.getItem(i).dispose();
+		for (int i=0; i<treeDownloadTransfer.getItemCount(); i++) {
+			((ProgressBar)treeDownloadTransfer.getItem(i).getData("progressbar")).dispose();
+			treeDownloadTransfer.getItem(i).dispose();
 		}
 		
 		
-		for (int i=0; i<tblUploadTransfer.getItemCount(); i++) {
-			((ProgressBar)tblUploadTransfer.getItem(i).getData("progressbar")).dispose();
-			tblUploadTransfer.getItem(i).dispose();
+		for (int i=0; i<treeUploadTransfer.getItemCount(); i++) {
+			((ProgressBar)treeUploadTransfer.getItem(i).getData("progressbar")).dispose();
+			treeUploadTransfer.getItem(i).dispose();
 		}
 		
 		
