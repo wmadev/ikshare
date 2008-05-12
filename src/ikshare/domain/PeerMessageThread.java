@@ -30,28 +30,27 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
     private boolean running = false;
     private PrintWriter outputWriter;
     private BufferedReader incomingReader;
-    private String accountName;
-	private Transfer transfer;
-        
+    private Transfer transfer;
     public PeerMessageThread(Transfer transfer){
     	EventController.getInstance().addTransferQueueListener(this);
-
+    	
     	this.transfer = transfer;
         running = true;
     }
     
     public PeerMessageThread(Socket socket){
     	EventController.getInstance().addTransferQueueListener(this);
-       clientSocket = socket;
+    	clientSocket = socket;
+    	running = true;
     }
 
 	public void run() {
         try {
         	if (clientSocket == null)
         		clientSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort());
-        
-        	outputWriter = new PrintWriter(clientSocket.getOutputStream(), true);
-            incomingReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+       
+       		outputWriter = new PrintWriter(clientSocket.getOutputStream(), true);
+          	incomingReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         	
 			
             while(running){
@@ -274,27 +273,41 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 	}
 	
 	public void sendMessage(final Commando commando) {
+
+		/*
+		if (outputWriter!=null) {
+			outputWriter.println(commando.toString());
+			System.out.println("Verstuurd Commando");
+			System.out.println("------------------");
+			System.out.println(commando);
+			System.out.println("");
+		}
+		*/
+		
 		ExecutorService es = Executors.newCachedThreadPool();
 		es.execute(new Runnable() {
 
 			public void run() {
-				System.out.println("Verstuurd Commando");
-				System.out.println("------------------");
-				System.out.println(commando);
-				System.out.println("");
 				
 				//System.out.println("[" +commando + "] wordt gezonden naar " + s.getInetAddress().getHostAddress() + " op poort " + s.getPort());
+				
 				try {
+					Thread.sleep(500);
+					
 					if (clientSocket == null) 
 						clientSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort());
 
 			        
 			    	outputWriter = new PrintWriter(clientSocket.getOutputStream(), true);
 			        incomingReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+					System.out.println("Verstuurd Commando");
+					System.out.println("------------------");
+					System.out.println(commando);
+					System.out.println("");
 				} catch (Exception e) {
 					
 				}
-				outputWriter.println(commando.toString());
 			}
 		});
 		
