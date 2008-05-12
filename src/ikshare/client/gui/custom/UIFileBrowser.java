@@ -195,7 +195,7 @@ public class UIFileBrowser implements ClientConfigurationListener{
         String ext = filename.substring(filename.lastIndexOf('.')+1, filename.length());
         if (ext.toLowerCase().equals("mp3")) {
         	Label buttonPlay = new Label(tblFileBrowser, SWT.NULL);
-        	Image imagePlay = new Image(Display.getCurrent(), "resources/icons/hp_play.png");
+        	Image imagePlay = new Image(Display.getCurrent(), "resources/icons/player_start.png");
         	buttonPlay.setImage(imagePlay);
         	buttonPlay.addListener(SWT.PUSH, new Listener(){
 
@@ -212,7 +212,7 @@ public class UIFileBrowser implements ClientConfigurationListener{
         	});
         	
         	Label buttonStop = new Label(tblFileBrowser, SWT.NULL);
-        	Image imageStop = new Image(Display.getCurrent(), "resources/icons/hp_stop.png");
+        	Image imageStop = new Image(Display.getCurrent(), "resources/icons/player_stop.png");
         	buttonStop.setImage(imageStop);
         	buttonStop.addListener(SWT.PUSH, new Listener(){
 
