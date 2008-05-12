@@ -9,6 +9,8 @@ import eu.medsea.util.MimeUtil;
 import ikshare.client.PlayerController;
 import ikshare.client.configuration.ClientConfiguration;
 import ikshare.client.configuration.ClientConfigurationController;
+import ikshare.client.gui.ExceptionWindow;
+import ikshare.client.gui.MainScreen;
 import ikshare.client.gui.UtilityClass;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.ClientConfigurationListener;
@@ -16,6 +18,7 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 import org.eclipse.swt.*;
+import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.events.*;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
@@ -74,8 +77,10 @@ public class UIFileBrowser implements ClientConfigurationListener{
         data.heightHint = 10*tblFileBrowser.getItemHeight();
         tblFileBrowser.setLayoutData(data);
         addTableColumn(tblFileBrowser,ClientConfigurationController.getInstance().getString("filename"),580,SWT.LEFT);
-	addTableColumn(tblFileBrowser,ClientConfigurationController.getInstance().getString("filetype"),70,SWT.LEFT);
+        addTableColumn(tblFileBrowser,ClientConfigurationController.getInstance().getString("filetype"),70,SWT.LEFT);
         addTableColumn(tblFileBrowser,ClientConfigurationController.getInstance().getString("size"), 90, SWT.LEFT);
+        addTableColumn(tblFileBrowser, "", 25, SWT.LEFT);
+        addTableColumn(tblFileBrowser, "", 25, SWT.LEFT);
         fillTable(current);
         tblFileBrowser.addMouseListener(new MouseAdapter() {
             public void mouseDown(MouseEvent event){
@@ -174,8 +179,8 @@ public class UIFileBrowser implements ClientConfigurationListener{
         }
     }
     
-    private void addTableItem(File file){
-        TableItem item = new TableItem(tblFileBrowser, SWT.NONE);
+    private void addTableItem(final File file){
+        final TableItem item = new TableItem(tblFileBrowser, SWT.NONE);
         item.setText(0,file.getName());
         item.setText(1,MimeUtil.getFileExtension(file));
         if(file.isDirectory()){
@@ -185,6 +190,58 @@ public class UIFileBrowser implements ClientConfigurationListener{
         Image icon = getMimeTypeIcon(file);
         if(icon!=null){
             item.setImage(0, icon);
+        }
+        String filename = file.toString();
+        String ext = filename.substring(filename.lastIndexOf('.')+1, filename.length());
+        if (ext.toLowerCase().equals("mp3")) {
+        	Label buttonPlay = new Label(tblFileBrowser, SWT.NULL);
+        	Image imagePlay = new Image(Display.getCurrent(), "resources/icons/hp_play.png");
+        	buttonPlay.setImage(imagePlay);
+        	buttonPlay.addListener(SWT.PUSH, new Listener(){
+
+				public void handleEvent(Event arg0) {
+					item.setBackground(Display.getCurrent().getSystemColor(SWT.COLOR_WIDGET_LIGHT_SHADOW));
+					PlayerController.getInstance().selectedMP3FileChanged(file);
+					try {
+						PlayerController.getInstance().play();
+					} catch (Exception e) {
+						new ExceptionWindow(e,MainScreen.getInstance(),false);
+					}
+				}
+        		
+        	});
+        	
+        	Label buttonStop = new Label(tblFileBrowser, SWT.NULL);
+        	Image imageStop = new Image(Display.getCurrent(), "resources/icons/hp_stop.png");
+        	buttonStop.setImage(imageStop);
+        	buttonStop.addListener(SWT.PUSH, new Listener(){
+
+				public void handleEvent(Event arg0) {
+					item.setBackground(null);
+					PlayerController.getInstance().selectedMP3FileChanged(file);
+					try {
+						PlayerController.getInstance().stop();
+					} catch (Exception e) {
+						new ExceptionWindow(e,MainScreen.getInstance(),false);
+					}
+				}
+        		
+        	});
+        	
+        	
+        	
+        //	buttonPlay.computeSize(SWT.DEFAULT, tblFileBrowser.getItemHeight(), false);
+        	TableEditor editorPlay = new TableEditor(tblFileBrowser);
+        	editorPlay.grabHorizontal = editorPlay.grabVertical = true;
+        	editorPlay.verticalAlignment = SWT.TOP;
+        	TableEditor editorStop = new TableEditor(tblFileBrowser);
+        	editorStop.grabHorizontal = editorPlay.grabVertical = true;
+        	editorStop.verticalAlignment = SWT.TOP;
+        	
+        	
+        	editorPlay.setEditor(buttonPlay, item, 3);
+        	editorStop.setEditor(buttonStop, item, 4);
+        	
         }
            
         
