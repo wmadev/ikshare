@@ -177,7 +177,7 @@ public class OracleFileStorage implements FileStorage {
     
     public List<SearchResult> advancedFileSearch(String keyword, boolean textAnd, int typeID, long minSize, long maxSize) throws DatabaseException {
         ArrayList<SearchResult> results = null;
-        String searchString="WITH y AS (SELECT x.USERNAME FROM ONLINE_USERS x WHERE x.ACTION='LOGON' AND x.USERNAME NOT IN ( SELECT USERNAME FROM ONLINE_USERS WHERE ACTION = 'LOGOFF' AND TIMESTAMP> x.TIMESTAMP AND USERNAME=x.USERNAME ) ) " +
+        String searchString="WITH y AS (SELECT distinct(x.USERNAME) FROM ONLINE_USERS x WHERE x.ACTION='LOGON' AND x.USERNAME NOT IN ( SELECT USERNAME FROM ONLINE_USERS WHERE ACTION = 'LOGOFF' AND TIMESTAMP> x.TIMESTAMP AND USERNAME=x.USERNAME ) ) " +
                 "SELECT fi.FOLDERID,FILENAME,ACCOUNTNAME,FILESIZE FROM SHAREDFILES fi JOIN SHAREDFOLDERS fo ON fo.FOLDERID=fi.FOLDERID JOIN y ON y.USERNAME=fo.ACCOUNTNAME and ( lower(FILENAME) LIKE '";
         keyword = keyword.toLowerCase();
         StringTokenizer tokenizer = new StringTokenizer(keyword," ");
@@ -284,7 +284,7 @@ public class OracleFileStorage implements FileStorage {
 
     public List<SearchResult> advancedFolderSearch(String keyword, boolean textAnd, long minSize, long maxSize) throws DatabaseException {
         ArrayList<SearchResult> results = null;
-        String searchString="WITH y AS (SELECT x.USERNAME FROM ONLINE_USERS x WHERE x.ACTION='LOGON' AND " +
+        String searchString="WITH y AS (SELECT distinct(x.USERNAME) FROM ONLINE_USERS x WHERE x.ACTION='LOGON' AND " +
               "x.USERNAME NOT IN ( SELECT USERNAME FROM ONLINE_USERS WHERE ACTION = 'LOGOFF' " +
               "AND TIMESTAMP> x.TIMESTAMP AND USERNAME=x.USERNAME ) ), " +
               "w as (SELECT distinct(fo.folderid), foldername, parentfolderid, accountname, " +
