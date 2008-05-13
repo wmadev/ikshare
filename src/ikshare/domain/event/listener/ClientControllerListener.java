@@ -10,6 +10,8 @@ package ikshare.domain.event.listener;
  * @author awosy
  */
 public interface ClientControllerListener {
+
+    public void connectionInterrupted();
     public void onLogOn();
     public void onLogOnFailed(String message);
 }

@@ -199,6 +199,12 @@ public class EventController {
 		}
 	}
 
+    public void triggerServerConnectionInterupted() {
+        for(ClientControllerListener l: clientControllerListeners){
+           l.connectionInterrupted();
+        }
+    }
+
 
 	public void triggerYouLoggedOn(ChatWelcomeCommando c)
 	{
