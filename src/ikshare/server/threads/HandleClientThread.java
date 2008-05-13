@@ -10,15 +10,8 @@ import ikshare.server.data.*;
 import java.io.*;
 import java.net.Socket;
 import java.text.MessageFormat;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.ResourceBundle;
-import java.util.StringTokenizer;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 public class HandleClientThread implements Runnable{
     private Socket clientSocket;
@@ -88,6 +81,7 @@ public class HandleClientThread implements Runnable{
             System.out.println("Client afgesloten");
         } catch (Exception ex) {
             ex.printStackTrace();
+            running = false;
         }
         
     }
