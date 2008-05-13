@@ -6,11 +6,13 @@ import java.io.File;
 import org.eclipse.swt.*;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.FontData;
+import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class AboutPanel extends AbstractPanel {
     private Composite parent;
+    private static String ICON_LOGO = "resources/icons/logo.png";
     
     public AboutPanel(String title,String icon){	
     super(title, icon);
@@ -30,23 +32,23 @@ public class AboutPanel extends AbstractPanel {
 		Composite spacer = new Composite(parent,SWT.None);
 		spacer.setLayoutData(gd0);
 		GridData gd1 = new GridData(SWT.FILL,SWT.FILL,true,false);
-		gd1.heightHint = 50;
-		String logo = "resources/logo.png";
-		File file = new File(logo);
-		/*if(file.exists()) {
-			Image image = new Image(Display.getCurrent(), logo);
+		gd1.heightHint = 130;
+		
+		File logo= new File(ICON_LOGO);
+		if(logo.exists()) {
+			Image image = new Image(Display.getCurrent(), ICON_LOGO);
 			Label label = new Label(parent, SWT.CENTER);
 			label.setImage(image);
 			label.setLayoutData(gd1);
-		}*/
+		}
 		GridData gd2 = new GridData(SWT.FILL,SWT.FILL,true,false);
 		gd2.heightHint = 30;
-		Label atopeer = new Label(parent, SWT.CENTER);
-		atopeer.setLayoutData(gd2);
-		atopeer.setText(ClientConfigurationController.getInstance().getString("ikshare"));
+		Label ikshare = new Label(parent, SWT.CENTER);
+		ikshare.setLayoutData(gd2);
+		ikshare.setText(ClientConfigurationController.getInstance().getString("ikshare"));
 		FontData data = Display.getCurrent().getSystemFont().getFontData()[0];
 		Font newFont = new Font(Display.getCurrent(), data.getName(), 20, SWT.BOLD);
-		atopeer.setFont(newFont);
+		ikshare.setFont(newFont);
 		GridData gd3 = new GridData(SWT.FILL,SWT.FILL,true,false);
 		gd3.heightHint = 400;
 		Label versie = new Label(parent, SWT.CENTER);
