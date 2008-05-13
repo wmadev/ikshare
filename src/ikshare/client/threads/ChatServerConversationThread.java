@@ -104,7 +104,6 @@ public class ChatServerConversationThread implements Runnable
             {
                 
             }
-            ex.printStackTrace();
             ClientController.getInstance().stopChatServerConversation();
         }
     }
