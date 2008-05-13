@@ -24,13 +24,11 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-/**
- *
- * @author awosy
- */
 public class UIFileBrowser implements ClientConfigurationListener{
     private static String MIMETYPE_ICONS = "resources/icons/mimetypes/";
     private static String ICON_UP = "resources/icons/go_up.png";
+    private static String ICON_PLAY = "resources/icons/player_start.png";
+    private static String ICON_STOP = "resources/icons/player_stop.png";
     private Composite parent;
     private File root;
     private File current;
@@ -48,7 +46,9 @@ public class UIFileBrowser implements ClientConfigurationListener{
     private void init(){
         Button btnUp = new Button(parent,SWT.NONE);
         btnUp.setLayoutData(new GridData(SWT.LEFT,SWT.FILL,false,false,1,1));
-        btnUp.setImage(new Image(Display.getCurrent(),ICON_UP));
+        if(new File(ICON_UP).exists()){
+        	btnUp.setImage(new Image(Display.getCurrent(),ICON_UP));
+        }
         btnUp.addListener(SWT.Selection, new Listener() {
 
             public void handleEvent(Event event) {
@@ -195,8 +195,10 @@ public class UIFileBrowser implements ClientConfigurationListener{
         String ext = filename.substring(filename.lastIndexOf('.')+1, filename.length());
         if (ext.toLowerCase().equals("mp3")) {
         	Label buttonPlay = new Label(tblFileBrowser, SWT.NULL);
-        	Image imagePlay = new Image(Display.getCurrent(), "resources/icons/player_start.png");
-        	buttonPlay.setImage(imagePlay);
+    		if(new File(ICON_PLAY).exists()){
+    			Image imageStart = new Image(Display.getCurrent(), ICON_PLAY);
+    			buttonPlay.setImage(imageStart);
+    		}
         	buttonPlay.addListener(SWT.PUSH, new Listener(){
 
 				public void handleEvent(Event arg0) {
@@ -212,8 +214,10 @@ public class UIFileBrowser implements ClientConfigurationListener{
         	});
         	
         	Label buttonStop = new Label(tblFileBrowser, SWT.NULL);
-        	Image imageStop = new Image(Display.getCurrent(), "resources/icons/player_stop.png");
-        	buttonStop.setImage(imageStop);
+    		if(new File(ICON_STOP).exists()){
+    			Image imageStop = new Image(Display.getCurrent(), ICON_STOP);
+    			buttonStop.setImage(imageStop);
+    		}
         	buttonStop.addListener(SWT.PUSH, new Listener(){
 
 				public void handleEvent(Event arg0) {
@@ -252,26 +256,29 @@ public class UIFileBrowser implements ClientConfigurationListener{
         Image icon = null;
         String[] mimetypes = MimeUtil.getMimeType(file.getName()).split(",");
         
-        if(file.isDirectory()){
-            icon =  new Image(Display.getCurrent(),MIMETYPE_ICONS+"folder.png");
-        }
-        else{ 
-            
-            int i = 0;
-            while(icon==null){
-                
-                if(i>mimetypes.length-1){
-                    icon =new Image(Display.getCurrent(),MIMETYPE_ICONS+"unknown.png");    
-                }
-                else {
-                    //System.out.println(mimetypes[i]);
-                    if(new File(MIMETYPE_ICONS+mimetypes[i].replace("/", "_")+".png").exists()){
-                        icon = new Image(Display.getCurrent(), MIMETYPE_ICONS+mimetypes[i].replace("/", "_")+".png");
-                    }
-                }
-                i++;
-                
-            }
+        if (new File(MIMETYPE_ICONS).isDirectory()) {
+	        
+	        if(file.isDirectory()){
+	            icon =  new Image(Display.getCurrent(),MIMETYPE_ICONS+"folder.png");
+	        }
+	        else{ 
+	            
+	            int i = 0;
+	            while(icon==null){
+	                
+	                if(i>mimetypes.length-1){
+	                    icon =new Image(Display.getCurrent(),MIMETYPE_ICONS+"unknown.png");    
+	                }
+	                else {
+	                    //System.out.println(mimetypes[i]);
+	                    if(new File(MIMETYPE_ICONS+mimetypes[i].replace("/", "_")+".png").exists()){
+	                        icon = new Image(Display.getCurrent(), MIMETYPE_ICONS+mimetypes[i].replace("/", "_")+".png");
+	                    }
+	                }
+	                i++;
+	                
+	            }
+	        }
         }
         return icon;
     }
