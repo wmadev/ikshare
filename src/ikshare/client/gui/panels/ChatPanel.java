@@ -551,8 +551,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		);
 		
 	}
-	
-	@Override
+
 	public void logNiLukNi(final ChatLogNiLukNiCommando c) {
 		this.getDisplay().asyncExec(
 			new Runnable() 

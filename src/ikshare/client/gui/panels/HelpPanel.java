@@ -12,7 +12,8 @@ import org.eclipse.swt.widgets.*;
 public class HelpPanel extends AbstractPanel{
     
 
-    public HelpPanel(String text,String icon){
+    @SuppressWarnings("deprecation")
+	public HelpPanel(String text,String icon){
         super(text,icon);
         String folder = "resources/help/en";
         final String[] urls;
