@@ -1,26 +1,14 @@
-
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.gui.panels;
 
 import ikshare.client.gui.AbstractPanel;
-import ikshare.client.gui.MainScreen;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.net.MalformedURLException;
-  import org.eclipse.swt.browser.*;
+import org.eclipse.swt.browser.*;
 import org.eclipse.swt.*;
-import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-/**
- *
- * @author Jana
- */
 public class HelpPanel extends AbstractPanel{
     
 

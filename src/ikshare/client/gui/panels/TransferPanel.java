@@ -1,15 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.gui.panels;
 
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.UtilityClass;
-import ikshare.domain.IKShareFile;
-import ikshare.domain.Peer;
 import ikshare.domain.PeerFacade;
 import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;
@@ -20,7 +13,6 @@ import java.io.File;
 import java.util.HashMap;
 
 import org.eclipse.swt.SWT;
-import org.eclipse.swt.custom.TableEditor;
 import org.eclipse.swt.custom.TreeEditor;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
@@ -37,17 +29,10 @@ import org.eclipse.swt.widgets.MenuItem;
 import org.eclipse.swt.widgets.ProgressBar;
 import org.eclipse.swt.widgets.TabFolder;
 import org.eclipse.swt.widgets.TabItem;
-import org.eclipse.swt.widgets.Table;
-import org.eclipse.swt.widgets.TableColumn;
-import org.eclipse.swt.widgets.TableItem;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
-/**
- *
- * @author Jana
- */
 public class TransferPanel extends AbstractPanel implements	FileTransferListener {
 
 

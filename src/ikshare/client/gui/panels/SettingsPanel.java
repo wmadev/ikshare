@@ -1,15 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.gui.panels;
 
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.configuration.ClientConfiguration;
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
-import ikshare.protocol.command.MyTurnCommando;
 
 import java.io.File;
 import java.util.Calendar;
@@ -18,10 +12,6 @@ import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
-/**
- *
- * @author Jana
- */
 public class SettingsPanel extends AbstractPanel{
     private static String ICON_GENERAL="resources/icons/pref_gen.png";
     private static String ICON_NETWORK="resources/icons/pref_net.png";

@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.gui.panels;
 
 import java.util.concurrent.ExecutorService;
@@ -19,10 +14,6 @@ import org.eclipse.swt.events.PaintListener;
 import org.eclipse.swt.graphics.Rectangle;
 import org.eclipse.swt.layout.RowLayout;
 
-/**
- *
- * @author Jana
- */
 public class StatisticPanel extends AbstractPanel{
 	private final StatisticPanel instance;
 	

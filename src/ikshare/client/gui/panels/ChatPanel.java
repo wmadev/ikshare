@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.gui.panels;
 
 import ikshare.client.ClientController;
@@ -49,10 +44,6 @@ import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.dialogs.ChatCreateRoomDialog;
 import ikshare.client.gui.dialogs.ChatRoomPasswordDialog;
 
-/**
- *
- * @author Jana
- */
 public class ChatPanel extends AbstractPanel implements ChatServerConversationListener, ClientConfigurationListener
 {
 	private LogonState loggedOn = LogonState.Offline;
