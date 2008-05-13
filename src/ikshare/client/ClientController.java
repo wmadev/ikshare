@@ -132,7 +132,7 @@ public class ClientController implements ServerConversationListener{
     private void sendCommand(Commando c) throws NoServerConnectionException{
         if(serverConversation == null){
             
-                throw new NoServerConnectionException("No connection with the server");
+                throw new NoServerConnectionException(ClientConfigurationController.getInstance().getString("noconnectionwithserver"));
             
             
         }

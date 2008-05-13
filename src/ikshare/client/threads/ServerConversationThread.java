@@ -2,6 +2,7 @@ package ikshare.client.threads;
 
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
+import ikshare.domain.exception.NoServerConnectionException;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CommandoParser;
 import java.io.BufferedReader;
@@ -34,13 +35,18 @@ public class ServerConversationThread implements Runnable{
         try {
             while (running) {
                 String inputLine = incomingReader.readLine();
-                //System.out.println(inputLine);
                 if (inputLine != null) {
+                    System.out.println("in lus");
                     Commando c = CommandoParser.getInstance().parse(inputLine);
 	            EventController.getInstance().triggerCommandoReceivedEvent(c);
                 }
+                else{
+                    running = false;
+                    throw new NoServerConnectionException(ClientConfigurationController.getInstance().getString("connectionwithserverlost"));
+                }
+                serverConnection.close();
             }
-            serverConnection.close();
+            
         } catch (SocketException ex) {
             System.out.println("Server down");
             running = false;
