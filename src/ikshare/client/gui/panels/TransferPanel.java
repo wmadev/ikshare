@@ -83,19 +83,17 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		treeUploadTransfer.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
 		treeUploadTransfer.setLinesVisible (true);
 		treeUploadTransfer.setHeaderVisible (true);
-		treeDownloadTransfer.addMouseListener(new MouseAdapter() {
+		treeUploadTransfer.addMouseListener(new MouseAdapter() {
 			public void mouseDown(MouseEvent event) {
 				if(event.button == 3){
-					final int selectedRow = treeDownloadTransfer.getSelectionCount();
+					final int selectedRow = treeUploadTransfer.getSelectionCount();
 					if (selectedRow == 0) 
 						return;
 					
-					final Transfer selected = (Transfer)treeDownloadTransfer.getSelection()[0].getData("transfer");
+					final Transfer selected = (Transfer)treeUploadTransfer.getSelection()[0].getData("transfer");
 					if (selected != null) {
-						rightClickMenu = new Menu (treeDownloadTransfer.getShell(), SWT.POP_UP);
-						if (selected.getState() == TransferState.DOWNLOADING) {
-							clearMenu(selected, true);
-						}
+						rightClickMenu = new Menu (treeUploadTransfer.getShell(), SWT.POP_UP);
+						clearMenu(selected, true);
 					}
 				}
 			}
@@ -240,7 +238,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 
 	public void transferStarted(final Transfer transfer) {
 		System.out.println(transfer.getState());
-		this.getDisplay().asyncExec(
+		this.getDisplay().syncExec(
 				new Runnable() {
 					public void run(){
 						TreeItem item = null;
@@ -464,14 +462,19 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 	public void transfersCleared() {
 
 		for (int i=0; i<treeDownloadTransfer.getItemCount(); i++) {
-			((ProgressBar)treeDownloadTransfer.getItem(i).getData("progressbar")).dispose();
-			treeDownloadTransfer.getItem(i).dispose();
+			Transfer t = (Transfer) treeDownloadTransfer.getItem(i).getData("transfer");
+			if (!PeerFacade.getInstance().getDownloadTransfers().contains(t)) {
+				((ProgressBar)treeDownloadTransfer.getItem(i).getData("progressbar")).dispose();
+				treeDownloadTransfer.getItem(i).dispose();
+			}
 		}
-		
-		
+
 		for (int i=0; i<treeUploadTransfer.getItemCount(); i++) {
-			((ProgressBar)treeUploadTransfer.getItem(i).getData("progressbar")).dispose();
-			treeUploadTransfer.getItem(i).dispose();
+			Transfer t = (Transfer) treeUploadTransfer.getItem(i).getData("transfer");
+			if (!PeerFacade.getInstance().getUploadTransfers().contains(t)) {
+				((ProgressBar)treeUploadTransfer.getItem(i).getData("progressbar")).dispose();
+				treeUploadTransfer.getItem(i).dispose();
+			}
 		}
 		
 		
