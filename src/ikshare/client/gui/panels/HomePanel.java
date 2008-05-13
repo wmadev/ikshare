@@ -19,6 +19,8 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.swt.SWT;
+import org.eclipse.swt.events.KeyEvent;
+import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.graphics.Image;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
@@ -82,6 +84,26 @@ public class HomePanel extends AbstractPanel implements ClientControllerListener
         lblAccountPassword.setLayoutData(lblData);
         txtAccountPassword = new Text(grpConnect, SWT.BORDER | SWT.PASSWORD);
         txtAccountPassword.setLayoutData(txtData);
+        txtAccountPassword.addKeyListener(new KeyListener() {
+
+            public void keyPressed(KeyEvent e) {
+                
+            }
+
+            public void keyReleased(KeyEvent e) {
+                 if(e.keyCode == SWT.CR){  
+                    if(validate()){
+                        if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logon"))){
+                            handleLogOn();
+                        }
+                        else if(btnConnect.getText().equals(ClientConfigurationController.getInstance().getString("logoff"))){
+                            handleLogOff();
+                        }
+                    }
+                }
+            }
+            
+        });
         
         lblAccountPasswordValidation = new Label(grpConnect,SWT.NONE);
         lblAccountPasswordValidation.setLayoutData(new GridData(SWT.FILL,SWT.CENTER,true,false,1,1));
