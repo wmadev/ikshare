@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.server.data.oracle;
 
 import ikshare.server.configuration.ServerConfiguration;
@@ -11,10 +6,6 @@ import ikshare.server.data.DatabaseFactory;
 import ikshare.server.data.FileStorage;
 import java.sql.Connection;
 
-/**
- *
- * @author awosy
- */
 public class OracleDatabaseFactory extends DatabaseFactory {
     private static OracleDatabaseFactory instance;
     

@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.server.data.oracle;
 
 import ikshare.domain.Peer;
@@ -14,10 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ResourceBundle;
 
-/**
- *
- * @author awosy
- */
 public class OracleAccountStorage implements AccountStorage {
     private static OracleAccountStorage instance;
     private ResourceBundle bundle;
