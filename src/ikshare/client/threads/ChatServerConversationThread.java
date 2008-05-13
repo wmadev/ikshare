@@ -82,6 +82,10 @@ public class ChatServerConversationThread implements Runnable
                     	EventController.getInstance().triggerLogNiLukNi((ChatLogNiLukNiCommando)c);
                     }
                 }
+                else
+                {
+                    throw new SocketException();
+                }
             }
             serverConnection.close();
         } 

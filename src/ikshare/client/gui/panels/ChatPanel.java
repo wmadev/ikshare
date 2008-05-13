@@ -53,6 +53,9 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
     
     private List publicRoomsList;
     
+    private Composite cmpPublicRooms;
+    private Composite cmpPrivateRooms;
+    
     private Button btnLog;
     private Label lblLog;
     private Label lblOnline;
@@ -71,6 +74,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
         GridLayout mainLayout = new GridLayout(2, false);
         this.setLayout(mainLayout);
         this.init();
+        this.setConnectState(2);
         
         parentShell = this.getShell();
     }
@@ -123,13 +127,12 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 		    	GridData gdLblOnline = new GridData(SWT.FILL, SWT.FILL, true, false);
 		    	gdLblOnline.horizontalSpan = 2;
 		    	lblOnline.setLayoutData(gdLblOnline);
-		    	setConnectState(2);
 		    	
 		    	layoutLog.topControl = grpLog;
 	    	}
 	    	{
 		    	//== Public Rooms panel ==
-		    	Composite cmpPublicRooms = new Composite(cmpRooms, SWT.LEFT);
+		    	cmpPublicRooms = new Composite(cmpRooms, SWT.LEFT);
 		        GridData gdPublicRooms = new GridData(SWT.NONE, SWT.FILL, false, true);
 		        gdPublicRooms.horizontalIndent = gdPublicRooms.verticalIndent = 0;
 		        gdPublicRooms.widthHint = 200;
@@ -165,7 +168,7 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 	    	}
 	    	{
 		        //== Private Rooms panel ==
-		        Composite cmpPrivateRooms = new Composite(cmpRooms, SWT.LEFT);
+		        cmpPrivateRooms = new Composite(cmpRooms, SWT.LEFT);
 		        GridData gdPrivateRooms = new GridData(SWT.NONE, SWT.NONE, false, false);
 		        gdPrivateRooms.horizontalIndent = gdPrivateRooms.verticalIndent = 0;
 		        gdPrivateRooms.widthHint = 200;
@@ -348,6 +351,8 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 					lblOnline.setText(ClientConfigurationController.getInstance().getChatString("online"));
 					lblOnline.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_DARK_GREEN));
 					loggedOn = LogonState.Online;
+                                        cmpPrivateRooms.setVisible(true);
+                                        cmpPublicRooms.setVisible(true);
 					break;
 				}
 				case 1:
@@ -355,6 +360,8 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 					lblOnline.setText(ClientConfigurationController.getInstance().getChatString("connecting"));
 					lblOnline.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_GRAY));
 					loggedOn = LogonState.Logging;
+                                        cmpPrivateRooms.setVisible(false);
+                                        cmpPublicRooms.setVisible(false);
 					break;
 				}
 				case 2:
@@ -362,6 +369,8 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 					lblOnline.setText(ClientConfigurationController.getInstance().getChatString("offline"));
 					lblOnline.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 					loggedOn = LogonState.Offline;
+                                        cmpPrivateRooms.setVisible(false);
+                                        cmpPublicRooms.setVisible(false);                                     
 					break;
 				}
 				default:
@@ -369,6 +378,8 @@ public class ChatPanel extends AbstractPanel implements ChatServerConversationLi
 					lblOnline.setText(ClientConfigurationController.getInstance().getChatString(message));
 					lblOnline.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
 					loggedOn = LogonState.Offline;
+                                        cmpPrivateRooms.setVisible(false);
+                                        cmpPublicRooms.setVisible(false);
 					break;
 				}
 			}
