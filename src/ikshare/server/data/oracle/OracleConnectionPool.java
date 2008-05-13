@@ -1,21 +1,10 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.server.data.oracle;
 
 import ikshare.server.data.ObjectPool;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
-/**
- *
- * @author awosy
- */
 public class OracleConnectionPool extends ObjectPool<Connection>{
     private String dsn, usr, pwd;
     public OracleConnectionPool(String driver, String dsn, String usr,
