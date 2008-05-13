@@ -1,31 +1,29 @@
 package ikshare.client.gui.panels;
 
 import ikshare.client.ClientController;
+import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.ExceptionWindow;
+import ikshare.client.gui.MainScreen;
 import ikshare.client.gui.UtilityClass;
-import ikshare.client.configuration.ClientConfigurationController;
-import ikshare.domain.Peer;
 import ikshare.domain.PeerFacade;
-import ikshare.domain.PeerFileDownloadThread;
 import ikshare.domain.SearchResult;
 import ikshare.domain.Transfer;
 import ikshare.domain.event.EventController;
-import ikshare.client.gui.MainScreen;
-
 import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.domain.exception.NoServerConnectionException;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.DownloadInformationResponseCommand;
 import ikshare.protocol.command.FoundResultCommando;
 import ikshare.protocol.command.NoResultsFoundCommando;
+
 import java.io.File;
 import java.net.UnknownHostException;
-
 import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 import org.eclipse.swt.custom.CTabItem;
@@ -37,8 +35,21 @@ import org.eclipse.swt.events.KeyListener;
 import org.eclipse.swt.events.MouseAdapter;
 import org.eclipse.swt.events.MouseEvent;
 import org.eclipse.swt.graphics.Image;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.FillLayout;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Combo;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Display;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.Label;
+import org.eclipse.swt.widgets.Listener;
+import org.eclipse.swt.widgets.Text;
+import org.eclipse.swt.widgets.Tree;
+import org.eclipse.swt.widgets.TreeColumn;
+import org.eclipse.swt.widgets.TreeItem;
 
 public class SearchPanel extends AbstractPanel implements ServerConversationListener, KeyListener {
 
@@ -317,6 +328,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         final CTabItem result = new CTabItem(folder, SWT.CLOSE);
         
         searches.put(sr.getId(), result);
+
         if (new File(ICON_SEARCH).exists()) {
             result.setImage(new Image(Display.getCurrent(), ICON_SEARCH));
         }
@@ -460,13 +472,11 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
                 }
                 else if(c instanceof DownloadInformationResponseCommand){
                     try {
-                    	DownloadInformationResponseCommand dirc = (DownloadInformationResponseCommand) c;
-                    	
-                        //int aantaldownloads = Integer.parseInt(MainScreen.getInstance().getInfoBar().getLblNrDownload().getText());
+                    	//int aantaldownloads = Integer.parseInt(MainScreen.getInstance().getInfoBar().getLblNrDownload().getText());
                         //MainScreen.getInstance().getInfoBar().getLblNrDownload().setText("" + aantaldownloads + 1);
                         Transfer t = ClientController.getInstance().getTransferForDownload((DownloadInformationResponseCommand) c);
-                        PeerFacade.getInstance().addToDownloads(t);
                         EventController.getInstance().triggerDownloadStartedEvent(t);
+                        PeerFacade.getInstance().addToDownloads(t);
                     } catch (UnknownHostException ex) {
                         new ExceptionWindow(ex,MainScreen.getInstance(),false);
                     }

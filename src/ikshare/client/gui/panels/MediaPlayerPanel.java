@@ -1,14 +1,21 @@
 package ikshare.client.gui.panels;
 
 import ikshare.client.gui.AbstractPanel;
+
 import java.awt.Frame;
 import java.util.HashMap;
-import org.eclipse.swt.*;
+
+import org.eclipse.swt.SWT;
 import org.eclipse.swt.awt.SWT_AWT;
-import org.eclipse.swt.layout.*;
-import org.eclipse.swt.widgets.*;
+import org.eclipse.swt.layout.GridData;
+import org.eclipse.swt.layout.GridLayout;
+import org.eclipse.swt.widgets.Button;
+import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Event;
+import org.eclipse.swt.widgets.Group;
+import org.eclipse.swt.widgets.List;
+import org.eclipse.swt.widgets.Listener;
 import org.videolan.jvlc.JVLC;
-import org.videolan.jvlc.LoggerVerbosityLevel;
 import org.videolan.jvlc.MediaDescriptor;
 import org.videolan.jvlc.MediaListPlayer;
 
