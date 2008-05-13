@@ -1,30 +1,32 @@
-/**
- * This class represents a thread that handles a client that connects with the server.
- */
 package ikshare.domain;
 
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.TransferQueueListener;
-import ikshare.protocol.command.*;
-import ikshare.server.*;
-import ikshare.server.data.*;
-import java.io.*;
+import ikshare.protocol.command.CancelTransferCommando;
+import ikshare.protocol.command.Commando;
+import ikshare.protocol.command.CommandoParser;
+import ikshare.protocol.command.FileConfirmCommando;
+import ikshare.protocol.command.FileNotFoundCommando;
+import ikshare.protocol.command.FileRequestCommando;
+import ikshare.protocol.command.FoundItAllCommando;
+import ikshare.protocol.command.GetConnCommando;
+import ikshare.protocol.command.GiveConnCommando;
+import ikshare.protocol.command.GivePeerCommando;
+import ikshare.protocol.command.GoForItCommando;
+import ikshare.protocol.command.MyTurnCommando;
+import ikshare.protocol.command.PassTurnCommando;
+import ikshare.protocol.command.PauseTransferCommando;
+import ikshare.protocol.command.ResumeTransferCommando;
+import ikshare.protocol.command.YourTurnCommando;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.net.Socket;
-import java.text.MessageFormat;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.StringTokenizer;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-/**
- *
- * @author awosy
- */
+
+
 public class PeerMessageThread implements Runnable, TransferQueueListener{
     private Socket clientSocket;
     private boolean running = false;
@@ -47,8 +49,7 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 	public void run() {
         try {
         	if (clientSocket == null)
-        		clientSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort());
-       
+        		clientSocket = new Socket(transfer.getPeer().getInternetAddress(), transfer.getPeer().getPort());	
        		outputWriter = new PrintWriter(clientSocket.getOutputStream(), true);
           	incomingReader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         	
@@ -63,7 +64,7 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
             }
             clientSocket.close();
         } catch (Exception ex) {
-            ex.printStackTrace();
+            
         }
         
     }
@@ -126,17 +127,14 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 
 
 	private void handleGoForItCommando(GoForItCommando gfic) {
-		Transfer t = PeerFacade.getInstance().getDownloadTransferForId(gfic.getTransferId());
 		PeerFacade.getInstance().startDownloadThread(PeerFacade.getInstance().getDownloadTransferForId(gfic.getTransferId()));	
-
 	}
 
 	private void handleOtherCommandos(Commando c) {
 		try {
 			clientSocket.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+			
 		}
 	}
 

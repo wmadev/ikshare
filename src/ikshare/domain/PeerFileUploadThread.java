@@ -9,10 +9,6 @@ import java.io.IOException;
 import java.net.Socket;
 import java.util.Date;
 
-/**
- * 
- * @author jonas
- */
 public class PeerFileUploadThread implements Runnable {
 
 	private Socket sendSocket;

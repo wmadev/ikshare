@@ -1,19 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.domain;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 
-/**
- *
- * @author awosy
- */
 public class SharedItem implements Serializable{
-    private boolean folder;
+
+	private static final long serialVersionUID = 1L;
+	private boolean folder;
     private ArrayList<SharedItem> sharedItems;
     private SharedItemState state;
     private int parentId;

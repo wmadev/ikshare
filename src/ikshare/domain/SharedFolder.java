@@ -1,19 +1,12 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.domain;
 
 import java.util.HashMap;
 import java.util.Map;
 
-/**
- *
- * @author awosy
- */
 public class SharedFolder extends SharedItem {
-    private String accountName;
+
+	private static final long serialVersionUID = 1L;
+	private String accountName;
     private String path;
     private int parentID;
     private int folderID;
