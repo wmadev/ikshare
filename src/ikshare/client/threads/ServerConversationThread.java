@@ -10,6 +10,7 @@ import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.net.InetAddress;
 import java.net.Socket;
+import java.net.SocketException;
 
 public class ServerConversationThread implements Runnable{
 
@@ -33,14 +34,19 @@ public class ServerConversationThread implements Runnable{
         try {
             while (running) {
                 String inputLine = incomingReader.readLine();
-                System.out.println(inputLine);
+                //System.out.println(inputLine);
                 if (inputLine != null) {
                     Commando c = CommandoParser.getInstance().parse(inputLine);
 	            EventController.getInstance().triggerCommandoReceivedEvent(c);
                 }
             }
             serverConnection.close();
-        } catch (Exception ex) {
+        } catch (SocketException ex) {
+            System.out.println("Server down");
+            running = false;
+        }
+        catch(Exception ex){
+            System.out.println("Iets anders");
             ex.printStackTrace();
         }
     }
