@@ -83,6 +83,23 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		treeUploadTransfer.setLayoutData(new GridData(SWT.FILL,SWT.FILL,true,true,2,1));
 		treeUploadTransfer.setLinesVisible (true);
 		treeUploadTransfer.setHeaderVisible (true);
+		treeDownloadTransfer.addMouseListener(new MouseAdapter() {
+			public void mouseDown(MouseEvent event) {
+				if(event.button == 3){
+					final int selectedRow = treeDownloadTransfer.getSelectionCount();
+					if (selectedRow == 0) 
+						return;
+					
+					final Transfer selected = (Transfer)treeDownloadTransfer.getSelection()[0].getData("transfer");
+					if (selected != null) {
+						rightClickMenu = new Menu (treeDownloadTransfer.getShell(), SWT.POP_UP);
+						if (selected.getState() == TransferState.DOWNLOADING) {
+							clearMenu(selected, true);
+						}
+					}
+				}
+			}
+		});
 		addTreeColumn(treeUploadTransfer,ClientConfigurationController.getInstance().getString("filename"),300,SWT.LEFT);
 		addTreeColumn(treeUploadTransfer,ClientConfigurationController.getInstance().getString("size"),100,SWT.RIGHT);
 		addTreeColumn(treeUploadTransfer,ClientConfigurationController.getInstance().getString("progress"), 100, SWT.RIGHT);
