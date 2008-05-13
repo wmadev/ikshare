@@ -42,13 +42,13 @@ public class ServerConversationThread implements Runnable{
                 }
                 else{
                     running = false;
-                    throw new NoServerConnectionException(ClientConfigurationController.getInstance().getString("connectionwithserverlost"));
+                    throw new SocketException();
                 }
-                serverConnection.close();
+                
             }
-            
+            serverConnection.close();
         } catch (SocketException ex) {
-            System.out.println("Server down");
+            EventController.getInstance().triggerServerConnectionInterupted();
             running = false;
         }
         catch(Exception ex){
