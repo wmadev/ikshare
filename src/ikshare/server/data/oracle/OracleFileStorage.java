@@ -308,26 +308,28 @@ public class OracleFileStorage implements FileStorage {
                 "v as (select folderid, foldername, parentfolderid, accountname, connect_by_root( foldersize) as foldersize " +
 		"from w	start with blad=1 connect by prior parentfolderid = folderid), " +
                 "z as (select folderid, foldername, parentfolderid, sum( foldersize) as foldersize, accountname " +
-		"from v group by folderid, foldername, parentfolderid, accountname ";
+		"from v group by folderid, foldername, parentfolderid, accountname), " +
+                "a as (select folderid, foldername, parentfolderid, foldersize, accountname from z ";
 
         if(minSize!=0 && maxSize!=0){
-            searchString+= "HAVING FOLDERSIZE BETWEEN "+minSize+" AND "+maxSize+" ";
+            searchString+= "WHERE FOLDERSIZE BETWEEN "+minSize+" AND "+maxSize+" ";
         }
         else if (minSize!=0){
-            searchString+= "HAVING FOLDERSIZE>"+minSize+" ";
+            searchString+= "WHERE FOLDERSIZE>"+minSize+" ";
              }
         else if (maxSize!=0){
-            searchString+= "HAVING FOLDERSIZE<"+maxSize+" ";
+            searchString+= "WHERE FOLDERSIZE<"+maxSize+" ";
         }
         searchString+=") " +
-                "select folderid, foldername, parentfolderid, foldersize, accountname from z " +
+                "select folderid, foldername, parentfolderid, foldersize, accountname from a " +
                 "union all select fi.folderid, filename, 0, fi.filesize, accountname " +
-                "from sharedfiles fi join z on z.folderid = fi.folderid " +
+                "from sharedfiles fi join a on a.folderid = fi.folderid " +
                 "order by folderid, parentfolderid desc";
               
         Connection conn = OracleDatabaseFactory.getConnection();
         try{
             Statement stmt=conn.createStatement();
+            System.out.println(searchString);
             ResultSet result=stmt.executeQuery(searchString);
             results =new ArrayList<SearchResult>();
             while(result.next()){
