@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.gui;
 
 import ikshare.client.configuration.ClientConfigurationController;
@@ -10,10 +5,6 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
 
-/**
- *
- * @author awosy
- */
 public class ExceptionWindow {
 	public ExceptionWindow(Exception e,MainScreen mw, boolean fatal) {
 		checkMainWindow(mw,e.getMessage());

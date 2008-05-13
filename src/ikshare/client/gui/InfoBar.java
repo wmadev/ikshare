@@ -1,12 +1,8 @@
 package ikshare.client.gui;
 
-import ikshare.client.ClientController;
-import java.awt.FlowLayout;
 import java.io.File;
 
 import ikshare.client.configuration.ClientConfigurationController;
-import ikshare.client.gui.custom.MP3Player;
-import ikshare.client.gui.custom.UIFileBrowser;
 import ikshare.domain.PeerFacade;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.TransferQueueListener;
