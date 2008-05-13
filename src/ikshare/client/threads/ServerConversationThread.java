@@ -36,7 +36,6 @@ public class ServerConversationThread implements Runnable{
             while (running) {
                 String inputLine = incomingReader.readLine();
                 if (inputLine != null) {
-                    System.out.println("in lus");
                     Commando c = CommandoParser.getInstance().parse(inputLine);
 	            EventController.getInstance().triggerCommandoReceivedEvent(c);
                 }
@@ -52,8 +51,8 @@ public class ServerConversationThread implements Runnable{
             running = false;
         }
         catch(Exception ex){
-            System.out.println("Iets anders");
-            ex.printStackTrace();
+            EventController.getInstance().triggerServerConnectionInterupted();
+            running = false;
         }
     }
     
