@@ -247,4 +247,15 @@ public class HomePanel extends AbstractPanel implements ClientControllerListener
            
     }
 
+    public void connectionInterrupted() {
+        getDisplay().asyncExec(new Runnable() {
+            public void run() {
+                handleLogOff();
+                lblStatus.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+                lblStatus.setText(ClientConfigurationController.getInstance().getString("connectionwithserverlost"));
+            }
+        });
+        
+    }
+
 }
