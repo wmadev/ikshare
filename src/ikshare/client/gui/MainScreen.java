@@ -9,6 +9,7 @@ import ikshare.client.gui.panels.SearchPanel;
 import ikshare.client.gui.panels.SettingsPanel;
 import ikshare.client.gui.panels.StatisticPanel;
 import ikshare.client.gui.panels.TransferPanel;
+import java.io.File;
 import java.util.*;
 import org.eclipse.swt.*;
 import org.eclipse.swt.custom.*;
@@ -17,6 +18,7 @@ import org.eclipse.swt.layout.*;
 import org.eclipse.swt.widgets.*;
 
 public class MainScreen {
+    private final String ICON = "resources/icons/logo.png";
     private Display display;
     private Shell shell;
     private java.util.List<AbstractPanel> panels;
@@ -151,10 +153,9 @@ public class MainScreen {
             shell.setLayout(gl);
             shell.setText(ClientConfigurationController.getInstance().getString("ikshare"));
 
-            /*String icon = "resources/logo.png";
-            File file = new File(icon);
-            if(file.exists())
-                    shell.setImage(new Image(display, icon));*/
+            if(new File(ICON).exists()){
+                shell.setImage(new Image(display,ICON));
+            }
     }
 
     
