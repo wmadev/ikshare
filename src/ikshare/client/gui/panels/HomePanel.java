@@ -11,18 +11,11 @@ import ikshare.client.gui.dialogs.CreateAccountDialogData;
 import ikshare.domain.PeerFacade;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.ClientControllerListener;
-import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.domain.exception.NoServerConnectionException;
 import ikshare.exceptions.ConfigurationException;
-import ikshare.protocol.command.Commando;
-import ikshare.protocol.command.LogNiLukNiCommando;
-import ikshare.protocol.command.WelcomeCommando;
-
 import java.io.File;
 import java.io.IOException;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.swt.SWT;
