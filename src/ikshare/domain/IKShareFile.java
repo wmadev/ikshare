@@ -5,10 +5,7 @@ import ikshare.client.configuration.ClientConfigurationController;
 import java.io.File;
 
 public class IKShareFile extends File {
-	
-	/**
-	 * 
-	 */
+
 	private static final long serialVersionUID = -4315713515270010597L;
 	private String folder, fileName;
 	

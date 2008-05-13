@@ -1,11 +1,9 @@
 package ikshare.domain;
 
-/**
- *
- * @author awosy
- */
+
 public class SharedFile extends SharedItem {
-    private String name;
+	private static final long serialVersionUID = 1L;
+	private String name;
     private int folderID;
     private long size;
 

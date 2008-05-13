@@ -7,10 +7,6 @@ import ikshare.protocol.command.FileRequestCommando;
 import ikshare.protocol.command.PauseTransferCommando;
 
 import java.io.File;
-import java.io.IOException;
-import java.net.InetAddress;
-import java.net.Socket;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.ListIterator;
@@ -88,7 +84,7 @@ public class PeerFacade {
 		peerMessageService = new PeerMessageService();
 		executorService.execute(peerMessageService);
 		
-		folders = new HashMap<Integer, SearchResult>();
+		folderMap = new HashMap<Integer, SearchResult>();
 	}
 
 
@@ -109,8 +105,6 @@ public class PeerFacade {
 		try {
 			Thread.sleep(200);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
 		}
 		
 		peerMessageThread.sendMessage(frc);
@@ -336,16 +330,16 @@ public class PeerFacade {
 
 	public void makeFolder(SearchResult start) {
 		
-		folders.put(start.getFolderId(), start);
+		folderMap.put(start.getFolderId(), start);
 		
 		String folderName = "";//ClientConfigurationController.getInstance().getConfiguration().getSharedFolder().toString();
 		
 		SearchResult temp = start;
 		while (temp!=null) {
 			folderName = temp.getName() + System.getProperty("file.separator") + folderName;
-			temp = folders.get(temp.getParentId());
+			temp = folderMap.get(temp.getParentId());
 		}
-		File folder = new File(folderName);
+		File folder = new File(ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+folderName);
 
 		System.out.println("[PeerFacade-makeFolder]: foldername:" + folderName );
 		System.out.println("[PeerFacade-makeFolder]: folder:" + folder );
@@ -355,8 +349,11 @@ public class PeerFacade {
 			folder.mkdir();
 	}
 
+	public HashMap<Integer, SearchResult> getFolderMap() {
+		return folderMap;
+	}
 
-	private HashMap<Integer, SearchResult> folders;
+	private HashMap<Integer, SearchResult> folderMap;
 	
 	
 }

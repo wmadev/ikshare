@@ -9,17 +9,13 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.Socket;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.Date;
+import java.util.StringTokenizer;
+import java.util.Vector;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- *
- * @author jonas
- */
+
 public class PeerFileDownloadThread implements Runnable {
 
     private BufferedInputStream inStream;
@@ -60,23 +56,38 @@ public class PeerFileDownloadThread implements Runnable {
         	transfer.setState(TransferState.DOWNLOADING);
 
         	boolean resumingDownload = (transfer.getDownloadLocation()!="");
-        	boolean superFolderExist = new File(ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+transfer.getFile().getFolder()).exists();
-
-        	System.out.println("[PeerFileDownloadThread-run] folder:" + ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+transfer.getFile().getFolder());
+        	boolean superFolderExists = false;
         	
-        	System.out.println("[PeerFileDownloadThread-run] superfolder exist:" + superFolderExist);
+        	StringTokenizer pathTokenizer = new StringTokenizer(transfer.getFile().getFolder(), System.getProperty("file.separator"));
+        	Vector<String> appartFolders = new Vector<String>();
+        	while (pathTokenizer.hasMoreTokens()) {
+        		String temp=pathTokenizer.nextToken();
+        		appartFolders.add(temp);
+        	}
+        	int begin=0;
+        	String fullPath=ClientConfigurationController.getInstance().getConfiguration().getSharedFolder().toString();
+        	while (begin<appartFolders.size() && !superFolderExists) {
+        		int i = begin;
+        		fullPath=ClientConfigurationController.getInstance().getConfiguration().getSharedFolder().toString();
+        		while (i<appartFolders.size()) {
+        			fullPath += System.getProperty("file.separator") + appartFolders.get(i);
+        			i++;
+        		}
+        		superFolderExists = new File(fullPath).isDirectory();
+
+        		begin++;
+        	}
+
+        	
+
         	String fileNamePrefix, extension;
         	
         	if(!resumingDownload){
         		String fileName;
-        		if (!superFolderExist)
-        			fileName = ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+System.getProperty("file.separator")+transfer.getFile().getName();
-        		else
-        			fileName = ClientConfigurationController.getInstance().getConfiguration().getSharedFolder()+System.getProperty("file.separator")+transfer.getFile().getFolder()+System.getProperty("file.separator")+transfer.getFile().getName();
+        		fileName = fullPath+System.getProperty("file.separator")+transfer.getFile().getName();
         		
         		
         		int lastIndexOfPoint = fileName.lastIndexOf(".");
-	        	//System.out.println(lastIndexOfPoint);
 	        	if (lastIndexOfPoint != -1) {
 	        		fileNamePrefix = fileName.substring(0, lastIndexOfPoint);
 	        		extension=fileName.substring(lastIndexOfPoint);
@@ -125,7 +136,6 @@ public class PeerFileDownloadThread implements Runnable {
 					previousTotal = transfer.getNumberOfBytesFinished();
 					EventController.getInstance().triggerDownloadStateChangedEvent(transfer);
 				}
-                //System.out.println("aantal bytes="+ n +" aantal pakketjes:" +tellerpakketjes);
             }
             transfer.setState(TransferState.FINISHED);
             transfer.setSpeed(0);
@@ -139,7 +149,6 @@ public class PeerFileDownloadThread implements Runnable {
 				EventController.getInstance().triggerDownloadPausedEvent(transfer);
 			else {
 				transfer.setState(TransferState.FAILED);
-				e.printStackTrace();
 				EventController.getInstance().triggerDownloadFailedEvent(transfer);
 			}
         } finally {
@@ -152,7 +161,6 @@ public class PeerFileDownloadThread implements Runnable {
     public void start() {
         service = Executors.newFixedThreadPool(1);
         service.execute(this);
-        System.out.println("Downloadthread gestart.");
     }
     
     public void stop() {
@@ -166,10 +174,6 @@ public class PeerFileDownloadThread implements Runnable {
     		fileOutput = null;
     		receiveSocket = null;
     		inStream = null;
-    		/*
-    		if (transfer.getState()!=TransferState.FINISHED && transfer.getState()!=TransferState.PAUSEDDOWNLOAD)
-    			outputFile.delete();
-    			*/
     		
     		System.gc();
 		} catch (IOException e) {
@@ -178,7 +182,6 @@ public class PeerFileDownloadThread implements Runnable {
 			e.printStackTrace();
 		} finally {
 			service.shutdown();
-			System.out.println("Downloadthread gestopt.");
 		}
     }
 }

@@ -1,6 +1,5 @@
 package ikshare.domain;
 
-import java.io.File;
 import java.util.HashMap;
 
 public class SearchResult {

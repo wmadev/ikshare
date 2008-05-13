@@ -1,31 +1,8 @@
 package ikshare.domain;
 
 import ikshare.client.configuration.ClientConfigurationController;
-import ikshare.domain.event.EventController;
-import ikshare.domain.event.listener.TransferQueueListener;
-import ikshare.protocol.command.CancelTransferCommando;
-import ikshare.protocol.command.Commando;
-import ikshare.protocol.command.CommandoParser;
-import ikshare.protocol.command.FileConfirmCommando;
-import ikshare.protocol.command.FileNotFoundCommando;
-import ikshare.protocol.command.FileRequestCommando;
-import ikshare.protocol.command.FoundItAllCommando;
-import ikshare.protocol.command.GetConnCommando;
-import ikshare.protocol.command.GiveConnCommando;
-import ikshare.protocol.command.GivePeerCommando;
-import ikshare.protocol.command.GoForItCommando;
-import ikshare.protocol.command.MyTurnCommando;
-import ikshare.protocol.command.PassTurnCommando;
-import ikshare.protocol.command.PauseTransferCommando;
-import ikshare.protocol.command.ResumeTransferCommando;
-import ikshare.protocol.command.YourTurnCommando;
-import ikshare.protocol.exception.CommandNotFoundException;
-import ikshare.server.threads.HandleClientThread;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ExecutorService;
