@@ -6,6 +6,7 @@
 package ikshare.domain.event;
 
 import ikshare.client.configuration.ClientConfiguration;
+import ikshare.domain.SearchResult;
 import ikshare.domain.Transfer;
 import ikshare.domain.event.listener.ChatServerConversationListener;
 import ikshare.domain.event.listener.ClientConfigurationListener;
@@ -186,6 +187,18 @@ public class EventController {
 			listener.activeUploadsChanged();
 		}
 	}
+
+    public void triggerNoResultFoundEvent(String keyword) {
+         for (ClientControllerListener listener : clientControllerListeners) {
+			listener.onNoResultFound(keyword);
+		}
+    }
+
+    public void triggerResultFoundEvent(SearchResult sr,String keyword) {
+        for (ClientControllerListener listener : clientControllerListeners) {
+			listener.onResultFound(sr,keyword);
+		}
+    }
 
 	public void triggerSelectedMP3FileChanged(File mp3File) {
 		for (SelectedMediaFileListener listener: selectedMediaFileListener) {

@@ -21,9 +21,11 @@ import ikshare.protocol.command.DownloadInformationResponseCommand;
 import ikshare.protocol.command.FindAdvancedFileCommando;
 import ikshare.protocol.command.FindAdvancedFolderCommando;
 import ikshare.protocol.command.FindBasicCommando;
+import ikshare.protocol.command.FoundResultCommando;
 import ikshare.protocol.command.LogNiLukNiCommando;
 import ikshare.protocol.command.LogOffCommando;
 import ikshare.protocol.command.LogOnCommando;
+import ikshare.protocol.command.NoResultsFoundCommando;
 import ikshare.protocol.command.WelcomeCommando;
 import ikshare.protocol.command.chat.ChatCreateRoomCommando;
 import ikshare.protocol.command.chat.ChatEnterRoomCommando;
@@ -292,5 +294,27 @@ public class ClientController implements ServerConversationListener{
         else if (c instanceof LogNiLukNiCommando){
             EventController.getInstance().triggerLogOnFailedEvent(((LogNiLukNiCommando)c).getMessage());
         }
+        else if (c instanceof FoundResultCommando) {
+             FoundResultCommando frc = (FoundResultCommando) c;
+             SearchResult sr  = new SearchResult(frc.getSearchID(), frc.getName(), frc.getSize(),frc.getAccountName(),frc.isFolder(),frc.getParentId(),frc.getFolderId());
+             EventController.getInstance().triggerResultFoundEvent(sr,frc.getSearchKeyword());
+        }
+        else if(c instanceof NoResultsFoundCommando){
+            EventController.getInstance().triggerNoResultFoundEvent(((NoResultsFoundCommando)c).getKeyword());
+        }
+        else if(c instanceof DownloadInformationResponseCommand){
+                    try {
+                    	//int aantaldownloads = Integer.parseInt(MainScreen.getInstance().getInfoBar().getLblNrDownload().getText());
+                        //MainScreen.getInstance().getInfoBar().getLblNrDownload().setText("" + aantaldownloads + 1);
+                        Transfer t = getTransferForDownload((DownloadInformationResponseCommand) c);
+                        EventController.getInstance().triggerDownloadStartedEvent(t);
+                        PeerFacade.getInstance().addToDownloads(t);
+                    } catch (UnknownHostException ex) {
+                        // niet afgehandeld
+                        ex.printStackTrace();
+                    }
+                }
+        
+        
     }
 }

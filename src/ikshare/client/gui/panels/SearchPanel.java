@@ -10,6 +10,7 @@ import ikshare.domain.PeerFacade;
 import ikshare.domain.SearchResult;
 import ikshare.domain.Transfer;
 import ikshare.domain.event.EventController;
+import ikshare.domain.event.listener.ClientControllerListener;
 import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.domain.exception.NoServerConnectionException;
 import ikshare.protocol.command.Commando;
@@ -51,7 +52,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
 
-public class SearchPanel extends AbstractPanel implements ServerConversationListener, KeyListener {
+public class SearchPanel extends AbstractPanel implements ClientControllerListener, KeyListener {
 
     private static String ICON_SEARCH = "resources/icons/sp_found.png";
     private boolean advanced = false, keywordAnd = true;
@@ -68,7 +69,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
     
     public SearchPanel(String text, String icon) {
         super(text, icon);
-        EventController.getInstance().addServerConversationListener(this);
+        EventController.getInstance().addClientControllerListener(this);
         searches = new HashMap<String, CTabItem>();
         treeItems = new HashMap<Integer,TreeItem>();
         this.setLayout(new GridLayout(2, false));
@@ -435,7 +436,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         if (new File(ICON_SEARCH).exists()) {
             result.setImage(new Image(Display.getCurrent(), ICON_SEARCH));
         }
-        result.setText("No results");
+        result.setText(notfoundkeyword);
         
         result.addDisposeListener(new DisposeListener() {
 
@@ -454,38 +455,26 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
        
     }
 
-   public void receivedCommando(final Commando c) {
+    public void onResultFound(final SearchResult found,final String keyword){
         this.getDisplay().asyncExec(new Runnable() {
-
             public void run() {
-                if (c instanceof FoundResultCommando) {
-                    FoundResultCommando frc = (FoundResultCommando) c;
-                    SearchResult sr  = new SearchResult(frc.getSearchID(), frc.getName(), frc.getSize(),frc.getAccountName(),frc.isFolder(),frc.getParentId(),frc.getFolderId());
-                    if (searches.containsKey(sr.getId())) {
-                        updateTabItem(searches.get(sr.getId()), sr);
+                if (searches.containsKey(found.getId())) {
+                        updateTabItem(searches.get(found.getId()), found);
                     } else {
-                        createTabItem(sr, frc.getSearchKeyword());
+                        createTabItem(found, keyword);
                     }
-                }
-                else if(c instanceof NoResultsFoundCommando){
-                    createTabItem(((NoResultsFoundCommando)c).getKeyword());
-                }
-                else if(c instanceof DownloadInformationResponseCommand){
-                    try {
-                    	//int aantaldownloads = Integer.parseInt(MainScreen.getInstance().getInfoBar().getLblNrDownload().getText());
-                        //MainScreen.getInstance().getInfoBar().getLblNrDownload().setText("" + aantaldownloads + 1);
-                        Transfer t = ClientController.getInstance().getTransferForDownload((DownloadInformationResponseCommand) c);
-                        EventController.getInstance().triggerDownloadStartedEvent(t);
-                        PeerFacade.getInstance().addToDownloads(t);
-                    } catch (UnknownHostException ex) {
-                        new ExceptionWindow(ex,MainScreen.getInstance(),false);
-                    }
-                }
             }
         });
     }
-
-    private void updateTabItem(CTabItem tab, SearchResult sr) {
+    public void onNoResultFound(final String keyword){
+        this.getDisplay().asyncExec(new Runnable() {
+            public void run() {
+                createTabItem(keyword);
+            }
+        });
+    }
+    
+   private void updateTabItem(CTabItem tab, SearchResult sr) {
         Tree treeResults = (Tree) tab.getData("tree");
         addTreeRow(sr, treeResults);
     }
@@ -593,5 +582,17 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         }else{
             txtKeywordBasic.setFocus();
         }
+    }
+
+    public void connectionInterrupted() {
+        // Not required by SearchPanel
+    }
+
+    public void onLogOn() {
+        // Not required by SearchPanel
+    }
+
+    public void onLogOnFailed(String message) {
+        // Not required by SearchPanel
     }
 }
