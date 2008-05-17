@@ -8,18 +8,10 @@ import ikshare.client.gui.MainScreen;
 import ikshare.client.gui.UtilityClass;
 import ikshare.domain.PeerFacade;
 import ikshare.domain.SearchResult;
-import ikshare.domain.Transfer;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.ClientControllerListener;
-import ikshare.domain.event.listener.ServerConversationListener;
 import ikshare.domain.exception.NoServerConnectionException;
-import ikshare.protocol.command.Commando;
-import ikshare.protocol.command.DownloadInformationResponseCommand;
-import ikshare.protocol.command.FoundResultCommando;
-import ikshare.protocol.command.NoResultsFoundCommando;
-
 import java.io.File;
-import java.net.UnknownHostException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Matcher;
