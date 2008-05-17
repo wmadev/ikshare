@@ -48,6 +48,7 @@ public class ClientController implements ServerConversationListener{
     private ExecutorService executorService;
     private ServerConversationThread serverConversation;
     private ChatServerConversationThread chatServerConversation;
+    private boolean loggedOn;
     
     private ClientController(){
         EventController.getInstance().addServerConversationListener(this);
@@ -60,6 +61,10 @@ public class ClientController implements ServerConversationListener{
         return instance;
     }
 
+    public boolean isLoggedOn(){
+        return loggedOn;
+    }
+    
     public void createAccount(String accountName, String accountPassword, String accountEmail) throws NoServerConnectionException, ConfigurationException {
 
         CreateAccountCommando cac = new CreateAccountCommando();
@@ -89,6 +94,7 @@ public class ClientController implements ServerConversationListener{
     }
 
     public void logoff(String accountName, String password, int port) throws NoServerConnectionException, ConfigurationException {
+        loggedOn = false;
         LogOffCommando loc = new LogOffCommando();
         loc.setAccountName(accountName);
         loc.setPassword(md5encrypt(password));
@@ -129,7 +135,7 @@ public class ClientController implements ServerConversationListener{
     
     private void sendCommand(Commando c) throws NoServerConnectionException{
         if(serverConversation == null){
-            
+                loggedOn = false;    
                 throw new NoServerConnectionException(ClientConfigurationController.getInstance().getString("noconnectionwithserver"));
             
             
@@ -241,7 +247,9 @@ public class ClientController implements ServerConversationListener{
     }
     
     public void stopServerConversation() {
-        serverConversation.stop();
+        if(serverConversation!=null){
+            serverConversation.stop();
+        }
         serverConversation = null;
     }
     
@@ -272,13 +280,13 @@ public class ClientController implements ServerConversationListener{
     public void receivedCommando(Commando c) {
         if( c instanceof WelcomeCommando){
             try {
+                loggedOn = true;
                 WelcomeCommando wc = (WelcomeCommando) c;
                 Peer p = new Peer(wc.getAccountName(), InetAddress.getByName(wc.getIpAddress()));
                 PeerFacade.getInstance().setPeer(p);
                 EventController.getInstance().triggerLoggedOnEvent();
             } catch (UnknownHostException ex) {
-                ex.printStackTrace();
-                // TODO betere afhandeling
+                loggedOn = false;
             }
         }
         else if (c instanceof LogNiLukNiCommando){
