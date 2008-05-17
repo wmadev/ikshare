@@ -449,7 +449,7 @@ public class SearchPanel extends AbstractPanel implements ServerConversationList
         Composite cmpResult1 = new Composite(folder, SWT.NONE);
         cmpResult1.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 3, 1));
         cmpResult1.setLayout(new GridLayout(1, false));
-        new Label(cmpResult1,SWT.NONE).setText("No result found for: "+notfoundkeyword);
+        new Label(cmpResult1,SWT.NONE).setText(ClientConfigurationController.getInstance().getString("noresultsfoundfor")+" "+notfoundkeyword);
         result.setControl(cmpResult1);
        
     }
