@@ -270,11 +270,20 @@ public class HomePanel extends AbstractPanel implements ClientControllerListener
     }
 
     public void connectionInterrupted() {
+        
         getDisplay().asyncExec(new Runnable() {
             public void run() {
-                handleLogOff();
-                lblStatus.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
-                lblStatus.setText(ClientConfigurationController.getInstance().getString("connectionwithserverlost"));
+                    if(ClientController.getInstance().isLoggedOn()){
+                        ClientController.getInstance().stopServerConversation();        
+                        btnConnect.setText(ClientConfigurationController.getInstance().getString("logon"));
+                        btnCreateNew.setEnabled(true);
+                        if (new File(ICON_LOGON).exists()) {
+                            btnConnect.setImage(new Image(Display.getCurrent(), ICON_LOGON));
+                        }
+
+                        lblStatus.setForeground(Display.getCurrent().getSystemColor(SWT.COLOR_RED));
+                        lblStatus.setText(ClientConfigurationController.getInstance().getString("connectionwithserverlost"));
+                    }
             }
         });
         
