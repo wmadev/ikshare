@@ -9,6 +9,7 @@ import ikshare.client.gui.custom.UIFileBrowser;
 import ikshare.client.gui.dialogs.CreateAccountDialog;
 import ikshare.client.gui.dialogs.CreateAccountDialogData;
 import ikshare.domain.PeerFacade;
+import ikshare.domain.SearchResult;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.ClientControllerListener;
 import ikshare.domain.exception.NoServerConnectionException;
@@ -287,6 +288,14 @@ public class HomePanel extends AbstractPanel implements ClientControllerListener
             }
         });
         
+    }
+
+    public void onResultFound(SearchResult found, String keyword) {
+        // Not required for HomePanel
+    }
+
+    public void onNoResultFound(String keyword) {
+        // Not required for HomePanel
     }
 
 }
