@@ -3,7 +3,7 @@ package ikshare.client.gui.panels;
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.UtilityClass;
-import ikshare.domain.PeerFacade;
+import ikshare.domain.TransferController;
 import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;
 import ikshare.domain.event.EventController;
@@ -187,7 +187,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		resumeMenuItem.setEnabled(enabled);
 		resumeMenuItem.addListener (SWT.Selection, new Listener () {
 			public void handleEvent(Event event) {
-					PeerFacade.getInstance().resumeDownloadThread(selected);
+					TransferController.getInstance().resumeDownloadThread(selected);
 			}
 		});
 	}
@@ -198,7 +198,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		pauseMenuItem.setEnabled(enabled);
 		pauseMenuItem.addListener (SWT.Selection, new Listener () {
 			public void handleEvent(Event event) {
-					PeerFacade.getInstance().pauseDownloadThread(selected);
+					TransferController.getInstance().pauseDownloadThread(selected);
 			}
 		});
 	}
@@ -209,7 +209,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		cancelMenuItem.setEnabled(enabled);
 		cancelMenuItem.addListener (SWT.Selection, new Listener () {
 			public void handleEvent(Event event) {
-					PeerFacade.getInstance().cancelDownloadThread(selected);
+					TransferController.getInstance().cancelDownloadThread(selected);
 			}
 		});
 	}
@@ -220,7 +220,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 		clearMenuItem.setEnabled(enabled);
 		clearMenuItem.addListener (SWT.Selection, new Listener () {
 			public void handleEvent(Event event) {
-					PeerFacade.getInstance().clearTransfers();
+					TransferController.getInstance().clearTransfers();
 			}
 		});
 	}
@@ -463,7 +463,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 
 		for (int i=0; i<treeDownloadTransfer.getItemCount(); i++) {
 			Transfer t = (Transfer) treeDownloadTransfer.getItem(i).getData("transfer");
-			if (!PeerFacade.getInstance().getDownloadTransfers().contains(t)) {
+			if (!TransferController.getInstance().getDownloadTransfers().contains(t)) {
 				((ProgressBar)treeDownloadTransfer.getItem(i).getData("progressbar")).dispose();
 				treeDownloadTransfer.getItem(i).dispose();
 			}
@@ -471,7 +471,7 @@ public class TransferPanel extends AbstractPanel implements	FileTransferListener
 
 		for (int i=0; i<treeUploadTransfer.getItemCount(); i++) {
 			Transfer t = (Transfer) treeUploadTransfer.getItem(i).getData("transfer");
-			if (!PeerFacade.getInstance().getUploadTransfers().contains(t)) {
+			if (!TransferController.getInstance().getUploadTransfers().contains(t)) {
 				((ProgressBar)treeUploadTransfer.getItem(i).getData("progressbar")).dispose();
 				treeUploadTransfer.getItem(i).dispose();
 			}
