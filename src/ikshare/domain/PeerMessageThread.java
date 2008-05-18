@@ -127,7 +127,7 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 
 
 	private void handleGoForItCommando(GoForItCommando gfic) {
-		PeerFacade.getInstance().startDownloadThread(PeerFacade.getInstance().getDownloadTransferForId(gfic.getTransferId()));	
+		TransferController.getInstance().startDownloadThread(TransferController.getInstance().getDownloadTransferForId(gfic.getTransferId()));	
 	}
 
 	private void handleOtherCommandos(Commando c) {
@@ -139,27 +139,27 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 	}
 
 	private void handleCancelTransferCommando(CancelTransferCommando ctc) {
-		Transfer canceledTransfer = PeerFacade.getInstance().getUploadTransferForId(ctc.getTransferId());
+		Transfer canceledTransfer = TransferController.getInstance().getUploadTransferForId(ctc.getTransferId());
 		canceledTransfer.setState(TransferState.CANCELLEDUPLOAD);
 		EventController.getInstance().triggerDownloadCanceledEvent(canceledTransfer);
 		
-		PeerFacade.getInstance().getPeerFileUploadThreadForTransfer(canceledTransfer).stop();
+		TransferController.getInstance().getPeerFileUploadThreadForTransfer(canceledTransfer).stop();
 	}
 
 	private void handlePauseTransferCommando(PauseTransferCommando ptc) {
-		Transfer pausedTransfer = PeerFacade.getInstance().getUploadTransferForId(ptc.getTransferId());
+		Transfer pausedTransfer = TransferController.getInstance().getUploadTransferForId(ptc.getTransferId());
 		pausedTransfer.setState(TransferState.PAUSEDUPLOAD);
 		EventController.getInstance().triggerDownloadPausedEvent(pausedTransfer);
 		
-		PeerFacade.getInstance().getPeerFileUploadThreadForTransfer(pausedTransfer).stop();
+		TransferController.getInstance().getPeerFileUploadThreadForTransfer(pausedTransfer).stop();
 	}
 	
 	private void handleResumeTransferCommando(ResumeTransferCommando rtc) {
-		Transfer resumedTransfer = PeerFacade.getInstance().getUploadTransferForId(rtc.getTransferId());
+		Transfer resumedTransfer = TransferController.getInstance().getUploadTransferForId(rtc.getTransferId());
 		resumedTransfer.setState(TransferState.RESUMEDUPLOAD);
 		EventController.getInstance().triggerDownloadResumedEvent(resumedTransfer);
 		
-		PeerFacade.getInstance().startResumeThread(PeerFacade.getInstance().getDownloadTransferForId(rtc.getTransferId()));	
+		TransferController.getInstance().startResumeThread(TransferController.getInstance().getDownloadTransferForId(rtc.getTransferId()));	
 	}
 
 	private void handleGiveConnCommando(GiveConnCommando givecc) {
@@ -178,7 +178,7 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 
 	private void handleMyTurnCommando(MyTurnCommando mtc) {
 		GoForItCommando gfic = new GoForItCommando();
-		gfic.setAccountName(PeerFacade.getInstance().getPeer().getAccountName());
+		gfic.setAccountName(TransferController.getInstance().getPeer().getAccountName());
 		gfic.setTransferId(mtc.getTransferId());
 		sendMessage(gfic);		
 	}
@@ -199,7 +199,7 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 		
 		if( f.exists() ) {
 	    	FileConfirmCommando fcc = new FileConfirmCommando();
-	    	fcc.setAccountName(PeerFacade.getInstance().getPeer().getAccountName());
+	    	fcc.setAccountName(TransferController.getInstance().getPeer().getAccountName());
 	    	fcc.setFileName(frc.getFileName());
 	    	fcc.setPath(frc.getPath());
 	    	fcc.setTransferId(frc.getTransferId());
@@ -215,16 +215,16 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 	    		t.setState(TransferState.RESUMEDUPLOAD);
 	    	else
 	    		t.setState(TransferState.UPLOADING);
-	    	PeerFacade.getInstance().addToUploads(t);
+	    	TransferController.getInstance().addToUploads(t);
 	    	
 	    	
-	    	if (PeerFacade.getInstance().getActiveUploads()<ClientConfigurationController.getInstance().getConfiguration().getMaximumUploads()) {
+	    	if (TransferController.getInstance().getActiveUploads()<ClientConfigurationController.getInstance().getConfiguration().getMaximumUploads()) {
 		    	
 		    	if (t.getState()==TransferState.UPLOADING)
 		    		EventController.getInstance().triggerDownloadStartedEvent(t);
 		    	
 		    	YourTurnCommando ytc = new YourTurnCommando();
-		    	ytc.setAccountName(PeerFacade.getInstance().getPeer().getAccountName());
+		    	ytc.setAccountName(TransferController.getInstance().getPeer().getAccountName());
 		    	ytc.setSize(f.length());
 		    	ytc.setBlockSize(t.getBlockSize());
 		    	ytc.setFileName(frc.getFileName());
@@ -237,7 +237,7 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 
 		} else {
 			FileNotFoundCommando fnfc = new FileNotFoundCommando();
-			fnfc.setAccountName(PeerFacade.getInstance().getPeer().getAccountName());
+			fnfc.setAccountName(TransferController.getInstance().getPeer().getAccountName());
 	    	fnfc.setFileName(frc.getFileName());
 	    	fnfc.setPath(frc.getPath());
 	    	fnfc.setTransferId(frc.getTransferId());
@@ -247,13 +247,13 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 
 	private void handleYourTurnCommando(YourTurnCommando ytc) {			
 		MyTurnCommando mtc = new MyTurnCommando();
-		mtc.setAccountName(PeerFacade.getInstance().getDownloadTransferForId(ytc.getTransferId()).getPeer().getAccountName());
+		mtc.setAccountName(TransferController.getInstance().getDownloadTransferForId(ytc.getTransferId()).getPeer().getAccountName());
 		mtc.setFileName(ytc.getFileName());
 		mtc.setPath(ytc.getPath());
 		mtc.setTransferId(ytc.getTransferId());
 		sendMessage(mtc);
 		
-		Transfer t = PeerFacade.getInstance().getDownloadTransferForId(ytc.getTransferId());
+		Transfer t = TransferController.getInstance().getDownloadTransferForId(ytc.getTransferId());
 		t.setFileSize(ytc.getSize());
 		t.setBlockSize(ytc.getBlockSize());
 		
@@ -265,7 +265,7 @@ public class PeerMessageThread implements Runnable, TransferQueueListener{
 	}
 
 	private void handleFileNotFoundCommando(FileNotFoundCommando fnfc) {
-		Transfer current = PeerFacade.getInstance().getDownloadTransferForId(fnfc.getTransferId());
+		Transfer current = TransferController.getInstance().getDownloadTransferForId(fnfc.getTransferId());
 		current.setState(TransferState.FAILED);
 		EventController.getInstance().triggerDownloadFailedEvent(current);
 	}
