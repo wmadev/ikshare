@@ -6,8 +6,8 @@ import ikshare.client.gui.AbstractPanel;
 import ikshare.client.gui.ExceptionWindow;
 import ikshare.client.gui.MainScreen;
 import ikshare.client.gui.UtilityClass;
-import ikshare.domain.PeerFacade;
 import ikshare.domain.SearchResult;
+import ikshare.domain.TransferController;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.ClientControllerListener;
 import ikshare.domain.exception.NoServerConnectionException;
@@ -367,7 +367,7 @@ public class SearchPanel extends AbstractPanel implements ClientControllerListen
 	            	}
 	            	else {
 	            		
-                		PeerFacade.getInstance().makeFolder(start);
+                		TransferController.getInstance().makeFolder(start);
 		            	TreeItem item = treeItems.get(start.getFolderId());
 		            	for (int i=0; i<item.getItemCount(); i++)
 		            		getDownloadInformation((SearchResult) item.getItem(i).getData("result"));
