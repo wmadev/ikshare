@@ -1,7 +1,7 @@
 package ikshare.client;
 
 import ikshare.client.gui.panels.TransferPanel;
-import ikshare.domain.PeerFacade;
+import ikshare.domain.TransferController;
 import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;
 
@@ -57,7 +57,7 @@ public class StatisticsController {
 	private void initLastSpeedDown() throws InterruptedException {
 		//int last = (int)(Math.random()*15000);
 		int last=0;
-		for (Transfer transfer : PeerFacade.getInstance().getDownloadTransfers()) {
+		for (Transfer transfer : TransferController.getInstance().getDownloadTransfers()) {
 			if (transfer.getState()==TransferState.DOWNLOADING)
 				last += transfer.getSpeed();
 		}
@@ -70,7 +70,7 @@ public class StatisticsController {
 	
 	private void initLastSpeedUp() throws InterruptedException {
 		int last = 0;
-		for (Transfer transfer : PeerFacade.getInstance().getUploadTransfers()) {
+		for (Transfer transfer : TransferController.getInstance().getUploadTransfers()) {
 			if (transfer.getState()==TransferState.UPLOADING)
 				last += transfer.getSpeed();
 		}
