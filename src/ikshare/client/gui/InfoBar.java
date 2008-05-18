@@ -3,7 +3,7 @@ package ikshare.client.gui;
 import java.io.File;
 
 import ikshare.client.configuration.ClientConfigurationController;
-import ikshare.domain.PeerFacade;
+import ikshare.domain.TransferController;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.TransferQueueListener;
 
@@ -75,7 +75,7 @@ public class InfoBar extends Composite implements TransferQueueListener {
         this.getDisplay().asyncExec(new Runnable() {
 
             public void run() {
-                lblNrDownload.setText(String.valueOf(PeerFacade.getInstance().getActiveDownloads()));
+                lblNrDownload.setText(String.valueOf(TransferController.getInstance().getActiveDownloads()));
             }
         });
     }
@@ -84,7 +84,7 @@ public class InfoBar extends Composite implements TransferQueueListener {
         this.getDisplay().asyncExec(new Runnable() {
 
             public void run() {
-                lblNrUpload.setText(String.valueOf(PeerFacade.getInstance().getActiveUploads()));
+                lblNrUpload.setText(String.valueOf(TransferController.getInstance().getActiveUploads()));
             }
         });
     }

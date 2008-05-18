@@ -6,7 +6,7 @@ import ikshare.client.threads.ServerConversationThread;
 import ikshare.client.threads.ShareSynchronisationThread;
 import ikshare.domain.IKShareFile;
 import ikshare.domain.Peer;
-import ikshare.domain.PeerFacade;
+import ikshare.domain.TransferController;
 import ikshare.domain.SearchResult;
 import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;
@@ -285,7 +285,7 @@ public class ClientController implements ServerConversationListener{
                 loggedOn = true;
                 WelcomeCommando wc = (WelcomeCommando) c;
                 Peer p = new Peer(wc.getAccountName(), InetAddress.getByName(wc.getIpAddress()));
-                PeerFacade.getInstance().setPeer(p);
+                TransferController.getInstance().setPeer(p);
                 EventController.getInstance().triggerLoggedOnEvent();
             } catch (UnknownHostException ex) {
                 loggedOn = false;
@@ -308,7 +308,7 @@ public class ClientController implements ServerConversationListener{
                         //MainScreen.getInstance().getInfoBar().getLblNrDownload().setText("" + aantaldownloads + 1);
                         Transfer t = getTransferForDownload((DownloadInformationResponseCommand) c);
                         EventController.getInstance().triggerDownloadStartedEvent(t);
-                        PeerFacade.getInstance().addToDownloads(t);
+                        TransferController.getInstance().addToDownloads(t);
                     } catch (UnknownHostException ex) {
                         // niet afgehandeld
                         ex.printStackTrace();
