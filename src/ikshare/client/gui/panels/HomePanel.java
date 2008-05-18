@@ -8,7 +8,7 @@ import ikshare.client.gui.MainScreen;
 import ikshare.client.gui.custom.UIFileBrowser;
 import ikshare.client.gui.dialogs.CreateAccountDialog;
 import ikshare.client.gui.dialogs.CreateAccountDialogData;
-import ikshare.domain.PeerFacade;
+import ikshare.domain.TransferController;
 import ikshare.domain.SearchResult;
 import ikshare.domain.event.EventController;
 import ikshare.domain.event.listener.ClientControllerListener;
@@ -175,7 +175,7 @@ public class HomePanel extends AbstractPanel implements ClientControllerListener
         try {
             ClientController.getInstance().startServerConversation();
             ClientController.getInstance().logon(txtAccountName.getText(), txtAccountPassword.getText(), ClientConfigurationController.getInstance().getConfiguration().getMessagePort());
-            PeerFacade.getInstance();
+            TransferController.getInstance();
         }
         catch(IOException ex){
             lblStatus.setText(ClientConfigurationController.getInstance().getString("noconnectionwithserver"));
