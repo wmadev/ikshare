@@ -1,5 +1,6 @@
 package ikshare.client.gui.panels;
 
+import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.client.gui.AbstractPanel;
 import java.io.File;
 import java.io.FilenameFilter;
@@ -12,10 +13,10 @@ import org.eclipse.swt.widgets.*;
 public class HelpPanel extends AbstractPanel{
     
 
-    @SuppressWarnings("deprecation")
-	public HelpPanel(String text,String icon){
+    public HelpPanel(String text,String icon){
         super(text,icon);
-        String folder = "resources/help/en";
+        String folder = "resources"+System.getProperty("file.separator")+"help"+System.getProperty("file.separator")+ClientConfigurationController.getInstance().getConfiguration().getLanguage();
+        System.out.println(folder);
         final String[] urls;
         final String[] titles;
         final int index;
