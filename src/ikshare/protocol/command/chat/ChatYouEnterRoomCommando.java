@@ -3,10 +3,6 @@ package ikshare.protocol.command.chat;
 import ikshare.protocol.command.Commando;
 import java.util.ArrayList;
 
-/**
- *
- * @author Boris Martens
- */
 public class ChatYouEnterRoomCommando extends Commando
 {
     private String roomName;

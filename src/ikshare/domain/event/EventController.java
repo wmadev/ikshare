@@ -1,41 +1,14 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.domain.event;
 
 import ikshare.client.configuration.ClientConfiguration;
 import ikshare.domain.SearchResult;
 import ikshare.domain.Transfer;
-import ikshare.domain.event.listener.ChatServerConversationListener;
-import ikshare.domain.event.listener.ClientConfigurationListener;
-import ikshare.domain.event.listener.ClientControllerListener;
-import ikshare.domain.event.listener.FileTransferListener;
-import ikshare.domain.event.listener.SelectedMediaFileListener;
-import ikshare.domain.event.listener.ServerConversationListener;
-import ikshare.domain.event.listener.TransferQueueListener;
+import ikshare.domain.event.listener.*;
 import ikshare.protocol.command.Commando;
-
-
 import java.io.File;
-
-import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
-import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
-import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
-import ikshare.protocol.command.chat.ChatLogNiLukNiCommando;
-import ikshare.protocol.command.chat.ChatMessageCommando;
-import ikshare.protocol.command.chat.ChatRoomDoesNotExistCommando;
-import ikshare.protocol.command.chat.ChatUpdateRoomsListCommando;
-import ikshare.protocol.command.chat.ChatWelcomeCommando;
-import ikshare.protocol.command.chat.ChatYouEnterRoomCommando;
-
+import ikshare.protocol.command.chat.*;
 import java.util.ArrayList;
 
-/**
- *
- * @author awosy
- */
 public class EventController {
 	private static EventController instance;
 

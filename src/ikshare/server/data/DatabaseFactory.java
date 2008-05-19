@@ -1,18 +1,9 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.server.data;
 
 import ikshare.server.configuration.ServerConfiguration;
 import ikshare.server.configuration.ServerConfigurationController;
 import ikshare.server.data.oracle.OracleDatabaseFactory;
 
-/**
- *
- * @author awosy
- */
 public abstract class DatabaseFactory {
     
     private static ServerConfiguration configuration;

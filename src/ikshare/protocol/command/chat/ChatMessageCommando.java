@@ -5,10 +5,6 @@ import java.util.StringTokenizer;
 
 import ikshare.protocol.command.Commando;
 
-/**
- * @author Boris
- *
- */
 public class ChatMessageCommando extends Commando
 {
 	private String text;

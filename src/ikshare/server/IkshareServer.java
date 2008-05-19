@@ -11,10 +11,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import ikshare.server.threads.HandleClientThread;
 
-/**
- *
- * @author awosy
- */
 public class IkshareServer implements Runnable {
        
     private boolean running = false;

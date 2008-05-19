@@ -2,10 +2,6 @@ package ikshare.protocol.command.chat;
 
 import ikshare.protocol.command.Commando;
 
-/**
- *
- * @author Boris martens
- */
 public class ChatLogOnCommando extends Commando {
     String nickName;
     int port;

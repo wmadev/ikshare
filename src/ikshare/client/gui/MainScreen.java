@@ -1,14 +1,7 @@
 package ikshare.client.gui;
 
 import ikshare.client.configuration.ClientConfigurationController;
-import ikshare.client.gui.panels.AboutPanel;
-import ikshare.client.gui.panels.ChatPanel;
-import ikshare.client.gui.panels.HelpPanel;
-import ikshare.client.gui.panels.HomePanel;
-import ikshare.client.gui.panels.SearchPanel;
-import ikshare.client.gui.panels.SettingsPanel;
-import ikshare.client.gui.panels.StatisticPanel;
-import ikshare.client.gui.panels.TransferPanel;
+import ikshare.client.gui.panels.*;
 import java.io.File;
 import java.util.*;
 import org.eclipse.swt.*;

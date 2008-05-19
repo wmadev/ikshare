@@ -2,7 +2,6 @@ package ikshare.client.threads;
 
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
-import ikshare.domain.exception.NoServerConnectionException;
 import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CommandoParser;
 import java.io.BufferedReader;

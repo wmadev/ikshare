@@ -1,9 +1,5 @@
 package ikshare.protocol.command;
 
-/**
- *
- * @author awosy
- */
 public class ServerErrorCommando extends Commando {
     private String message;
     

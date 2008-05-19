@@ -1,17 +1,8 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.server.data;
 
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-/**
- *
- * @author awosy
- */
 public abstract class ObjectPool<T> {
        private long expirationTime;
 
