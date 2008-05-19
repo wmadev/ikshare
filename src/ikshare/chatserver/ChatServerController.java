@@ -2,22 +2,11 @@ package ikshare.chatserver;
 
 import ikshare.chatserver.datatypes.ChatClient;
 import ikshare.chatserver.datatypes.ChatRoom;
-import ikshare.domain.IKShareFile;
-import ikshare.protocol.command.chat.ChatCreateRoomCommando;
-import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
-import ikshare.protocol.command.chat.ChatMessageCommando;
-import ikshare.protocol.command.chat.ChatRoomDoesNotExistCommando;
-import ikshare.protocol.command.chat.ChatUpdateRoomsListCommando;
-import ikshare.protocol.command.chat.ChatYouEnterRoomCommando;
-
+import ikshare.protocol.command.chat.*;
 import java.util.ArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- *
- * @author Boris martens
- */
 public class ChatServerController {
 	private ChatServer server;
 	private ExecutorService executorService;
