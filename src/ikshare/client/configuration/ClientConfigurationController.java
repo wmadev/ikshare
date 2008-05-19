@@ -84,20 +84,18 @@ public class ClientConfigurationController {
                 config = new DefaultClientConfiguration();
             }
             else{
-                if(!validSchema(System.getProperty("user.home")+sep+"ikshare"+sep+"configuration.xml","resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"client-configuration.xsd" )){
-                    System.out.println("ongeldig");
+                if(!validSchema(System.getProperty("user.home")+sep+"ikshare"+sep+"configuration.xml","resources"+sep+"config"+sep+"client_configuration.xsd" )){
+                    System.out.println("ongeldige windowsrommel");
                     config = new DefaultClientConfiguration();
                 }
-                
                 else{
                     System.out.println("geldig");
-                config = new ClientConfiguration();
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder parser = factory.newDocumentBuilder();
-                // TODO: If document is not valid return default
-                Document doc = parser.parse(configFile);
-                loadUserSettings(doc,config);
-                loadNetworkSettings(doc,config);
+                    config = new ClientConfiguration();
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder parser = factory.newDocumentBuilder();
+                    Document doc = parser.parse(configFile);
+                    loadUserSettings(doc,config);
+                    loadNetworkSettings(doc,config);
                 }
             }
         }catch (Exception e) {
