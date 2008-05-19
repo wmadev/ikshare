@@ -177,6 +177,8 @@ public class ClientConfigurationController {
     }
     
     public boolean validSchema(String xmlPath,String schemaPath){
+        System.out.println(schemaPath);
+        System.out.println(xmlPath);
         try{
             SAXParserFactory factory = SAXParserFactory.newInstance();
             factory.setValidating(true);
