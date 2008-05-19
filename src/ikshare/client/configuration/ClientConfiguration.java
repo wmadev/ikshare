@@ -7,7 +7,6 @@ public class ClientConfiguration {
     private String language;
     private String nickname;
     private String accountName;
-    private String accountPassword;
     private Calendar birthday;
     private File sharedFolder;
     private String ikshareServerAddress, chatServerAddress;
