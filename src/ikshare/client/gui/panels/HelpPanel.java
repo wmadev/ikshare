@@ -16,7 +16,6 @@ public class HelpPanel extends AbstractPanel{
     public HelpPanel(String text,String icon){
         super(text,icon);
         String folder = "resources"+System.getProperty("file.separator")+"help"+System.getProperty("file.separator")+ClientConfigurationController.getInstance().getConfiguration().getLanguage();
-        System.out.println(folder);
         final String[] urls;
         final String[] titles;
         final int index;

@@ -61,7 +61,6 @@ public class MainScreen {
         doInfobar();
 
         addPanel(new HomePanel(ClientConfigurationController.getInstance().getString("home"),"resources/icons/tb_home.png"));
-        //addPanel(new MediaPlayerPanel(ClientConfigurationController.getInstance().getString("media"),"resources/icons/tb_media.png"));
         addPanel (new SearchPanel(ClientConfigurationController.getInstance().getString("search"),"resources/icons/tb_search.png"));
         addPanel (new TransferPanel(ClientConfigurationController.getInstance().getString("transfer"),"resources/icons/tb_down.png"));
         addPanel (new ChatPanel(ClientConfigurationController.getInstance().getString("chat"),"resources/icons/tb_chat.png"));
