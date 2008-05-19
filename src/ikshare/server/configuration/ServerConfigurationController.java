@@ -43,12 +43,9 @@ public class ServerConfigurationController {
             }
             else{
                 if(!validSchema("resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"server_configuration.xml","resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"server_configuration.xsd" )){
-                    System.out.println("ongeldig");
                     config = new DefaultServerConfiguration();
                 }
-                
                 else{
-                    System.out.println("geldig");
                     config = new ServerConfiguration();
                     DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                     DocumentBuilder parser = factory.newDocumentBuilder();
