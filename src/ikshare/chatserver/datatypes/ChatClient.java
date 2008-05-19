@@ -2,13 +2,8 @@ package ikshare.chatserver.datatypes;
 
 import ikshare.chatserver.HandleChatClientThread;
 import ikshare.protocol.command.*;
-
 import java.net.InetAddress;
 
-/**
- *
- * @author Boris martens
- */
 public class ChatClient 
 {
     private String nickName;

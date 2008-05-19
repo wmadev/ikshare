@@ -1,9 +1,5 @@
 package ikshare.chatserver.datatypes;
 
-/**
- *
- * @author Boris martens
- */
 public class ChatMessage 
 {
     private String text;

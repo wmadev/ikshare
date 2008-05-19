@@ -3,10 +3,6 @@ package ikshare.client.chatComponents;
 import org.eclipse.swt.widgets.List;
 import org.eclipse.swt.widgets.Text;
 
-/**
- *
- * @author Boris Martens
- */
 public class ChatRoom 
 {
     private List members;

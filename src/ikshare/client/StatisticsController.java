@@ -1,6 +1,5 @@
 package ikshare.client;
 
-import ikshare.client.gui.panels.TransferPanel;
 import ikshare.domain.TransferController;
 import ikshare.domain.Transfer;
 import ikshare.domain.TransferState;

@@ -2,13 +2,8 @@ package ikshare.chatserver.datatypes;
 
 import ikshare.protocol.command.*;
 import ikshare.protocol.command.chat.*;
-
 import java.util.ArrayList;
 
-/**
- *
- * @author Boris martens
- */
 public class ChatRoom 
 {
     private ArrayList<ChatClient> clients = new ArrayList<ChatClient>();

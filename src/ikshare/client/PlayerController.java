@@ -9,7 +9,7 @@ import java.io.FileInputStream;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javazoom.jl.player.Player; //TODO
+import javazoom.jl.player.Player; 
 
 public class PlayerController implements SelectedMediaFileListener{
 	private File selectedFile;
@@ -78,7 +78,6 @@ public class PlayerController implements SelectedMediaFileListener{
 	}
 
 	public void selectedMPEGFileChanged(File mpegFile) {
-		// TODO Auto-generated method stub
-		
+				
 	}
 }
