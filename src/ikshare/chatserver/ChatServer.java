@@ -6,10 +6,6 @@ import java.net.Socket;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-/**
- *
- * @author Boris Martens
- */
 public class ChatServer implements Runnable 
 { 
 	private static int SERVER_PORT = 6005;
