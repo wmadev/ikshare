@@ -3,10 +3,16 @@ package ikshare.server.configuration;
 import java.io.File;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
 
 public class ServerConfigurationController {
 
@@ -36,18 +42,44 @@ public class ServerConfigurationController {
                 config = new DefaultServerConfiguration();
             }
             else{
-                config = new ServerConfiguration();
-                DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-                DocumentBuilder parser = factory.newDocumentBuilder();
-                // TODO: If document is not valid return default
-                Document doc = parser.parse(configFile);
-                loadServerSettings(doc,config);
+                if(!validSchema("resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"server_configuration.xml","resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"server_configuration.xsd" )){
+                    System.out.println("ongeldig");
+                    config = new DefaultServerConfiguration();
+                }
+                
+                else{
+                    System.out.println("geldig");
+                    config = new ServerConfiguration();
+                    DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+                    DocumentBuilder parser = factory.newDocumentBuilder();
+                    // TODO: If document is not valid return default
+                    Document doc = parser.parse(configFile);
+                    loadServerSettings(doc,config);
+                }
             }
         }catch (Exception e) {
             e.printStackTrace();
             config = new DefaultServerConfiguration();
         }
     }
+    public boolean validSchema(String xmlPath,String schemaPath){
+        try{
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setValidating(true);
+            factory.setNamespaceAware(true);
+            SAXParser parser = factory.newSAXParser();
+            parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
+            parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", new File(schemaPath));
+            XMLReader reader = parser.getXMLReader();
+            reader.setErrorHandler(new SaxErrorHandler());
+            reader.parse(xmlPath);
+            return true;
+        }
+        catch(Exception e){
+            return false;
+        }
+    }
+    
     public ServerConfiguration getConfiguration(){
         return config;
     }
@@ -70,38 +102,23 @@ public class ServerConfigurationController {
             }
         }
     }
-    
-    /*public void saveConfiguration(){
-        saveConfiguration(config);
-    }
-    
-    public void saveConfiguration(ServerConfiguration config) {
-         try{
-            DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder parser = factory.newDocumentBuilder();
-            Document doc = parser.newDocument();
-            Element configurationNode = doc.createElement("ikshare-configuration");
-            Element userSettingsNode = buildNetworkSettingsNode(doc);
-            configurationNode.appendChild(userSettingsNode);
-            doc.appendChild(configurationNode);
-            System.out.println("resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"server_configuration.xml");
-            FileOutputStream out = new FileOutputStream("resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"server_configuration.xml");
-          
-                
-            
-            Transformer transformer = TransformerFactory.newInstance().newTransformer();
-            DOMSource source = new DOMSource(doc);
-            StreamResult result = new StreamResult(out);
-            transformer.setOutputProperty("indent","yes");
-            transformer.transform(source,result);
-        }
-        catch(Exception e){
-            e.printStackTrace();
-        }
-    }
-    
-    private Element buildNetworkSettingsNode(Document doc){
-        return null;
-    }*/
-        
+     class SaxErrorHandler implements ErrorHandler {
+
+	public void error(SAXParseException exception) throws SAXException {
+		System.err.println(exception.getMessage());
+		throw exception;
+
+	}
+
+	public void fatalError(SAXParseException exception) throws SAXException {
+		System.err.println(exception.getMessage());
+		throw exception;
+	}
+
+	public void warning(SAXParseException exception) throws SAXException {
+		System.err.println(exception.getMessage());
+		throw exception;
+		
+	}
+     }
 }
