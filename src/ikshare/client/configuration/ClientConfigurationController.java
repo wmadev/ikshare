@@ -187,8 +187,7 @@ public class ClientConfigurationController {
             parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", new File(schemaPath));
             XMLReader reader = parser.getXMLReader();
             reader.setErrorHandler(new SaxErrorHandler());
-            InputSource input = new InputSource(xmlPath);
-            reader.parse(input);
+            reader.parse("file:///"+xmlPath);
             return true;
         }
         catch(Exception e){
