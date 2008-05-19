@@ -27,6 +27,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.ErrorHandler;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 import org.xml.sax.XMLReader;
@@ -186,7 +187,8 @@ public class ClientConfigurationController {
             parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", new File(schemaPath));
             XMLReader reader = parser.getXMLReader();
             reader.setErrorHandler(new SaxErrorHandler());
-            reader.parse(xmlPath);
+            InputSource input = new InputSource(xmlPath);
+            reader.parse(input);
             return true;
         }
         catch(Exception e){
