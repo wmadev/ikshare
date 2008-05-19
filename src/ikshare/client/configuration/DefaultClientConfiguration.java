@@ -17,7 +17,7 @@ class DefaultClientConfiguration extends ClientConfiguration {
 
     public DefaultClientConfiguration()  {
         super.setAccountName("");
-        super.setNickname("nick ;)");
+        super.setNickname("ikshare_user");
         super.setLanguage("en");
         Calendar date = Calendar.getInstance();
         date.set(Calendar.DAY_OF_MONTH, 17);
