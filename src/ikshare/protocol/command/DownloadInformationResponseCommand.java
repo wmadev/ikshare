@@ -1,19 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.protocol.command;
 
-import java.net.InetAddress;
-import java.net.UnknownHostException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-/**
- *
- * @author awosy
- */
 public class DownloadInformationResponseCommand extends Commando{
     private String ip;
     private int port;

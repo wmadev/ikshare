@@ -1,8 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.gui.dialogs;
 
 import ikshare.client.ClientController;
@@ -17,8 +12,6 @@ import ikshare.protocol.command.Commando;
 import ikshare.protocol.command.CreatedAccountCommando;
 import ikshare.protocol.command.InvalidRegisterCommando;
 import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.eclipse.swt.SWT;

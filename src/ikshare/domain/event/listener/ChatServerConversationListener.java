@@ -1,19 +1,7 @@
 package ikshare.domain.event.listener;
 
-import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
-import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
-import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
-import ikshare.protocol.command.chat.ChatLogNiLukNiCommando;
-import ikshare.protocol.command.chat.ChatMessageCommando;
-import ikshare.protocol.command.chat.ChatRoomDoesNotExistCommando;
-import ikshare.protocol.command.chat.ChatUpdateRoomsListCommando;
-import ikshare.protocol.command.chat.ChatWelcomeCommando;
-import ikshare.protocol.command.chat.ChatYouEnterRoomCommando;
+import ikshare.protocol.command.chat.*;
 
-/**
- *
- * @author Boris
- */
 public interface ChatServerConversationListener {
 	public void youLoggedOn(ChatWelcomeCommando c);
     public void receivedMessage(ChatMessageCommando c);

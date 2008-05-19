@@ -4,10 +4,6 @@ import java.util.ArrayList;
 
 import ikshare.protocol.command.Commando;
 
-/**
- *
- * @author Boris martens
- */
 public class ChatWelcomeCommando extends Commando {
     String nickName;
     ArrayList<String> rooms;

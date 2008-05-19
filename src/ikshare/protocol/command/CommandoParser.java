@@ -6,8 +6,6 @@ import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
 import ikshare.protocol.command.chat.ChatInvalidCommando;
 import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
 import ikshare.protocol.command.chat.ChatLogNiLukNiCommando;
-import ikshare.protocol.command.chat.ChatLogOffCommando;
-import ikshare.protocol.command.chat.ChatLogOnCommando;
 import ikshare.protocol.command.chat.ChatMessageCommando;
 import ikshare.protocol.command.chat.ChatWelcomeCommando;
 import ikshare.protocol.exception.*;

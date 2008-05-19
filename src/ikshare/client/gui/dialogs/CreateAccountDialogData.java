@@ -1,14 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.client.gui.dialogs;
 
-/**
- *
- * @author awosy
- */
 public class CreateAccountDialogData {
     private String accountName;
     private String accountPassword;

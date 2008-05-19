@@ -1,14 +1,5 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
-
 package ikshare.protocol.command;
 
-/**
- *
- * @author awosy
- */
 public class NoResultsFoundCommando extends Commando {
     private String searchID;
     private String keyword;

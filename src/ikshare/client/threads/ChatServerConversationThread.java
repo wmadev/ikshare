@@ -4,16 +4,7 @@ import ikshare.client.ClientController;
 import ikshare.client.configuration.ClientConfigurationController;
 import ikshare.domain.event.EventController;
 import ikshare.protocol.command.Commando;
-import ikshare.protocol.command.chat.ChatCommandoParser;
-import ikshare.protocol.command.chat.ChatHasEnteredRoomCommando;
-import ikshare.protocol.command.chat.ChatHasLeftRoomCommando;
-import ikshare.protocol.command.chat.ChatInvalidRoomPasswordCommando;
-import ikshare.protocol.command.chat.ChatLogNiLukNiCommando;
-import ikshare.protocol.command.chat.ChatMessageCommando;
-import ikshare.protocol.command.chat.ChatRoomDoesNotExistCommando;
-import ikshare.protocol.command.chat.ChatUpdateRoomsListCommando;
-import ikshare.protocol.command.chat.ChatWelcomeCommando;
-import ikshare.protocol.command.chat.ChatYouEnterRoomCommando;
+import ikshare.protocol.command.chat.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,10 +14,6 @@ import java.net.InetAddress;
 import java.net.Socket;
 import java.net.SocketException;
 
-/**
- *
- * @author Boris Martens
- */
 public class ChatServerConversationThread implements Runnable
 {
     private Socket serverConnection;
