@@ -15,6 +15,8 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -24,6 +26,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.ErrorHandler;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.XMLReader;
 
 public class ClientConfigurationController {
     private static ClientConfigurationController instance;
@@ -78,6 +84,13 @@ public class ClientConfigurationController {
                 config = new DefaultClientConfiguration();
             }
             else{
+                if(!validSchema(System.getProperty("user.home")+sep+"ikshare"+sep+"configuration.xml","resources"+System.getProperty("file.separator")+"config"+System.getProperty("file.separator")+"client-configuration.xsd" )){
+                    System.out.println("ongeldig");
+                    config = new DefaultClientConfiguration();
+                }
+                
+                else{
+                    System.out.println("geldig");
                 config = new ClientConfiguration();
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder parser = factory.newDocumentBuilder();
@@ -85,6 +98,7 @@ public class ClientConfigurationController {
                 Document doc = parser.parse(configFile);
                 loadUserSettings(doc,config);
                 loadNetworkSettings(doc,config);
+                }
             }
         }catch (Exception e) {
             e.printStackTrace();
@@ -159,6 +173,24 @@ public class ClientConfigurationController {
             }else if(child.getNodeName().equals("chat-server-address")) {
             	config.setChatServerAddress(((Element)child).getTextContent());
             }
+        }
+    }
+    
+    public boolean validSchema(String xmlPath,String schemaPath){
+        try{
+            SAXParserFactory factory = SAXParserFactory.newInstance();
+            factory.setValidating(true);
+            factory.setNamespaceAware(true);
+            SAXParser parser = factory.newSAXParser();
+            parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
+            parser.setProperty("http://java.sun.com/xml/jaxp/properties/schemaSource", new File(schemaPath));
+            XMLReader reader = parser.getXMLReader();
+            reader.setErrorHandler(new SaxErrorHandler());
+            reader.parse(xmlPath);
+            return true;
+        }
+        catch(Exception e){
+            return false;
         }
     }
     
@@ -282,6 +314,27 @@ public class ClientConfigurationController {
     		loadConfiguration();
         return config;
     }
-    
+
+        class SaxErrorHandler implements ErrorHandler {
+
+	public void error(SAXParseException exception) throws SAXException {
+		System.err.println(exception.getMessage());
+		throw exception;
+
+	}
+
+	public void fatalError(SAXParseException exception) throws SAXException {
+		System.err.println(exception.getMessage());
+		throw exception;
+	}
+
+	public void warning(SAXParseException exception) throws SAXException {
+		System.err.println(exception.getMessage());
+		throw exception;
+		
+	}
+
+        
+     }
 
 }
