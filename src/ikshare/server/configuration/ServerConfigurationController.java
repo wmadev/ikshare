@@ -58,6 +58,12 @@ public class ServerConfigurationController {
             e.printStackTrace();
             config = new DefaultServerConfiguration();
         }
+        System.out.println("Configuration loaded:");
+        System.out.println("Driver: "+config.getDatabaseDriver());
+        System.out.println("Password: "+config.getDatabasePassword());
+        System.out.println("URL: "+config.getDatabaseURL());
+        System.out.println("User: "+config.getDatabaseUser());
+      
     }
     public boolean validSchema(String xmlPath,String schemaPath){
         try{
