@@ -77,7 +77,8 @@ public class PeerFileDownloadThread implements Runnable {
 
         		begin++;
         	}
-
+        	if (!superFolderExists)
+        		fullPath = ClientConfigurationController.getInstance().getConfiguration().getSharedFolder().toString();
         	
 
         	String fileNamePrefix, extension;
