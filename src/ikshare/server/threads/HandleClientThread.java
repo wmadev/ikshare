@@ -38,7 +38,7 @@ public class HandleClientThread implements Runnable{
             while(running){
                 String inputLine = incomingReader.readLine();
                 if (inputLine != null) {
-                    System.out.println(inputLine);
+                    System.out.println("RECV: "+inputLine);
                     Commando c = CommandoParser.getInstance().parse(inputLine);
 	            if (c instanceof CreateAccountCommando) {
                         handleCreateAccountCommando(c);
@@ -103,20 +103,20 @@ public class HandleClientThread implements Runnable{
                 if (ServerController.getInstance().createAccount(newUser)) {
                     CreatedAccountCommando cdac = new CreatedAccountCommando();
                     cdac.setAccountName(newUser.getAccountName());
-                    outputWriter.println(cdac.toString());
+                    sendCommand(cdac);
                 }
             }
             else {
                 InvalidRegisterCommando irc = new InvalidRegisterCommando();
                 String[] param = {newUser.getAccountName()};
                 irc.setMessage(getString("accountNameAlreadyExists",param));
-                outputWriter.println(irc.toString());
+                sendCommand(irc);
             }
         }
         catch (DatabaseException ex) {
             ServerErrorCommando sec = new ServerErrorCommando();
             sec.setMessage(ex.getMessage());
-            outputWriter.println(sec.toString());
+            sendCommand(sec);
         }
     }
 
@@ -128,7 +128,7 @@ public class HandleClientThread implements Runnable{
             } catch (DatabaseException ex) {
                 ServerErrorCommando sec = new ServerErrorCommando();
                 sec.setMessage(ex.getMessage());
-                outputWriter.println(sec.toString());
+                sendCommand(sec);
             }
         }
         else{
@@ -137,7 +137,7 @@ public class HandleClientThread implements Runnable{
             } catch (DatabaseException ex) {
                 ServerErrorCommando sec = new ServerErrorCommando();
                 sec.setMessage(ex.getMessage());
-                outputWriter.println(sec.toString());
+                sendCommand(sec);
             }
         }
     }
@@ -152,12 +152,12 @@ public class HandleClientThread implements Runnable{
                 dirc.setName(di.getName());
                 dirc.setPath(di.getPath());
                 dirc.setPort(di.getPort());
-                outputWriter.println(dirc.toString());
+                sendCommand(dirc);
             }
         } catch (DatabaseException ex) {
             ServerErrorCommando sec = new ServerErrorCommando();
             sec.setMessage(ex.getMessage());
-            outputWriter.println(sec.toString());
+            sendCommand(sec);
         }
     }
 
@@ -174,7 +174,7 @@ public class HandleClientThread implements Runnable{
         catch (DatabaseException ex) {
             ServerErrorCommando sec = new ServerErrorCommando();
             sec.setMessage(ex.getMessage());
-            outputWriter.println(sec.toString());
+            sendCommand(sec);
         }
         if(results!= null && results.size()>=1){
             for(SearchResult result : results){
@@ -187,13 +187,13 @@ public class HandleClientThread implements Runnable{
                 frc.setSize(result.getSize());
                 frc.setParentId(result.getParentId());
                 frc.setFolderId(result.getFolderId());
-                outputWriter.println(frc.toString());
+                sendCommand(frc);
             }
         }else{
             NoResultsFoundCommando nrfc = new NoResultsFoundCommando();
             nrfc.setSearchID(fbc.getSearchID());
             nrfc.setKeyword(fbc.getKeyword());
-            outputWriter.println(nrfc.toString());
+            sendCommand(nrfc);
         }
     }
     
@@ -206,7 +206,7 @@ public class HandleClientThread implements Runnable{
         catch (DatabaseException ex) {
             ServerErrorCommando sec = new ServerErrorCommando();
             sec.setMessage(ex.getMessage());
-            outputWriter.println(sec.toString());
+            sendCommand(sec);
         }
         if(results!= null && results.size()>=1){
             for(SearchResult result : results){
@@ -219,13 +219,13 @@ public class HandleClientThread implements Runnable{
                 frc.setSize(result.getSize());
                 frc.setParentId(result.getParentId());
                 frc.setFolderId(result.getFolderId());
-                outputWriter.println(frc.toString());
+                sendCommand(frc);
             }
         }else{
             NoResultsFoundCommando nrfc = new NoResultsFoundCommando();
             nrfc.setSearchID(fafc.getSearchID());
             nrfc.setKeyword(fafc.getKeyword());
-            outputWriter.println(nrfc.toString());
+            sendCommand(nrfc);
         }
     }
 
@@ -238,7 +238,7 @@ public class HandleClientThread implements Runnable{
         catch (DatabaseException ex) {
             ServerErrorCommando sec = new ServerErrorCommando();
             sec.setMessage(ex.getMessage());
-            outputWriter.println(sec.toString());
+            sendCommand(sec);
         }
         if(results!= null && results.size()>=1){
             for(SearchResult result : results){
@@ -251,13 +251,13 @@ public class HandleClientThread implements Runnable{
                 frc.setSize(result.getSize());
                 frc.setParentId(result.getParentId());
                 frc.setFolderId(result.getFolderId());
-                outputWriter.println(frc.toString());
+                sendCommand(frc);
             }
         }else{
             NoResultsFoundCommando nrfc = new NoResultsFoundCommando();
             nrfc.setSearchID(fafc.getSearchID());
             nrfc.setKeyword(fafc.getKeyword());
-            outputWriter.println(nrfc.toString());
+            sendCommand(nrfc);
         }
     }
 
@@ -272,7 +272,7 @@ public class HandleClientThread implements Runnable{
         catch (DatabaseException ex) {
             ServerErrorCommando sec = new ServerErrorCommando();
             sec.setMessage(ex.getMessage());
-            outputWriter.println(sec.toString());
+            sendCommand(sec);
         }
         running = false;
     }
@@ -287,7 +287,7 @@ public class HandleClientThread implements Runnable{
                     WelcomeCommando wc = new WelcomeCommando();
                     wc.setAccountName(user.getAccountName());
                     wc.setIpAddress(clientSocket.getInetAddress().getHostAddress());
-                    outputWriter.println(wc.toString());
+                    sendCommand(wc);
                 }
             }
             else {
@@ -295,13 +295,13 @@ public class HandleClientThread implements Runnable{
                 String[] param = {user.getAccountName()};
                 lnlnc.setAccountName(user.getAccountName());
                 lnlnc.setMessage(getString("logonFailed",param));
-                outputWriter.println(lnlnc.toString());
+                sendCommand(lnlnc);
             }
         }
         catch (DatabaseException ex) {
             ServerErrorCommando sec = new ServerErrorCommando();
             sec.setMessage(ex.getMessage());
-            outputWriter.println(sec.toString());
+            sendCommand(sec);
         }
     }
 
@@ -317,11 +317,11 @@ public class HandleClientThread implements Runnable{
                 int id = ServerController.getInstance().addSharedFolder(asc.getPath(), accountName, asc.getName(), asc.getParentFolderID());
                 ReceiveFolderIdCommando rfic = new ReceiveFolderIdCommando();
                 rfic.setFolderId(id);
-                outputWriter.println(rfic.toString());
+                sendCommand(rfic);
             } catch (DatabaseException ex) {
                 ServerErrorCommando sec = new ServerErrorCommando();
                 sec.setMessage(ex.getMessage());
-                outputWriter.println(sec.toString());
+                sendCommand(sec);
             }
         }
         else{
@@ -330,9 +330,12 @@ public class HandleClientThread implements Runnable{
             } catch (DatabaseException ex) {
                 ServerErrorCommando sec = new ServerErrorCommando();
                 sec.setMessage(ex.getMessage());
-                outputWriter.println(sec.toString());
+                sendCommand(sec);
             }
         }
     }
-    
+    private void sendCommand(Commando o){
+        //System.out.println("SEND: "+o.toString());
+        outputWriter.println(o.toString());
+    }
 }
